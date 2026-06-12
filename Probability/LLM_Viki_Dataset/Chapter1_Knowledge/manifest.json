@@ -1,0 +1,27 @@
+{
+  "name": "durrett_chapter1_probability_foundations_llm_viki",
+  "description": "Unified LLM/Viki-style knowledge base for Chapter 1 of Durrett Probability: Theory and Examples, including textbook knowledge pieces and exercise-derived method patterns.",
+  "source_file": "Probability/Textbook/Chapters/PTE-Chapter1.pdf",
+  "source_tex": "Probability/Exercises/Chapter1/Chapter1Exercises.tex",
+  "source_pdf": "Probability/Exercises/Chapter1/Chapter1Exercises.pdf",
+  "created_at": "2026-06-11T05:37:13.514169+00:00",
+  "piece_count": 70,
+  "textbook_piece_count": 41,
+  "exercise_derived_piece_count": 29,
+  "section_count": 7,
+  "exercise_record_count": 56,
+  "method_card_count": 7,
+  "files": [
+    "chapter1_knowledge_pieces.jsonl",
+    "chapter1_textbook_knowledge_pieces.jsonl",
+    "chapter1_section_guides.jsonl",
+    "chapter1_viki.md",
+    "chapter1_flashcards.tsv",
+    "chapter1_exercise_records.jsonl",
+    "chapter1_exercise_method_cards.jsonl",
+    "chapter1_exercise_new_knowledge.jsonl",
+    "chapter1_exercise_method_flashcards.tsv",
+    "chapter1_exercise_viki.md",
+    "manifest.json"
+  ]
+}

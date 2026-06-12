@@ -1,0 +1,26 @@
+{
+  "name": "durrett_chapter3_central_limit_theorems_llm_viki",
+  "description": "Curated LLM/Viki-style knowledge pieces for Chapter 3 of Durrett Probability: Theory and Examples.",
+  "source_file": "Probability/Textbook/Chapters/PTE-Chapter3.pdf",
+  "created_at": "2026-06-11T05:35:25.909157+00:00",
+  "piece_count": 53,
+  "section_count": 10,
+  "files": [
+    "chapter3_knowledge_pieces.jsonl",
+    "chapter3_section_guides.jsonl",
+    "chapter3_viki.md",
+    "chapter3_flashcards.tsv",
+    "manifest.json",
+    "chapter3_exercise_records.jsonl",
+    "chapter3_exercise_method_cards.jsonl",
+    "chapter3_exercise_new_knowledge.jsonl",
+    "chapter3_exercise_method_flashcards.tsv",
+    "chapter3_exercise_viki.md"
+  ],
+  "exercise_source_tex": "Probability/Exercises/Chapter3/Chapter3Exercises.tex",
+  "exercise_source_pdf": "Probability/Exercises/Chapter3/Chapter3Exercises.pdf",
+  "exercise_record_count": 88,
+  "exercise_method_card_count": 10,
+  "exercise_new_knowledge_count": 40,
+  "exercise_viki_created_at": "2026-06-12T07:45:50.565281+00:00"
+}

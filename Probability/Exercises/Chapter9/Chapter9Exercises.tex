@@ -1,0 +1,1643 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!60!black
+}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\dd}{\,d}
+\newcommand{\Del}{\Delta}
+\newcommand{\Knowledge}[1]{%
+  \par\smallskip\noindent
+  \textbf{Knowledge used.}
+  {\small\color{blue!60!black}\raggedright #1\par}
+  \par\smallskip
+}
+
+\title{Chapter 9 Exercises}
+\author{\textsc{Solutions to Rick Durrett's}\\
+\textit{Probability: Theory and Examples}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\noindent
+These solutions use the local Chapter 9 LLM/Viki knowledge set in
+\path{Probability/LLM_Viki_Dataset/Chapter9_Knowledge}.  The cited
+knowledge IDs refer to entries in
+\path{chapter9_knowledge_pieces.jsonl}.
+
+\section*{Section 9.2 Exercises}
+
+\noindent\textbf{Question.}
+The local Chapter 9 textbook PDF has no separately numbered exercises
+inside Section 9.2, ``Heat Equation.''  The items below solve the
+natural verification problems in that section: the martingale
+calculation, uniqueness, recovery of the initial condition, and the
+kernel-smoothing detail left to the reader in Theorem 9.2.5.
+
+\Knowledge{
+\path{durrett_ch9_heat_backward_martingale};
+\path{durrett_ch9_heat_equation_solution};
+\path{durrett_ch9_heat_kernel_smoothing}.
+}
+
+\subsection*{Exercise 9.2.A: the backward heat martingale}
+
+\noindent\textbf{Problem.}
+Suppose $u\in C^{1,2}((0,\infty)\times\R^d)$ and
+\[
+  u_t=\frac12\Del u.
+\]
+Show that, for fixed $t>0$,
+\[
+  M_s=u(t-s,B_s),\qquad 0\le s<t,
+\]
+is a local martingale.
+
+\noindent\textbf{Solution.}
+Apply It\^o's formula to the space-time function
+$F(s,x)=u(t-s,x)$.  Its derivatives are
+\[
+  F_s(s,x)=-u_t(t-s,x),\qquad
+  \nabla_xF(s,x)=\nabla u(t-s,x),\qquad
+  \Del_xF(s,x)=\Del u(t-s,x).
+\]
+Therefore
+\[
+  \dd u(t-s,B_s)
+  =
+  \left[-u_t(t-s,B_s)+\frac12\Del u(t-s,B_s)\right]\dd s
+  +\nabla u(t-s,B_s)\cdot\dd B_s.
+\]
+The drift vanishes because $u_t=(1/2)\Del u$.  Thus
+\[
+  M_s-M_0
+  =
+  \int_0^s \nabla u(t-r,B_r)\cdot\dd B_r.
+\]
+The stochastic integral is a local martingale after the usual
+localization, for instance by stopping when
+\[
+  \int_0^s |\nabla u(t-r,B_r)|^2\dd r
+\]
+exceeds $n$.  Hence $M_s$ is a local martingale on $[0,t)$.
+
+\subsection*{Exercise 9.2.B: uniqueness of bounded heat solutions}
+
+\noindent\textbf{Problem.}
+Let $u$ be a bounded solution of
+\[
+  u_t=\frac12\Del u,\qquad
+  u(0,x)=f(x),
+\]
+where $f$ is bounded and continuous.  Prove that
+\[
+  u(t,x)=\E_x f(B_t).
+\]
+
+\noindent\textbf{Solution.}
+Fix $t>0$ and start Brownian motion at $B_0=x$.  By Exercise 9.2.A,
+$M_s=u(t-s,B_s)$ is a local martingale for $0\le s<t$.  Since $u$ is
+bounded, the localized martingales are uniformly bounded; hence
+$M_s$ is an honest bounded martingale on each interval $[0,t-\epsilon]$,
+and the martingale convergence theorem gives
+\[
+  M_t:=\lim_{s\uparrow t}M_s
+\]
+almost surely and in $L^1$.
+
+Because $B_s\to B_t$ almost surely and $u$ is continuous at
+$(0,B_t)$ with boundary value $f(B_t)$,
+\[
+  M_t
+  =
+  \lim_{s\uparrow t}u(t-s,B_s)
+  =
+  f(B_t)
+  \qquad \text{a.s.}
+\]
+Taking expectations in the bounded martingale gives
+\[
+  u(t,x)=M_0=\E_x M_t=\E_x f(B_t).
+\]
+Thus a bounded solution is unique and must be the Brownian heat
+semigroup applied to $f$.
+
+\subsection*{Exercise 9.2.C: the initial condition for the Brownian formula}
+
+\noindent\textbf{Problem.}
+Let
+\[
+  v(t,x)=\E_x f(B_t)=\E f(x+B_t),
+\]
+where $f$ is bounded and continuous.  Show that
+\[
+  v(t_n,x_n)\to f(x)
+\]
+whenever $t_n\downarrow0$ and $x_n\to x$.
+
+\noindent\textbf{Solution.}
+Write $B_{t_n}\stackrel{d}{=}\sqrt{t_n}Z$, where
+$Z$ is a standard $d$-dimensional normal vector.  Then
+\[
+  v(t_n,x_n)=\E f(x_n+\sqrt{t_n}Z).
+\]
+For each fixed $Z$, $x_n+\sqrt{t_n}Z\to x$.  Since $f$ is continuous,
+\[
+  f(x_n+\sqrt{t_n}Z)\to f(x)
+  \qquad \text{a.s.}
+\]
+Also $|f(x_n+\sqrt{t_n}Z)|\le \|f\|_\infty$.  The bounded convergence
+theorem gives
+\[
+  v(t_n,x_n)\to \E f(x)=f(x).
+\]
+So the Brownian formula has the required initial trace.
+
+\subsection*{Exercise 9.2.D: heat-kernel smoothing and the PDE}
+
+\noindent\textbf{Problem.}
+Fill in the details in Theorem 9.2.5.  For bounded continuous $f$, prove
+that
+\[
+  v(t,x)=\E_x f(B_t)
+  =
+  \int_{\R^d}p_t(x-y)f(y)\dd y,
+  \qquad
+  p_t(z)=(2\pi t)^{-d/2}e^{-|z|^2/(2t)},
+\]
+belongs to $C^{1,2}((0,\infty)\times\R^d)$ and satisfies
+\[
+  v_t=\frac12\Del v.
+\]
+
+\noindent\textbf{Solution.}
+Fix $0<a<b<\infty$ and a compact set $K\subset\R^d$.  We first justify
+differentiating under the integral for $(t,x)\in[a,b]\times K$.
+For a multi-index $\alpha$ and an integer $m\ge0$, the derivatives
+\[
+  \partial_t^m\partial_x^\alpha p_t(x-y)
+\]
+are finite sums of terms of the form
+\[
+  C\,t^{-q}\,(x-y)^\beta p_t(x-y),
+\]
+where $q$ and $\beta$ depend on $m,\alpha,d$.  On $t\in[a,b]$ these are
+bounded by an integrable Gaussian-tail majorant
+\[
+  C_{a,b,K}\,(1+|y|^N)e^{-c|y|^2}
+\]
+for suitable constants $C_{a,b,K},N,c>0$.  Since $f$ is bounded, the
+dominated convergence theorem allows us to differentiate under the
+integral for one time derivative and for two spatial derivatives.
+Thus $v\in C^{1,2}$ on $(0,\infty)\times\R^d$.
+
+It remains to identify the PDE.  The Gaussian kernel satisfies
+\[
+  \partial_t p_t(z)
+  =
+  \left(-\frac d{2t}+\frac{|z|^2}{2t^2}\right)p_t(z),
+\]
+while
+\[
+  \partial_{z_i}p_t(z)=-\frac{z_i}{t}p_t(z),
+  \qquad
+  \partial_{z_i z_i}p_t(z)
+  =
+  \left(\frac{z_i^2}{t^2}-\frac1t\right)p_t(z).
+\]
+Summing over $i$ gives
+\[
+  \Del p_t(z)
+  =
+  \left(\frac{|z|^2}{t^2}-\frac d t\right)p_t(z).
+\]
+Hence
+\[
+  \partial_t p_t(z)=\frac12\Del p_t(z).
+\]
+Differentiating the convolution under the integral,
+\[
+  v_t(t,x)
+  =
+  \int_{\R^d}\partial_t p_t(x-y)f(y)\dd y
+  =
+  \frac12\int_{\R^d}\Del_x p_t(x-y)f(y)\dd y
+  =
+  \frac12\Del v(t,x).
+\]
+Therefore $v$ is a classical solution of the heat equation for $t>0$.
+Together with Exercise 9.2.C, this proves existence of a bounded
+solution with initial value $f$; Exercise 9.2.B proves uniqueness.
+
+\section*{Section 9.3 Exercises}
+
+\noindent\textbf{Question.}
+The local Chapter 9 textbook PDF also has no separately numbered
+exercise block inside Section 9.3, ``Inhomogeneous Heat Equation.''
+The solutions below spell out the section's verification problems for
+the equation
+\[
+  u_t=\frac12\Del u+g,
+  \qquad
+  u(0,x)=0,
+\]
+with bounded continuous $g$.  For nonzero initial condition $f$, add
+the homogeneous heat solution $\E_x f(B_t)$ from Section 9.2.
+
+\Knowledge{
+\path{durrett_ch9_duhamel_inhomogeneous_heat};
+\path{durrett_ch9_inhomogeneous_heat_regularity};
+\path{durrett_ch9_heat_kernel_smoothing}.
+}
+
+\subsection*{Exercise 9.3.A: the source-term martingale}
+
+\noindent\textbf{Problem.}
+Suppose $u\in C^{1,2}$ and
+\[
+  u_t=\frac12\Del u+g.
+\]
+Show that, for fixed $t>0$,
+\[
+  M_s=u(t-s,B_s)+\int_0^s g(B_r)\dd r,\qquad 0\le s<t,
+\]
+is a local martingale.
+
+\noindent\textbf{Solution.}
+As in Section 9.2, apply It\^o's formula to $u(t-s,B_s)$:
+\[
+  \dd u(t-s,B_s)
+  =
+  \left[-u_t(t-s,B_s)+\frac12\Del u(t-s,B_s)\right]\dd s
+  +\nabla u(t-s,B_s)\cdot\dd B_s.
+\]
+Since $u_t=(1/2)\Del u+g$,
+\[
+  -u_t+\frac12\Del u=-g.
+\]
+Hence
+\[
+  \dd\left(u(t-s,B_s)+\int_0^s g(B_r)\dd r\right)
+  =
+  \nabla u(t-s,B_s)\cdot\dd B_s.
+\]
+After localizing the stochastic integral by its quadratic variation,
+the right side is a martingale.  Therefore $M_s$ is a local martingale.
+
+\subsection*{Exercise 9.3.B: uniqueness and Duhamel's formula}
+
+\noindent\textbf{Problem.}
+Assume $u$ is bounded on $[0,T]\times\R^d$ for each $T<\infty$,
+satisfies
+\[
+  u_t=\frac12\Del u+g,\qquad u(0,x)=0,
+\]
+and $g$ is bounded.  Prove that
+\[
+  u(t,x)=\E_x\int_0^t g(B_s)\dd s.
+\]
+
+\noindent\textbf{Solution.}
+Fix $t>0$ and $B_0=x$.  By Exercise 9.3.A,
+\[
+  M_s=u(t-s,B_s)+\int_0^s g(B_r)\dd r,\qquad 0\le s<t,
+\]
+is a local martingale.  Since $u$ and $g$ are bounded on the relevant
+finite time interval, $M_s$ is bounded by a deterministic constant, so
+the localized martingale is uniformly integrable and $M_s$ is an honest
+martingale.
+
+Letting $s\uparrow t$, continuity at time $0$ gives
+\[
+  \lim_{s\uparrow t}u(t-s,B_s)=u(0,B_t)=0,
+\]
+and bounded convergence gives
+\[
+  M_t=\int_0^t g(B_r)\dd r.
+\]
+Taking expectations,
+\[
+  u(t,x)=M_0=\E_xM_t
+  =
+  \E_x\int_0^t g(B_s)\dd s.
+\]
+This proves uniqueness among bounded solutions and identifies the
+solution as Duhamel's formula.
+
+\subsection*{Exercise 9.3.C: smooth formula implies the PDE}
+
+\noindent\textbf{Problem.}
+Let
+\[
+  v(t,x)=\E_x\int_0^t g(B_s)\dd s.
+\]
+Assume $v\in C^{1,2}((0,\infty)\times\R^d)$.  Show that
+\[
+  v_t=\frac12\Del v+g.
+\]
+
+\noindent\textbf{Solution.}
+Use the Markov property to write, for $h>0$,
+\[
+  v(t+h,x)
+  =
+  \E_x\int_0^{t+h}g(B_s)\dd s
+  =
+  \E_x\int_0^h g(B_s)\dd s+\E_x v(t,B_h).
+\]
+Subtract $v(t,x)$:
+\[
+  v(t+h,x)-v(t,x)
+  =
+  \E_x\{v(t,B_h)-v(t,x)\}
+  +\E_x\int_0^h g(B_s)\dd s.
+\]
+Because $v$ is $C^{1,2}$ in space, Taylor's formula at $x$ gives
+\[
+  \E_x\{v(t,B_h)-v(t,x)\}
+  =
+  \frac12\Del v(t,x)h+o(h),
+\]
+using $\E_x(B_h^i-x_i)=0$,
+$\E_x[(B_h^i-x_i)(B_h^j-x_j)]=h\delta_{ij}$.  Since $g$ is continuous
+and $B_s\to x$ in probability as $s\downarrow0$,
+\[
+  \frac1h\E_x\int_0^h g(B_s)\dd s\to g(x).
+\]
+Divide by $h$ and let $h\downarrow0$:
+\[
+  v_t(t,x)=\frac12\Del v(t,x)+g(x).
+\]
+
+\subsection*{Exercise 9.3.D: initial condition}
+
+\noindent\textbf{Problem.}
+Show that
+\[
+  v(t,x)=\E_x\int_0^t g(B_s)\dd s
+\]
+satisfies $v(t,x)\to0$ as $t\downarrow0$, uniformly in $x$, when
+$g$ is bounded.
+
+\noindent\textbf{Solution.}
+If $\|g\|_\infty\le M$, then
+\[
+  |v(t,x)|
+  \le
+  \E_x\int_0^t |g(B_s)|\dd s
+  \le Mt.
+\]
+Therefore $\sup_x |v(t,x)|\le Mt\to0$.  This is exactly the initial
+condition $v(0,x)=0$.
+
+\subsection*{Exercise 9.3.E: kernel form and regularity}
+
+\noindent\textbf{Problem.}
+Write the Duhamel solution in heat-kernel form and explain why
+Holder continuity of $g$ is a natural sufficient condition for
+$v\in C^{1,2}$.
+
+\noindent\textbf{Solution.}
+By Fubini's theorem and the Brownian transition density,
+\[
+  v(t,x)
+  =
+  \int_0^t \E_x g(B_s)\dd s
+  =
+  \int_0^t\int_{\R^d}p_s(x-y)g(y)\dd y\dd s.
+\]
+Equivalently,
+\[
+  v(t,x)=\int_{\R^d}G_t(x,y)g(y)\dd y,
+  \qquad
+  G_t(x,y)=\int_0^t p_s(x-y)\dd s.
+\]
+Formally differentiating under the integral is delicate near $s=0$,
+because derivatives of $p_s$ become singular as $s\downarrow0$ and
+$y\to x$.  The cancellation supplied by
+\[
+  g(y)=g(x)+O(|y-x|^\alpha)
+\]
+when $g$ is Holder continuous offsets this singularity.  More
+concretely, split
+\[
+  P_sg(x)-g(x)
+  =
+  \int_{\R^d}p_s(z)\{g(x+z)-g(x)\}\dd z.
+\]
+If $g$ is Holder with exponent $\alpha>0$, then
+\[
+  |P_sg(x)-g(x)|
+  \le
+  C\E|B_s|^\alpha
+  =
+  C' s^{\alpha/2}.
+\]
+This is the small-time gain that makes the singular kernel estimates
+integrable in the parabolic regularity argument.  The standard
+Schauder estimate for the heat equation then gives
+\[
+  v\in C^{1,2}((0,\infty)\times\R^d),
+\]
+and Exercise 9.3.C proves that this classical function solves
+\[
+  v_t=\frac12\Del v+g,\qquad v(0,x)=0.
+\]
+Thus Holder continuity is not just a cosmetic assumption; it is the
+condition that lets the source term smooth into a classical solution.
+
+\section*{Section 9.4 Exercises}
+
+\noindent\textbf{Question.}
+The local Chapter 9 textbook PDF has no separately numbered exercise
+block inside Section 9.4, ``Feynman-Kac Formula.''  The solutions below
+work through the section's verification problems for
+\[
+  u_t=\frac12\Del u+c(x)u,
+  \qquad
+  u(0,x)=f(x),
+\]
+where $c$ and $f$ are bounded and continuous.
+
+\Knowledge{
+\path{durrett_ch9_feynman_kac_forward};
+\path{durrett_ch9_feynman_kac_smoothness};
+\path{durrett_ch9_heat_equation_solution};
+\path{durrett_ch9_duhamel_inhomogeneous_heat}.
+}
+
+\subsection*{Exercise 9.4.A: the weighted martingale}
+
+\noindent\textbf{Problem.}
+Let
+\[
+  A_s=\int_0^s c(B_r)\dd r.
+\]
+Suppose $u\in C^{1,2}$ and
+\[
+  u_t=\frac12\Del u+c(x)u.
+\]
+Show that, for fixed $t>0$,
+\[
+  M_s=u(t-s,B_s)e^{A_s},\qquad 0\le s<t,
+\]
+is a local martingale.
+
+\noindent\textbf{Solution.}
+The process $A_s$ has finite variation, so the ordinary product rule
+and It\^o's formula give
+\[
+  \dd\{u(t-s,B_s)e^{A_s}\}
+  =
+  e^{A_s}\dd u(t-s,B_s)
+  +
+  u(t-s,B_s)e^{A_s}\dd A_s.
+\]
+There is no quadratic covariation term because $e^{A_s}$ has finite
+variation.  Also
+\[
+  \dd A_s=c(B_s)\dd s
+\]
+and
+\[
+  \dd u(t-s,B_s)
+  =
+  \left[-u_t(t-s,B_s)+\frac12\Del u(t-s,B_s)\right]\dd s
+  +
+  \nabla u(t-s,B_s)\cdot\dd B_s.
+\]
+Therefore
+\[
+  \dd M_s
+  =
+  e^{A_s}
+  \left[-u_t+\frac12\Del u+cu\right](t-s,B_s)\dd s
+  +
+  e^{A_s}\nabla u(t-s,B_s)\cdot\dd B_s.
+\]
+Since $u_t=(1/2)\Del u+cu$, the drift vanishes.  After localizing the
+stochastic integral by its quadratic variation,
+\[
+  M_s-M_0
+  =
+  \int_0^s e^{A_r}\nabla u(t-r,B_r)\cdot\dd B_r
+\]
+is a local martingale.  Hence $M_s$ is a local martingale.
+
+\subsection*{Exercise 9.4.B: uniqueness and the Feynman-Kac formula}
+
+\noindent\textbf{Problem.}
+Assume $u$ is bounded on $[0,T]\times\R^d$ for each $T<\infty$ and
+satisfies
+\[
+  u_t=\frac12\Del u+c(x)u,\qquad u(0,x)=f(x),
+\]
+with $c$ bounded.  Prove that
+\[
+  u(t,x)
+  =
+  \E_x\left[
+    f(B_t)\exp\left(\int_0^t c(B_s)\dd s\right)
+  \right].
+\]
+
+\noindent\textbf{Solution.}
+Fix $t>0$ and start Brownian motion at $B_0=x$.  By Exercise 9.4.A,
+\[
+  M_s=u(t-s,B_s)\exp\left(\int_0^s c(B_r)\dd r\right)
+\]
+is a local martingale on $[0,t)$.  If $|c|\le C$ and $u$ is bounded on
+$[0,t]\times\R^d$, then
+\[
+  |M_s|\le e^{Ct}\sup_{0\le r\le t,y\in\R^d}|u(r,y)|.
+\]
+Thus $M_s$ is bounded and therefore an honest uniformly integrable
+martingale.
+
+Let $s\uparrow t$.  Since $B_s\to B_t$ almost surely and $u$ is
+continuous at the initial boundary,
+\[
+  \lim_{s\uparrow t}u(t-s,B_s)=u(0,B_t)=f(B_t).
+\]
+Also $\int_0^s c(B_r)\dd r\to\int_0^t c(B_r)\dd r$.  Hence
+\[
+  M_t
+  =
+  f(B_t)\exp\left(\int_0^t c(B_r)\dd r\right).
+\]
+Taking expectations in the martingale identity $M_0=\E_xM_t$ gives the
+claimed formula.  In particular, this proves uniqueness among bounded
+solutions.
+
+\subsection*{Exercise 9.4.C: a smooth Feynman-Kac formula solves the PDE}
+
+\noindent\textbf{Problem.}
+Let
+\[
+  v(t,x)=
+  \E_x\left[
+    f(B_t)\exp\left(\int_0^t c(B_s)\dd s\right)
+  \right].
+\]
+Assume $v\in C^{1,2}((0,\infty)\times\R^d)$.  Show that
+\[
+  v_t=\frac12\Del v+c(x)v.
+\]
+
+\noindent\textbf{Solution.}
+The Markov property gives, for $h>0$,
+\[
+  v(t+h,x)
+  =
+  \E_x\left[
+    e^{\int_0^h c(B_s)\dd s}v(t,B_h)
+  \right].
+\]
+Subtract $v(t,x)$ and add-subtract $v(t,B_h)$:
+\[
+  v(t+h,x)-v(t,x)
+  =
+  \E_x\{v(t,B_h)-v(t,x)\}
+  +
+  \E_x\left[
+    v(t,B_h)\left(e^{\int_0^h c(B_s)\dd s}-1\right)
+  \right].
+\]
+Since $v$ is $C^{1,2}$ in space,
+\[
+  \E_x\{v(t,B_h)-v(t,x)\}
+  =
+  \frac12\Del v(t,x)h+o(h).
+\]
+For the second term, boundedness of $c$ gives
+\[
+  e^{\int_0^h c(B_s)\dd s}-1
+  =
+  \int_0^h c(B_r)\exp\left(\int_r^h c(B_s)\dd s\right)\dd r.
+\]
+As $h\downarrow0$, $B_r\to x$ in probability uniformly on small time
+intervals and $v(t,B_h)\to v(t,x)$ in probability.  The integrand is
+bounded on compact time intervals, so dominated convergence yields
+\[
+  \frac1h
+  \E_x\left[
+    v(t,B_h)\left(e^{\int_0^h c(B_s)\dd s}-1\right)
+  \right]
+  \to c(x)v(t,x).
+\]
+Divide by $h$ and let $h\downarrow0$ to obtain
+\[
+  v_t(t,x)=\frac12\Del v(t,x)+c(x)v(t,x).
+\]
+
+\subsection*{Exercise 9.4.D: initial condition}
+
+\noindent\textbf{Problem.}
+Show that the Feynman-Kac formula satisfies the initial condition:
+\[
+  v(t_n,x_n)\to f(x)
+\]
+whenever $t_n\downarrow0$ and $x_n\to x$.
+
+\noindent\textbf{Solution.}
+Write
+\[
+  A_t=\int_0^t c(B_s)\dd s.
+\]
+If $|c|\le C$, then $|A_t|\le Ct$, so $e^{A_t}\to1$ uniformly as
+$t\downarrow0$.  Therefore
+\[
+  |v(t,x)-\E_xf(B_t)|
+  \le
+  \|f\|_\infty \E_x|e^{A_t}-1|
+  \le
+  \|f\|_\infty(e^{Ct}-1)\to0.
+\]
+By the Section 9.2 initial-condition result,
+\[
+  \E_{x_n}f(B_{t_n})\to f(x).
+\]
+Combining the two estimates gives
+\[
+  v(t_n,x_n)\to f(x).
+\]
+
+\subsection*{Exercise 9.4.E: reducing smoothness to Sections 9.2 and 9.3}
+
+\noindent\textbf{Problem.}
+Assume $f$ and $c$ are Holder continuous and bounded.  Explain the
+identity used in Durrett's proof of Theorem 9.4.5 and why it reduces
+smoothness of the Feynman-Kac formula to the heat and inhomogeneous
+heat results.
+
+\noindent\textbf{Solution.}
+Let
+\[
+  A_t=\int_0^t c(B_r)\dd r.
+\]
+Since $A_t$ is continuous and of finite variation,
+\[
+  e^{A_t}-1
+  =
+  \int_0^t c(B_s)e^{A_t-A_s}\dd s
+  =
+  \int_0^t c(B_s)
+      \exp\left(\int_s^t c(B_r)\dd r\right)\dd s.
+\]
+Multiplying by $f(B_t)$ and taking expectations,
+\[
+  v(t,x)
+  =
+  \E_xf(B_t)
+  +
+  \int_0^t
+    \E_x\left[
+      c(B_s)
+      \exp\left(\int_s^t c(B_r)\dd r\right)f(B_t)
+    \right]\dd s.
+\]
+Conditioning on $\F_s$ and using the Markov property turns the second
+integrand into
+\[
+  \E_x\left[c(B_s)v(t-s,B_s)\right].
+\]
+Thus
+\[
+  v(t,x)=v_1(t,x)+v_2(t,x),
+\]
+where
+\[
+  v_1(t,x)=\E_xf(B_t),
+  \qquad
+  v_2(t,x)=\int_0^t\E_x\{c(B_s)v(t-s,B_s)\}\dd s.
+\]
+The first term is the homogeneous heat solution from Section 9.2, so
+$v_1\in C^{1,2}$ for $t>0$.  The second term has the form of the
+inhomogeneous heat solution from Section 9.3 with source
+\[
+  g(r,x)=c(x)v(r,x).
+\]
+Boundedness of $c$ and $f$ makes $v$ locally bounded in time.  Holder
+continuity of $f$ gives local Holder control of $v_1$ in $x$, while the
+inhomogeneous heat estimates give the same kind of local Holder control
+for $v_2$.  Since $c$ is Holder, the product $g(r,x)=c(x)v(r,x)$ is
+locally Holder in the spatial variable.  Section 9.3's regularity
+result then gives $v_2\in C^{1,2}$, and hence
+\[
+  v=v_1+v_2\in C^{1,2}.
+\]
+Exercise 9.4.C then shows that this smooth Feynman-Kac formula solves
+the PDE.
+
+\section*{Section 9.5 Exercises}
+
+\Knowledge{
+\path{durrett_ch9_dirichlet_problem_representation};
+\path{durrett_ch9_mean_value_harmonicity};
+\path{durrett_ch9_interior_smoothness_harmonic};
+\path{durrett_ch9_regular_boundary_point};
+\path{durrett_ch9_boundary_continuity_regular_points};
+\path{durrett_ch9_cone_condition}.
+}
+
+\subsection*{Exercise 9.5.1}
+
+\noindent\textbf{Question.}
+Suppose $h$ is bounded and harmonic on $\R^d$.  Prove that $h$ is
+constant.
+
+\noindent\textbf{Solution.}
+Let $B_t$ be Brownian motion started at $x$.  Since $h$ is harmonic,
+$h(B_{t\wedge S_R})$ is a bounded martingale, where
+$S_R=\inf\{t:|B_t-x|=R\}$.  Letting $R\to\infty$ and using bounded
+convergence gives
+\[
+  h(x)=\E h(x+B_t),\qquad t>0.
+\]
+Thus, for any $x,y\in\R^d$,
+\[
+  h(x)-h(y)
+  =
+  \int_{\R^d} h(z)\{p_t(z-x)-p_t(z-y)\}\dd z.
+\]
+If $\|h\|_\infty\le M$, then
+\[
+  |h(x)-h(y)|
+  \le
+  M\int_{\R^d}|p_t(z-x)-p_t(z-y)|\dd z.
+\]
+The two Gaussian densities have the same covariance matrix $tI$ and
+means separated by the fixed vector $x-y$.  As $t\to\infty$, their
+total variation distance tends to $0$.  Hence $|h(x)-h(y)|=0$.
+Since $x$ and $y$ were arbitrary, $h$ is constant.
+
+\subsection*{Exercise 9.5.2}
+
+\noindent\textbf{Question.}
+Suppose $f\in C^2$ is superharmonic, takes values in $[0,\infty]$, and
+is continuous.  Show that in dimensions $1$ and $2$, $f$ must be
+constant.  Give an example of the form $f(x)=g(|x|)$ in $d\ge3$.
+
+\noindent\textbf{Solution.}
+Use the convention that superharmonic means $\Del f\le0$.  It\^o's
+formula gives
+\[
+  f(B_t)-f(B_0)
+  =
+  \int_0^t \nabla f(B_s)\cdot\dd B_s
+  +
+  \frac12\int_0^t \Del f(B_s)\dd s.
+\]
+After localization, $f(B_t)$ is therefore a nonnegative local
+supermartingale, hence a supermartingale.
+
+Let $x,y\in\R^d$ and let
+\[
+  T_\varepsilon=\inf\{t:|B_t-y|\le\varepsilon\}
+\]
+for Brownian motion started at $x$.  In dimensions $1$ and $2$,
+Brownian motion is recurrent, so $T_\varepsilon<\infty$ almost surely.
+Optional stopping at $T_\varepsilon\wedge n$ and nonnegativity give
+\[
+  f(x)\ge \E_x f(B_{T_\varepsilon}); 
+\]
+then let $n\to\infty$.  Since $B_{T_\varepsilon}$ lies on the sphere
+of radius $\varepsilon$ about $y$, continuity implies
+\[
+  \lim_{\varepsilon\downarrow0}\E_x f(B_{T_\varepsilon})=f(y).
+\]
+Thus $f(x)\ge f(y)$.  Reversing $x$ and $y$ gives $f(y)\ge f(x)$, so
+$f$ is constant.
+
+For $d\ge3$, a smooth nonconstant radial example is
+\[
+  f(x)=g(|x|)
+  =
+  (1+|x|^2)^{-(d-2)/2}.
+\]
+Let $\alpha=(d-2)/2$ and $r=|x|$.  For $g(r)=(1+r^2)^{-\alpha}$,
+\[
+  g''(r)+\frac{d-1}{r}g'(r)
+  =
+  2\alpha(1+r^2)^{-\alpha-2}
+  \{-d+(2\alpha+2-d)r^2\}.
+\]
+Since $2\alpha+2-d=0$, this becomes
+\[
+  \Del f(x)
+  =
+  -d(d-2)(1+|x|^2)^{-(d+2)/2}\le0.
+\]
+So $f$ is nonnegative, smooth, radial, superharmonic, and nonconstant.
+
+\subsection*{Exercise 9.5.3}
+
+\noindent\textbf{Question.}
+Let $\tau=\inf\{t:B_t\notin G\}$.  Suppose $G$ is connected and open,
+all boundary points are regular, and $\Prob_x(\tau<\infty)<1$ in $G$.
+Show that all bounded solutions of the Dirichlet problem with boundary
+value $0$ on $\partial G$ have the form
+\[
+  u(x)=c\Prob_x(\tau=\infty).
+\]
+
+\noindent\textbf{Solution.}
+Put
+\[
+  q(x)=\Prob_x(\tau=\infty).
+\]
+By the strong Markov property, $q$ is harmonic in $G$.  Since every
+boundary point is regular, $q(x)\to0$ as $x$ approaches $\partial G$.
+Thus $q$ itself is a bounded solution of the zero-boundary Dirichlet
+problem.  The assumption $\Prob_x(\tau<\infty)<1$ says $q(x)>0$ in $G$.
+
+Let $u$ be another bounded solution with zero boundary data and let
+$M=\|u\|_\infty$.  Stopping $u(B_t)$ at $\tau$ and using the regular
+zero boundary condition gives
+\[
+  u(x)=\E_x\{u(B_t);\tau>t\}.
+\]
+Therefore
+\[
+  |u(x)|\le M\Prob_x(\tau>t).
+\]
+Letting $t\to\infty$ gives
+\[
+  |u(x)|\le Mq(x).
+\]
+Hence $h(x)=u(x)/q(x)$ is bounded in $G$.
+
+Now use the Doob $q$-transform, i.e. Brownian motion conditioned never
+to leave $G$:
+\[
+  \Prob_x^q(A)
+  =
+  \frac{1}{q(x)}
+  \E_x\{\mathbf{1}_A q(B_t);t<\tau\},
+  \qquad A\in\mathcal{F}_t.
+\]
+The ratio $h=u/q$ is harmonic for this conditioned process.  Since $G$
+is connected and all finite boundary points are regular, the only
+remaining boundary point for the conditioned process is the ideal point
+``at infinity.''  The bounded martingale $h(B_t)$ therefore has a
+constant terminal value under the conditioned law.  Calling this
+constant $c$, we get
+\[
+  h(x)=\E_x^q h(B_t)=c,
+\]
+and hence
+\[
+  u(x)=cq(x)=c\Prob_x(\tau=\infty).
+\]
+
+Equivalently, this is the maximum-principle content of the hint:
+adding a large multiple of $q$ to $\pm u$ produces nonnegative
+zero-boundary harmonic functions, and the only possible freedom is the
+amount of mass assigned to escape through infinity.
+
+\subsection*{Exercise 9.5.4}
+
+\noindent\textbf{Question.}
+Let $\tau=\inf\{t:B_t\notin G\}$ and consider the Dirichlet problem in
+a connected open set $G$ in $d\ge3$, where all boundary points are
+regular and $\Prob_x(\tau<\infty)<1$ in $G$.  The extracted statement
+again has boundary condition $f\equiv0$.  Conclude that all bounded
+solutions have the form
+\[
+  u(x)=c\Prob_x(\tau=\infty).
+\]
+
+\noindent\textbf{Solution.}
+For the zero-boundary statement, this is exactly Exercise 9.5.3.  The
+dimension assumption $d\ge3$ is the natural transient setting in which
+escape to infinity may have positive probability.
+
+The usual general form is worth recording.  If the boundary value is a
+bounded continuous function $f$, one particular solution is
+\[
+  v(x)=\E_x\{f(B_\tau);\tau<\infty\}.
+\]
+If $u$ is any other bounded solution with the same boundary data, then
+$w=u-v$ is a bounded solution with zero boundary data.  By Exercise
+9.5.3,
+\[
+  w(x)=c\Prob_x(\tau=\infty).
+\]
+Hence all bounded solutions with boundary value $f$ are
+\[
+  u(x)=
+  \E_x\{f(B_\tau);\tau<\infty\}
+  +
+  c\Prob_x(\tau=\infty).
+\]
+When $f\equiv0$, this reduces to the displayed formula in the question.
+
+\subsection*{Exercise 9.5.5}
+
+\noindent\textbf{Question.}
+Define a flat cone $\overline V(y,v,a)$ to be the intersection of
+$V(y,v,a)$ with a $(d-1)$-dimensional hyperplane that contains the line
+$\{y+\theta v:\theta\in\R\}$.  Show that Theorem 9.5.10 remains true if
+``cone'' is replaced by ``flat cone.''
+
+\noindent\textbf{Solution.}
+By translating and rotating, take $y=0$ and take the hyperplane to be
+\[
+  H=\{x\in\R^d:x_d=0\}.
+\]
+Write Brownian motion as $B_t=(X_t,Y_t)$, where $X_t$ is
+$(d-1)$-dimensional Brownian motion in $H$ and $Y_t$ is an independent
+one-dimensional Brownian motion perpendicular to $H$.
+
+The zero set of $Y_t$ accumulates at $0$ almost surely.  At those times
+Brownian motion lies in the hyperplane $H$.  The trace of $B_t$ on
+$H$, parametrized by the local time of $Y_t$ at $0$, is a rotationally
+symmetric Cauchy process in $H$.  Starting from $0$, this trace process
+enters every relatively open cone in $H$ immediately with probability
+one.  Therefore, if $G^c$ contains a flat cone with vertex $y$, then
+Brownian motion started at $y$ hits $G^c$ at arbitrarily small positive
+times almost surely.
+
+Thus
+\[
+  \Prob_y(\tau_G=0)=1,
+\]
+so $y$ is a regular boundary point.  This is exactly the conclusion of
+Theorem 9.5.10 with ``cone'' replaced by ``flat cone.''
+
+\section*{Section 9.6 Exercises}
+
+\noindent\textbf{Question.}
+The local Chapter 9 PDF has no separately numbered exercise block in
+Section 9.6, ``Green's Functions and Potential Kernels.''  The items
+below solve the section's natural verification problems: occupation
+times of balls, the potential-kernel computations in dimensions
+$d\ge3$, $d=2$, and $d=1$, and the normalization
+$(1/2)\Del G=-\delta_0$.
+
+\Knowledge{
+\path{durrett_ch9_newtonian_potential_kernel};
+\path{durrett_ch9_green_function_killed_domain};
+\path{durrett_ch9_radial_harmonic_functions}.
+}
+
+\subsection*{Exercise 9.6.A: occupation time of a ball}
+
+\noindent\textbf{Problem.}
+Let $D=B(0,r)$.  Show that
+\[
+  \Prob_x\left(\int_0^\infty \mathbf{1}_D(B_t)\dd t=\infty\right)=1
+  \quad\text{in } d\le2,
+\]
+while
+\[
+  \E_x\int_0^\infty \mathbf{1}_D(B_t)\dd t<\infty
+  \quad\text{in } d\ge3.
+\]
+
+\noindent\textbf{Solution.}
+For $d\le2$, Brownian motion is recurrent.  Thus it enters $D$
+infinitely often almost surely.  Let $G=B(0,2r)$ and define successive
+entrance and exit times
+\[
+  S_k=\inf\{t>T_{k-1}:B_t\in D\},
+  \qquad
+  T_k=\inf\{t>S_k:B_t\notin G\},
+\]
+with $T_0=0$.  By the strong Markov property, the occupation increments
+\[
+  X_k=\int_{S_k}^{T_k}\mathbf{1}_D(B_t)\dd t
+\]
+are independent after conditioning on the entrance point, and each has
+a positive mean bounded away from $0$ because Brownian motion started
+in the compact ball $D$ spends positive expected time in $D$ before
+leaving $G$.  Hence, by the strong law applied along visits,
+\[
+  \sum_{k=1}^\infty X_k=\infty
+  \qquad\text{a.s.}
+\]
+Therefore the total occupation time of $D$ is infinite almost surely.
+
+For $d\ge3$, use Fubini and the transition density
+\[
+  p_t(x,y)=(2\pi t)^{-d/2}e^{-|x-y|^2/(2t)}.
+\]
+For nonnegative $f$,
+\[
+  \E_x\int_0^\infty f(B_t)\dd t
+  =
+  \int_{\R^d}\left(\int_0^\infty p_t(x,y)\dd t\right)f(y)\dd y.
+\]
+The inner integral is finite for $x\ne y$ when $d\ge3$ and equals a
+constant times $|x-y|^{2-d}$, as computed in Exercise 9.6.B.  Taking
+$f=\mathbf{1}_D$, the singularity is locally integrable:
+\[
+  \int_{B(0,r)} |x-y|^{2-d}\dd y<\infty,
+\]
+because near $y=x$ the polar-coordinate integrand is
+$\rho^{2-d}\rho^{d-1}=\rho$.  Thus
+\[
+  \E_x\int_0^\infty \mathbf{1}_D(B_t)\dd t<\infty.
+\]
+
+\subsection*{Exercise 9.6.B: the potential kernel in $d\ge3$}
+
+\noindent\textbf{Problem.}
+Compute
+\[
+  G(x,y)=\int_0^\infty p_t(x,y)\dd t
+\]
+for $d\ge3$.
+
+\noindent\textbf{Solution.}
+Let $a=|x-y|$.  For $a>0$,
+\[
+  G(x,y)=
+  \int_0^\infty (2\pi t)^{-d/2}e^{-a^2/(2t)}\dd t.
+\]
+Set $s=a^2/(2t)$, so $t=a^2/(2s)$ and
+\[
+  \dd t=-\frac{a^2}{2s^2}\dd s.
+\]
+Then
+\[
+\begin{aligned}
+  G(x,y)
+  &=
+  \int_\infty^0
+  \left(2\pi\frac{a^2}{2s}\right)^{-d/2}
+  e^{-s}
+  \left(-\frac{a^2}{2s^2}\right)\dd s  \\
+  &=
+  \frac{a^{2-d}}{2\pi^{d/2}}
+  \int_0^\infty s^{d/2-2}e^{-s}\dd s  \\
+  &=
+  \frac{\Gamma(d/2-1)}{2\pi^{d/2}}|x-y|^{2-d}.
+\end{aligned}
+\]
+The gamma integral is finite exactly when $d/2-1>0$, i.e. $d\ge3$.
+
+\subsection*{Exercise 9.6.C: the modified kernel in $d=1$}
+
+\noindent\textbf{Problem.}
+In dimension $1$, define
+\[
+  G(x,y)=\int_0^\infty\{p_t(x,y)-p_t(0,0)\}\dd t.
+\]
+Show that
+\[
+  G(x,y)=-|x-y|.
+\]
+
+\noindent\textbf{Solution.}
+Let $a=|x-y|$.  Then
+\[
+  G(x,y)
+  =
+  \frac1{\sqrt{2\pi}}\int_0^\infty
+  \left(e^{-a^2/(2t)}-1\right)t^{-1/2}\dd t.
+\]
+With $u=a^2/(2t)$,
+\[
+  G(x,y)
+  =
+  -\frac{a}{2\sqrt{\pi}}\int_0^\infty (1-e^{-u})u^{-3/2}\dd u.
+\]
+Use
+\[
+  1-e^{-u}=\int_0^u e^{-s}\dd s
+\]
+and Fubini:
+\[
+\begin{aligned}
+  \int_0^\infty (1-e^{-u})u^{-3/2}\dd u
+  &=
+  \int_0^\infty e^{-s}\int_s^\infty u^{-3/2}\dd u\,\dd s  \\
+  &=
+  2\int_0^\infty e^{-s}s^{-1/2}\dd s
+  =
+  2\sqrt{\pi}.
+\end{aligned}
+\]
+Therefore
+\[
+  G(x,y)=-a=-|x-y|.
+\]
+
+\subsection*{Exercise 9.6.D: the modified kernel in $d=2$}
+
+\noindent\textbf{Problem.}
+In dimension $2$, define
+\[
+  G(x,y)=\int_0^\infty\{p_t(x,y)-p_t(0,e_1)\}\dd t,
+  \qquad e_1=(1,0).
+\]
+Show that
+\[
+  G(x,y)=-\frac1\pi\log|x-y|.
+\]
+
+\noindent\textbf{Solution.}
+Let $a=|x-y|$.  Since
+\[
+  p_t(x,y)=\frac1{2\pi t}e^{-a^2/(2t)},
+  \qquad
+  p_t(0,e_1)=\frac1{2\pi t}e^{-1/(2t)},
+\]
+we have
+\[
+  G(x,y)
+  =
+  \frac1{2\pi}\int_0^\infty
+  \left(e^{-a^2/(2t)}-e^{-1/(2t)}\right)t^{-1}\dd t.
+\]
+Set $u=1/(2t)$.  Then $t^{-1}\dd t=-u^{-1}\dd u$, and
+\[
+  G(x,y)
+  =
+  \frac1{2\pi}\int_0^\infty
+  \frac{e^{-a^2u}-e^{-u}}{u}\dd u.
+\]
+The standard Frullani integral gives, for $a>0$,
+\[
+  \int_0^\infty \frac{e^{-a^2u}-e^{-u}}{u}\dd u
+  =
+  \log\frac1{a^2}
+  =
+  -2\log a.
+\]
+Hence
+\[
+  G(x,y)=-\frac1\pi\log|x-y|.
+\]
+
+\subsection*{Exercise 9.6.E: distributional normalization}
+
+\noindent\textbf{Problem.}
+Verify that the constants in the potential kernels are chosen so that
+\[
+  \frac12\Del_xG(x,0)=-\delta_0
+\]
+in the distributional sense.
+
+\noindent\textbf{Solution.}
+Away from $0$, each kernel is a constant multiple of the radial
+harmonic function from Section 9.1:
+\[
+  |x|^{2-d}\quad(d\ge3),\qquad
+  \log|x|\quad(d=2),\qquad
+  |x|\quad(d=1).
+\]
+So $\Del G(x,0)=0$ for $x\ne0$.  It remains to check the mass at the
+origin.
+
+For $d=1$, $G(x,0)=-|x|$.  Since $(|x|)'=\operatorname{sgn}(x)$ and
+$(|x|)''=2\delta_0$,
+\[
+  \frac12G''=-\delta_0.
+\]
+
+For $d\ge3$, write
+\[
+  G(x,0)=C_d|x|^{2-d},
+  \qquad
+  C_d=\frac{\Gamma(d/2-1)}{2\pi^{d/2}}.
+\]
+Let $\varphi\in C_c^\infty(\R^d)$.  Since $G$ is harmonic off $0$,
+Green's identity on $\{|x|>\varepsilon\}$ gives
+\[
+  \int_{|x|>\varepsilon}G(x,0)\Del\varphi(x)\dd x
+  =
+  \int_{|x|=\varepsilon}
+  \left\{G\,\partial_n\varphi-\varphi\,\partial_nG\right\}\dd S,
+\]
+where $n$ is the inward normal for the removed ball.  The term
+$G\,\partial_n\varphi$ is $O(\varepsilon)$ and vanishes.  Also
+\[
+  \partial_rG=C_d(2-d)\varepsilon^{1-d}.
+\]
+With the inward normal convention on the inner boundary,
+$\partial_nG=-\partial_rG=C_d(d-2)\varepsilon^{1-d}$.  Hence
+\[
+  \int_{\R^d}G\Del\varphi
+  =
+  -C_d(d-2)\omega_d\varphi(0),
+\]
+where $\omega_d=2\pi^{d/2}/\Gamma(d/2)$ is the surface area of the unit
+sphere.  Using
+\[
+  \Gamma(d/2)=(d/2-1)\Gamma(d/2-1),
+\]
+we get $C_d(d-2)\omega_d=2$.  Therefore
+\[
+  \int_{\R^d}\frac12G\Del\varphi=-\varphi(0),
+\]
+which is exactly $(1/2)\Del G=-\delta_0$.
+
+For $d=2$, $G(x,0)=-(1/\pi)\log|x|$.  The same boundary calculation
+uses $\partial_rG=-(1/\pi)r^{-1}$ and the circle length $2\pi r$,
+giving
+\[
+  \int_{\R^2}G\Del\varphi=-2\varphi(0),
+  \qquad
+  \int_{\R^2}\frac12G\Del\varphi=-\varphi(0).
+\]
+Thus the normalization is correct in every dimension.
+
+\section*{Section 9.7 Exercises}
+
+\Knowledge{
+\path{durrett_ch9_poisson_equation_representation};
+\path{durrett_ch9_expected_exit_time_poisson};
+\path{durrett_ch9_poisson_boundary_regular}.
+}
+
+\subsection*{Exercise 9.7.1}
+
+\noindent\textbf{Question.}
+Let $G$ be a bounded open set and let
+\[
+  \tau=\inf\{t:B_t\notin G\}.
+\]
+What equation should we solve to find
+\[
+  w(x)=\E_x\tau^2?
+\]
+
+\noindent\textbf{Solution.}
+First recall the Section 9.7 result for the first moment.  If
+\[
+  v(x)=\E_x\tau,
+\]
+then $v$ solves
+\[
+  \frac12\Del v=-1\quad\text{in }G,
+  \qquad
+  v=0\quad\text{on }\partial G
+\]
+at regular boundary points.
+
+For the second moment, use the Markov property at a small deterministic
+time $t$, or equivalently Dynkin's formula.  On the event $\{t<\tau\}$,
+\[
+  \tau=t+\tau\circ\theta_t,
+\]
+so the general moment recursion is
+\[
+  \frac12\Del m_n=-n m_{n-1},
+  \qquad
+  m_n=0\quad\text{on }\partial G,
+\]
+where $m_n(x)=\E_x\tau^n$ and $m_0\equiv1$.  Therefore
+\[
+  w(x)=m_2(x)=\E_x\tau^2
+\]
+should be found by solving
+\[
+  \boxed{\frac12\Del w=-2v\quad\text{in }G,\qquad w=0\quad\text{on }\partial G,}
+\]
+where $v$ is the solution of the first-moment problem above.
+
+Equivalently, eliminating $v$ gives a fourth-order equation.  Since
+\[
+  v=-\frac14\Del w,
+\]
+and $(1/2)\Del v=-1$, we get
+\[
+  \frac18\Del^2 w=-1,
+  \qquad\text{or}\qquad
+  \Del^2 w=-8
+  \quad\text{in }G.
+\]
+The coupled Poisson system is usually the cleaner way to state and
+solve the problem:
+\[
+  \frac12\Del v=-1,\quad v|_{\partial G}=0,
+  \qquad
+  \frac12\Del w=-2v,\quad w|_{\partial G}=0.
+\]
+
+\section*{Section 9.8 Exercises}
+
+\noindent\textbf{Question.}
+The local Chapter 9 PDF has no separately numbered exercise block in
+Section 9.8, ``Schrodinger Equation.''  The solutions below work
+through the section's main verification problems: the weighted
+martingale, the one-dimensional obstruction, the finite-gauge
+condition, the Feynman-Kac representation, and the explicit exponential
+exit-time formula.
+
+\Knowledge{
+\path{durrett_ch9_schrodinger_martingale};
+\path{durrett_ch9_schrodinger_nonuniqueness_warning};
+\path{durrett_ch9_gauge_function};
+\path{durrett_ch9_gauge_theorem_connected_domain};
+\path{durrett_ch9_schrodinger_dirichlet_representation};
+\path{durrett_ch9_schrodinger_boundary_regular};
+\path{durrett_ch9_interval_exponential_exit_moment}.
+}
+
+\subsection*{Exercise 9.8.A: the Schrodinger martingale}
+
+\noindent\textbf{Problem.}
+Let $G$ be open, let $\tau=\inf\{t:B_t\notin G\}$, and suppose
+$u\in C^2(G)$ satisfies
+\[
+  \frac12\Del u+c(x)u=0\quad\text{in }G.
+\]
+Show that
+\[
+  M_t=u(B_t)\exp\left(\int_0^t c(B_s)\dd s\right),
+  \qquad 0\le t<\tau,
+\]
+is a local martingale.
+
+\noindent\textbf{Solution.}
+Put
+\[
+  A_t=\int_0^t c(B_s)\dd s.
+\]
+Since $A_t$ has finite variation, the product rule and It\^o's formula
+give, for $t<\tau$,
+\[
+\begin{aligned}
+  \dd\{u(B_t)e^{A_t}\}
+  &=
+  e^{A_t}\nabla u(B_t)\cdot\dd B_t
+  +
+  e^{A_t}\frac12\Del u(B_t)\dd t
+  +
+  u(B_t)e^{A_t}c(B_t)\dd t \\
+  &=
+  e^{A_t}\nabla u(B_t)\cdot\dd B_t
+  +
+  e^{A_t}\left(\frac12\Del u+c u\right)(B_t)\dd t.
+\end{aligned}
+\]
+The drift vanishes by the PDE.  After stopping when
+\[
+  \int_0^t e^{2A_s}|\nabla u(B_s)|^2\dd s
+\]
+gets large or when $B_t$ approaches $\partial G$, the stochastic
+integral is a martingale.  Hence $M_t$ is a local martingale on
+$[0,\tau)$.
+
+\subsection*{Exercise 9.8.B: why boundedness alone is not enough}
+
+\noindent\textbf{Problem.}
+Solve the boundary-value problem
+\[
+  \frac12u''+\gamma u=0\quad\text{on }(-a,a),
+  \qquad
+  u(-a)=u(a)=1,
+\]
+and explain why this warns us not to assert blindly that
+\[
+  u(x)=\E_x e^{\gamma\tau},
+  \qquad
+  \tau=\inf\{t:B_t\notin(-a,a)\}.
+\]
+
+\noindent\textbf{Solution.}
+Let $b=\sqrt{2\gamma}$.  The general solution is
+\[
+  u(x)=A\cos(bx)+B\sin(bx).
+\]
+The boundary equations are
+\[
+  A\cos(ba)+B\sin(ba)=1,
+  \qquad
+  A\cos(ba)-B\sin(ba)=1.
+\]
+Thus $B\sin(ba)=0$ and $A\cos(ba)=1$.  When $\cos(ba)\ne0$, the even
+solution is
+\[
+  u(x)=\frac{\cos(bx)}{\cos(ba)}.
+\]
+When $\cos(ba)=0$, no solution with boundary value $1$ exists.
+
+The probabilistic quantity $\E_x e^{\gamma\tau}$ is nonnegative.  But
+if $ba>\pi/2$ and $\cos(ba)\ne0$, the ODE solution above takes negative
+values for some $x$, so it cannot equal $\E_xe^{\gamma\tau}$.  The
+missing hypothesis is integrability of the exponential weight, encoded
+by the gauge
+\[
+  w(x)=\E_x e^{\gamma\tau}.
+\]
+For large positive $\gamma$, this gauge is infinite.
+
+\subsection*{Exercise 9.8.C: the gauge and finite-gauge uniqueness}
+
+\noindent\textbf{Problem.}
+Let
+\[
+  w(x)=\E_x\exp\left(\int_0^\tau c(B_s)\dd s\right).
+\]
+Assume $G$ is bounded and connected, $f,c$ are bounded and continuous,
+and $w\not\equiv\infty$.  Explain why any bounded solution of
+\[
+  \frac12\Del u+c u=0\quad\text{in }G,\qquad u=f\quad\text{on }\partial G
+\]
+must be
+\[
+  u(x)=
+  \E_x\left[
+    f(B_\tau)\exp\left(\int_0^\tau c(B_s)\dd s\right)
+  \right].
+\]
+
+\noindent\textbf{Solution.}
+By the gauge theorem in the section, $w\not\equiv\infty$ on a connected
+bounded domain implies
+\[
+  \sup_{x\in G}w(x)<\infty.
+\]
+Let
+\[
+  A_t=\int_0^t c(B_s)\dd s.
+\]
+Exercise 9.8.A shows that $u(B_t)e^{A_t}$ is a local martingale before
+exit.  Stop at $t\wedge\tau$ and use boundedness to get
+\[
+  u(x)
+  =
+  \E_x\{f(B_\tau)e^{A_\tau};\tau\le t\}
+  +
+  \E_x\{u(B_t)e^{A_t};\tau>t\}.
+\]
+The first term converges by dominated convergence to
+\[
+  \E_x\{f(B_\tau)e^{A_\tau}\},
+\]
+because $|f(B_\tau)e^{A_\tau}|\le \|f\|_\infty e^{A_\tau}$ and
+$\E_xe^{A_\tau}=w(x)<\infty$.
+
+For the second term, condition on $\mathcal{F}_t$ and use the Markov
+property:
+\[
+  \E_x(e^{A_\tau}\mid\mathcal{F}_t)
+  =
+  e^{A_t}w(B_t)
+  \quad\text{on }\{\tau>t\}.
+\]
+Since the finite-gauge theorem gives $w$ bounded and bounded away from
+$0$ on $G$ in the way used in Durrett's proof, the tail term is
+controlled by
+\[
+  C\,\E_x\{e^{A_\tau};\tau>t\}\to0
+\]
+again by dominated convergence.  Therefore
+\[
+  u(x)=
+  \E_x\left[
+    f(B_\tau)\exp\left(\int_0^\tau c(B_s)\dd s\right)
+  \right],
+\]
+and the bounded solution is unique.
+
+\subsection*{Exercise 9.8.D: the smooth representation solves the PDE}
+
+\noindent\textbf{Problem.}
+Let
+\[
+  v(x)=
+  \E_x\left[
+    f(B_\tau)\exp\left(\int_0^\tau c(B_s)\dd s\right)
+  \right].
+\]
+Assume $v\in C^2(G)$.  Show that
+\[
+  \frac12\Del v+c v=0\quad\text{in }G.
+\]
+
+\noindent\textbf{Solution.}
+Let $B(x,r)\Subset G$ and let
+\[
+  \sigma=\inf\{t:B_t\notin B(x,r)\}.
+\]
+By the strong Markov property,
+\[
+  v(x)=
+  \E_x\left[
+    e^{\int_0^\sigma c(B_s)\dd s}v(B_\sigma)
+  \right].
+\]
+For small $r$, $\E_x\sigma=O(r^2)$ and
+\[
+  e^{\int_0^\sigma c(B_s)\dd s}
+  =
+  1+c(x)\sigma+o(r^2)
+\]
+in expectation.  Taylor expansion gives
+\[
+  \E_x v(B_\sigma)-v(x)
+  =
+  \frac12\Del v(x)\E_x\sigma+o(r^2),
+\]
+because the first moments vanish and the cross terms cancel by
+symmetry.  Combining these expansions,
+\[
+  0=
+  \left(\frac12\Del v(x)+c(x)v(x)\right)\E_x\sigma+o(r^2).
+\]
+Since $\E_x\sigma$ is of order $r^2$, divide by $\E_x\sigma$ and let
+$r\downarrow0$:
+\[
+  \frac12\Del v(x)+c(x)v(x)=0.
+\]
+
+\subsection*{Exercise 9.8.E: boundary condition at regular points}
+
+\noindent\textbf{Problem.}
+Assume the finite-gauge hypotheses and let $y$ be a regular boundary
+point.  Show that
+\[
+  v(x)\to f(y)
+  \qquad\text{as }x\to y,\ x\in G.
+\]
+
+\noindent\textbf{Solution.}
+Let $x_n\to y$ from inside $G$.  Regularity gives, for every
+$\delta>0$,
+\[
+  \Prob_{x_n}(\tau\le\delta)\to1,
+  \qquad
+  \Prob_{x_n}(B_\tau\in B(y,\delta))\to1.
+\]
+On $\{\tau\le\delta,\ B_\tau\in B(y,\delta)\}$, continuity of $f$ and
+boundedness of $c$ imply
+\[
+  e^{\int_0^\tau c(B_s)\dd s}f(B_\tau)\to f(y)
+\]
+as $\delta\downarrow0$.  The part with $\tau>1$ is negligible because
+the finite-gauge theorem gives $\sup_G w<\infty$ and
+\[
+  \E_{x_n}\{e^{\int_0^\tau c(B_s)\dd s}|f(B_\tau)|;\tau>1\}
+  \le
+  C\|f\|_\infty \Prob_{x_n}(\tau>1)\to0.
+\]
+The remaining intermediate interval is handled by first taking
+$\delta$ small and then $n$ large.  Hence $v(x_n)\to f(y)$.
+
+\subsection*{Exercise 9.8.F: exponential exit time from an interval}
+
+\noindent\textbf{Problem.}
+Let $\tau=\inf\{t:B_t\notin(-a,a)\}$ and $\gamma>0$.  Show that
+\[
+  \E_x e^{\gamma\tau}
+  =
+  \frac{\cos(x\sqrt{2\gamma})}{\cos(a\sqrt{2\gamma})}
+  \quad\text{if }0<\gamma<\frac{\pi^2}{8a^2},
+\]
+and that $\E_xe^{\gamma\tau}=\infty$ if
+$\gamma\ge \pi^2/(8a^2)$.
+
+\noindent\textbf{Solution.}
+Let $b=\sqrt{2\gamma}$.  If $0<ab<\pi/2$, then
+\[
+  u(x)=\frac{\cos(bx)}{\cos(ba)}
+\]
+is positive on $[-a,a]$ and solves
+\[
+  \frac12u''+\gamma u=0,
+  \qquad
+  u(-a)=u(a)=1.
+\]
+The finite-gauge theorem therefore identifies the Feynman-Kac
+representation:
+\[
+  \E_xe^{\gamma\tau}=u(x)
+  =
+  \frac{\cos(x\sqrt{2\gamma})}{\cos(a\sqrt{2\gamma})}.
+\]
+
+Now suppose $\gamma\ge\pi^2/(8a^2)$.  This is the first Dirichlet
+eigenvalue threshold for the interval.  If the gauge were finite, the
+finite-gauge theorem would produce a bounded nonnegative solution of
+\[
+  \frac12u''+\gamma u=0,\qquad u(\pm a)=1.
+\]
+But the explicit ODE solution from Exercise 9.8.B either does not exist
+at the threshold values where $\cos(ba)=0$, or changes sign when
+$ab>\pi/2$.  Neither possibility can equal the nonnegative function
+$\E_xe^{\gamma\tau}$.  Hence the gauge cannot be finite, and
+\[
+  \E_xe^{\gamma\tau}=\infty
+  \qquad\text{for all }x\in(-a,a).
+\]
+
+\end{document}

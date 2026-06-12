@@ -1,0 +1,671 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!60!black
+}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\dd}{\,d}
+\newcommand{\Knowledge}[1]{%
+  \par\smallskip\noindent
+  \textbf{Knowledge used.}
+  {\small\color{blue!60!black}\raggedright #1\par}
+  \par\smallskip
+}
+
+\title{Chapter 8 Exercises}
+\author{\textsc{Solutions to Rick Durrett's}\\
+\textit{Probability: Theory and Examples}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\noindent
+These solutions use the local Chapter 8 LLM/Viki knowledge set in
+\path{Probability/LLM_Viki_Dataset/Chapter8_Knowledge}.  The cited
+knowledge IDs refer to entries in
+\path{chapter8_knowledge_pieces.jsonl}.
+
+\section*{Exercise 8.1.1}
+
+\noindent\textbf{Question.}
+Use Exercise 7.5.4 to conclude that
+\[
+  \E T_{U,V}^2 \le 4\E X^4.
+\]
+
+\Knowledge{
+\path{durrett_ch8_skorokhod_embedding_mean_zero};
+\path{durrett_ch8_embedded_random_walk}.
+}
+
+\noindent\textbf{Solution.}
+Recall the notation from the proof of Skorokhod's representation
+theorem.  The mean-zero law of $X$ is written as a mixture of two-point
+mean-zero laws $\mu_{u,v}$, where $u<0<v$ and
+\[
+  \mu_{u,v}(\{u\})=\frac{v}{v-u},
+  \qquad
+  \mu_{u,v}(\{v\})=\frac{-u}{v-u}.
+\]
+Given $(U,V)=(u,v)$, the stopping time is
+\[
+  T_{u,v}=\inf\{t:B_t\notin(u,v)\},
+\]
+so $B_{T_{u,v}}$ has law $\mu_{u,v}$.
+
+Exercise 7.5.4 says that for Brownian motion exiting an interval
+$(a,b)$ with $a<0<b$,
+\[
+  \E T_{a,b}^2 \le 4 \E B_{T_{a,b}}^4.
+\]
+Applying this conditional on $(U,V)=(u,v)$ gives
+\[
+  \E\!\left(T_{U,V}^2\mid U,V\right)
+  \le
+  4\E\!\left(B_{T_{U,V}}^4\mid U,V\right)
+  =
+  4\int x^4\,\mu_{U,V}(\dd x).
+\]
+Now take expectations over the mixing distribution of $(U,V)$.  Since
+the mixture of the laws $\mu_{U,V}$ is exactly the original law of $X$,
+\[
+  \E T_{U,V}^2
+  \le
+  4 \E\int x^4\,\mu_{U,V}(\dd x)
+  =
+  4\E X^4.
+\]
+If $\E X^4=\infty$, the inequality is still true in the extended sense;
+otherwise it gives the desired finite second-moment bound for the
+embedding time.
+
+\section*{Exercise 8.1.2}
+
+\noindent\textbf{Question.}
+Suppose $S_n$ is one-dimensional simple random walk and let
+\[
+  R_n
+  =
+  1+\max_{m\le n}S_m-\min_{m\le n}S_m
+\]
+be the number of points visited by time $n$.  Show that $R_n/\sqrt n$
+converges in distribution to a limit.
+
+\Knowledge{
+\path{durrett_ch8_donsker_invariance_principle};
+\path{durrett_ch8_continuous_functional_transfer};
+\path{durrett_ch8_maximum_functional}.
+}
+
+\noindent\textbf{Solution.}
+For one-dimensional nearest-neighbor simple random walk, every integer
+between the running minimum and running maximum has been visited.  Hence
+the number of visited points by time $n$ is exactly
+\[
+  R_n
+  =
+  1+\max_{0\le m\le n}S_m-\min_{0\le m\le n}S_m.
+\]
+
+Let $W_n(t)=S(\lfloor nt\rfloor)/\sqrt n$ with linear interpolation
+between the mesh points.  Since the increments of simple random walk
+have mean $0$ and variance $1$, Donsker's theorem gives
+\[
+  W_n \Rightarrow B
+  \qquad\text{in } C[0,1],
+\]
+where $B$ is standard Brownian motion.
+
+Define the range functional
+\[
+  \psi(\omega)=\sup_{0\le t\le 1}\omega(t)
+  -\inf_{0\le t\le 1}\omega(t),
+  \qquad \omega\in C[0,1].
+\]
+This functional is continuous under the uniform norm.  Indeed, if
+$\|\omega-\eta\|_\infty\le\varepsilon$, then
+\[
+  |\sup_t\omega(t)-\sup_t\eta(t)|\le\varepsilon,
+  \qquad
+  |\inf_t\omega(t)-\inf_t\eta(t)|\le\varepsilon,
+\]
+and therefore $|\psi(\omega)-\psi(\eta)|\le 2\varepsilon$.
+The continuous mapping theorem now implies
+\[
+  \max_{0\le m\le n}\frac{S_m}{\sqrt n}
+  -
+  \min_{0\le m\le n}\frac{S_m}{\sqrt n}
+  =
+  \psi(W_n)
+  \Rightarrow
+  \psi(B)
+  =
+  \sup_{0\le t\le 1}B_t-\inf_{0\le t\le 1}B_t.
+\]
+Finally, $1/\sqrt n\to0$, so Slutsky's theorem gives
+\[
+  \frac{R_n}{\sqrt n}
+  =
+  \frac{1}{\sqrt n}
+  +
+  \max_{0\le m\le n}\frac{S_m}{\sqrt n}
+  -
+  \min_{0\le m\le n}\frac{S_m}{\sqrt n}
+  \Rightarrow
+  \sup_{0\le t\le 1}B_t-\inf_{0\le t\le 1}B_t.
+\]
+Thus $R_n/\sqrt n$ converges in distribution.  The limiting random
+variable is the range of Brownian motion on $[0,1]$.
+
+\section*{Section 8.2 Exercises}
+
+\noindent\textbf{Question.}
+The local textbook PDF has no separately numbered exercises in
+Section 8.2.  Section 8.2, ``CLTs for Martingales,'' begins immediately
+after Exercise 8.1.2 and then proceeds through Theorems 8.2.1--8.2.8
+before Section 8.3 begins.
+
+\Knowledge{
+\path{durrett_ch8_martingale_sk_embedding};
+\path{durrett_ch8_martingale_convergence_variance_sum};
+\path{durrett_ch8_martingale_fclt_random_clock};
+\path{durrett_ch8_martingale_lindeberg_feller};
+\path{durrett_ch8_martingale_clt_final_form}.
+}
+
+\noindent\textbf{Solution.}
+There are therefore no Section 8.2 exercise statements to solve from
+this source file.  The main usable knowledge from the section is the
+martingale CLT toolkit:
+\begin{enumerate}[label=(\roman*)]
+\item square-integrable martingales can be embedded in Brownian motion
+  at stopping times;
+\item the Brownian clock is controlled by conditional variances;
+\item a martingale functional CLT follows when the conditional variance
+  process converges to deterministic time and large jumps are negligible;
+\item the Lindeberg-Feller martingale theorem is obtained by truncation;
+\item the single-sequence martingale CLT follows by converting the
+  sequence into a triangular array.
+\end{enumerate}
+These are recorded above as the relevant Viki knowledge IDs, but the
+textbook does not give an Exercise 8.2.1 or any other Section 8.2
+exercise to solve.
+
+\section*{Exercise 8.3.1}
+
+\noindent\textbf{Question.}
+Consider the special case of Example 8.3.3 in which $\xi_i$, $i\in\mathbb Z$,
+are i.i.d. and take values $H$ and $T$ with equal probability.  Let
+\[
+  \eta_n=f(\xi_n,\xi_{n+1}),
+  \qquad
+  f(H,T)=1,
+  \qquad
+  f(i,j)=0 \text{ otherwise}.
+\]
+Then $S_n=\eta_1+\cdots+\eta_n$ counts the number of head runs in
+$\xi_1,\ldots,\xi_{n+1}$.  Apply Theorem 8.3.2 with
+$\F_n=\sigma(\xi_m:m\le n+1)$ to show that there are constants $\mu$
+and $\sigma$ so that
+\[
+  \frac{S_n-n\mu}{\sigma n^{1/2}}\Rightarrow \chi .
+\]
+What is the random variable $Y_0$ constructed in the proof of
+Theorem 8.3.2 in this case?
+
+\Knowledge{
+\path{durrett_ch8_stationary_coboundary_clt};
+\path{durrett_ch8_projective_stationary_clt};
+\path{durrett_ch8_m_dependent_clt};
+\path{durrett_ch8_martingale_clt_final_form}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  X_n=\eta_n-\mu,
+  \qquad
+  \mu=\E\eta_n.
+\]
+Since $\eta_n=1_{\{\xi_n=H,\xi_{n+1}=T\}}$,
+\[
+  \mu=\Prob(\xi_n=H,\xi_{n+1}=T)=\frac14.
+\]
+The sequence $(X_n)$ is stationary and ergodic because it is a
+shift-factor of the i.i.d. sequence $(\xi_n)$.  Also $X_0$ depends only
+on $\xi_0,\xi_1$.  With $\F_n=\sigma(\xi_m:m\le n+1)$, for $k\ge2$ the
+$\sigma$-field $\F_{-k}$ is generated by variables $\xi_m$ with
+$m\le -k+1\le -1$, and hence is independent of $X_0$.  Therefore
+\[
+  \E(X_0\mid \F_{-k})=0,
+  \qquad k\ge2.
+\]
+Thus
+\[
+  \sum_{k\ge1}\|\E(X_0\mid \F_{-k})\|_2<\infty,
+\]
+so Theorem 8.3.2 applies.
+
+It remains to compute the constants.  We already have $\mu=1/4$.  Since
+$(\eta_n)$ is $1$-dependent, only the lag-one covariance contributes:
+\[
+  \sigma^2
+  =
+  \operatorname{Var}(\eta_0)
+  +2\operatorname{Cov}(\eta_0,\eta_1).
+\]
+Now
+\[
+  \operatorname{Var}(\eta_0)
+  =
+  \frac14\left(1-\frac14\right)
+  =
+  \frac{3}{16}.
+\]
+The events $\{\eta_0=1\}$ and $\{\eta_1=1\}$ cannot occur together,
+because they would require $\xi_1=T$ and $\xi_1=H$ simultaneously.
+Hence $\E(\eta_0\eta_1)=0$, and
+\[
+  \operatorname{Cov}(\eta_0,\eta_1)
+  =
+  0-\frac14\cdot\frac14
+  =
+  -\frac1{16}.
+\]
+Therefore
+\[
+  \sigma^2=\frac{3}{16}+2\left(-\frac1{16}\right)=\frac1{16},
+  \qquad
+  \sigma=\frac14.
+\]
+Theorem 8.3.2 gives
+\[
+  \frac{S_n-n/4}{(1/4)\sqrt n}\Rightarrow \chi,
+\]
+where $\chi$ has the standard normal distribution.
+
+Finally we identify the $Y_0$ from the proof of Theorem 8.3.2.  Write
+$I_j=1_{\{\xi_j=H\}}$, so $\eta_j=I_j(1-I_{j+1})$ and
+$X_j=\eta_j-1/4$.  The proof defines
+\[
+  Y_0=\sum_{j=0}^\infty
+  \left\{\E(X_j\mid \F_0)-\E(X_j\mid \F_{-1})\right\}.
+\]
+All terms with $j\ge2$ vanish, because $X_j$ is independent of $\F_0$.
+For $j=0$,
+\[
+  \E(X_0\mid \F_0)=X_0,
+  \qquad
+  \E(X_0\mid \F_{-1})=\frac12 I_0-\frac14.
+\]
+For $j=1$,
+\[
+  \E(X_1\mid \F_0)=\frac12 I_1-\frac14,
+  \qquad
+  \E(X_1\mid \F_{-1})=0.
+\]
+Thus
+\[
+  Y_0
+  =
+  \left(I_0(1-I_1)-\frac14\right)
+  -\left(\frac12 I_0-\frac14\right)
+  +\left(\frac12 I_1-\frac14\right),
+\]
+or equivalently
+\[
+  Y_0
+  =
+  \frac12 I_0+\frac12 I_1-I_0I_1-\frac14.
+\]
+This takes the value $1/4$ when $\xi_0\ne \xi_1$ and $-1/4$ when
+$\xi_0=\xi_1$.  In particular $\E Y_0^2=1/16$, matching the limiting
+variance computed above.
+
+\section*{Exercise 8.4.1}
+
+\noindent\textbf{Question.}
+Use Exercise 7.4.8 and the reasoning that led to (8.4.11) to conclude
+\[
+  \Prob\left(\max_{0\le t\le1}B_t^0>b\right)=\exp(-2b^2),
+\]
+where $B^0$ is Brownian bridge.
+
+\Knowledge{
+\path{durrett_ch8_brownian_bridge_conditioning};
+\path{durrett_ch8_kolmogorov_distribution_method}.
+}
+
+\noindent\textbf{Solution.}
+Think of Brownian bridge as Brownian motion conditioned on $B_1=0$.
+Let $T_b=\inf\{t:B_t=b\}$.  For Brownian motion starting at $0$,
+\[
+  \left\{\max_{0\le t\le1}B_t>b\right\}
+  =
+  \{T_b<1\}.
+\]
+Exercise 7.4.8 gives the reflected density
+\[
+  \Prob_0(T_b<1,\ B_1\in dx)
+  =
+  p_1(0,2b-x)\,dx,
+  \qquad x<b.
+\]
+Conditioning on $B_1=0$ therefore gives
+\[
+  \Prob\left(\max_{0\le t\le1}B_t^0>b\right)
+  =
+  \frac{p_1(0,2b)}{p_1(0,0)}.
+\]
+Since $p_1(0,x)=(2\pi)^{-1/2}\exp(-x^2/2)$,
+\[
+  \frac{p_1(0,2b)}{p_1(0,0)}
+  =
+  \exp\left(-\frac{(2b)^2}{2}\right)
+  =
+  \exp(-2b^2).
+\]
+
+\section*{Exercise 8.4.2}
+
+\noindent\textbf{Question.}
+Let $B_t$ be a Brownian motion starting at $0$.  Show that
+\[
+  X_t=(1-t)B\left(\frac{t}{1-t}\right), \qquad 0\le t<1,
+\]
+is a Brownian bridge.
+
+\Knowledge{
+\path{durrett_ch8_brownian_bridge_conditioning}.
+}
+
+\noindent\textbf{Solution.}
+The process $X$ is Gaussian and has mean zero, since it is obtained by
+deterministic linear transformations of Brownian motion.  For
+$0\le s\le t<1$,
+\[
+  \E(X_sX_t)
+  =
+  (1-s)(1-t)
+  \E\left[
+    B\left(\frac{s}{1-s}\right)
+    B\left(\frac{t}{1-t}\right)
+  \right].
+\]
+Because $u\mapsto u/(1-u)$ is increasing,
+\[
+  \E\left[
+    B\left(\frac{s}{1-s}\right)
+    B\left(\frac{t}{1-t}\right)
+  \right]
+  =
+  \frac{s}{1-s}.
+\]
+Thus
+\[
+  \E(X_sX_t)
+  =
+  (1-s)(1-t)\frac{s}{1-s}
+  =
+  s(1-t),
+\]
+which is exactly the covariance of Brownian bridge
+$B_t^0=B_t-tB_1$.
+
+Finally, as $t\uparrow1$ let $u=t/(1-t)$.  Then
+\[
+  X_t=\frac{B_u}{1+u}.
+\]
+Brownian motion is sublinear at infinity, so $B_u/(1+u)\to0$ almost
+surely.  Setting $X_1=0$, the process has continuous paths on $[0,1]$.
+Since it is a centered Gaussian process with Brownian-bridge covariance,
+$X$ is a Brownian bridge.
+
+\section*{Exercise 8.4.3}
+
+\noindent\textbf{Question.}
+Show that Brownian bridge is a Markov process by checking that if
+$s_1<\cdots<s_n<s<t<1$, then
+\[
+  \Prob(B^0(t)=y\mid B^0(s)=x,B^0(s_n)=x_n,\ldots,B^0(s_1)=x_1)
+  =
+  \Prob(B^0(t)=y\mid B^0(s)=x).
+\]
+
+\Knowledge{
+\path{durrett_ch8_brownian_bridge_conditioning};
+\path{durrett_ch8_kolmogorov_distribution_method}.
+}
+
+\noindent\textbf{Solution.}
+Use the pinned Brownian transition-density formula.  If
+$0=t_0<s_1<\cdots<s_n<s<t<1$ and $x_0=0$, the joint density of
+\[
+  B^0(s_1),\ldots,B^0(s_n),B^0(s),B^0(t)
+\]
+at $x_1,\ldots,x_n,x,y$ is proportional to
+\[
+  \left\{\prod_{j=1}^n
+  p_{s_j-s_{j-1}}(x_{j-1},x_j)\right\}
+  p_{s-s_n}(x_n,x)\,
+  p_{t-s}(x,y)\,
+  p_{1-t}(y,0).
+\]
+The joint density of
+$B^0(s_1),\ldots,B^0(s_n),B^0(s)$ at
+$x_1,\ldots,x_n,x$ is proportional to
+\[
+  \left\{\prod_{j=1}^n
+  p_{s_j-s_{j-1}}(x_{j-1},x_j)\right\}
+  p_{s-s_n}(x_n,x)\,
+  p_{1-s}(x,0).
+\]
+Dividing the two densities, all factors involving the earlier times
+$s_1,\ldots,s_n$ cancel.  Hence the conditional density of $B^0(t)$
+given the displayed past is
+\[
+  \frac{p_{t-s}(x,y)p_{1-t}(y,0)}{p_{1-s}(x,0)},
+\]
+which depends only on the present value $B^0(s)=x$.  This proves the
+Markov property.
+
+\section*{Exercise 8.4.4}
+
+\noindent\textbf{Question.}
+Let $B_t^0$ be Brownian bridge.  Show that
+\[
+  X_t=\frac{B_t^0}{1-t}, \qquad 0\le t<1,
+\]
+is a martingale but is not $L^2$ bounded.
+
+\Knowledge{
+\path{durrett_ch8_brownian_bridge_conditioning}.
+}
+
+\noindent\textbf{Solution.}
+Let $\F_t^0=\sigma(B_u^0:0\le u\le t)$ be the natural filtration of the
+bridge.  From the Brownian-bridge transition law, for $0\le s<t<1$,
+\[
+  \E(B_t^0\mid \F_s^0)
+  =
+  \E(B_t^0\mid B_s^0)
+  =
+  \frac{1-t}{1-s}B_s^0.
+\]
+Therefore
+\[
+  \E(X_t\mid \F_s^0)
+  =
+  \frac{1}{1-t}\E(B_t^0\mid \F_s^0)
+  =
+  \frac{B_s^0}{1-s}
+  =
+  X_s.
+\]
+Thus $(X_t)_{0\le t<1}$ is a martingale.
+
+It is not $L^2$ bounded.  Since Brownian bridge has
+\[
+  \operatorname{Var}(B_t^0)=t(1-t),
+\]
+we have
+\[
+  \E X_t^2
+  =
+  \frac{\E(B_t^0)^2}{(1-t)^2}
+  =
+  \frac{t(1-t)}{(1-t)^2}
+  =
+  \frac{t}{1-t}.
+\]
+As $t\uparrow1$, this tends to infinity.  Hence
+\[
+  \sup_{0\le t<1}\E X_t^2=\infty,
+\]
+so the martingale is not bounded in $L^2$.
+
+\section*{Exercise 8.5.1}
+
+\noindent\textbf{Question.}
+Show that if $\E|X_i|^\alpha=\infty$ for some $\alpha<2$, then
+\[
+  \limsup_{n\to\infty}\frac{|X_n|}{n^{1/\alpha}}=\infty
+  \qquad\text{a.s.}
+\]
+so the law of the iterated logarithm fails.
+
+\Knowledge{
+\path{durrett_ch8_iid_lil};
+\path{durrett_ch8_brownian_lil}.
+}
+
+\noindent\textbf{Solution.}
+Let $Y=|X_1|^\alpha$.  Since $\E Y=\infty$ and the tail function
+$t\mapsto\Prob(Y>t)$ is nonincreasing,
+\[
+  \sum_{n=1}^\infty \Prob(Y>cn)=\infty
+  \qquad\text{for every } c>0.
+\]
+Equivalently, for every $M>0$,
+\[
+  \sum_{n=1}^\infty
+  \Prob\left(|X_n|>M n^{1/\alpha}\right)
+  =
+  \sum_{n=1}^\infty
+  \Prob\left(Y>M^\alpha n\right)
+  =
+  \infty.
+\]
+The events $\{|X_n|>M n^{1/\alpha}\}$ are independent, so the second
+Borel-Cantelli lemma gives
+\[
+  |X_n|>M n^{1/\alpha}
+  \quad\text{infinitely often a.s.}
+\]
+Since $M$ is arbitrary, applying this to $M=1,2,3,\ldots$ gives
+\[
+  \limsup_{n\to\infty}\frac{|X_n|}{n^{1/\alpha}}=\infty
+  \qquad\text{a.s.}
+\]
+
+This rules out the LIL normalization.  Indeed, if an increment is very
+large, then at least one of the two adjacent partial sums is large:
+\[
+  |X_n|=|S_n-S_{n-1}|
+  \le |S_n|+|S_{n-1}|,
+\]
+so
+\[
+  \max(|S_n|,|S_{n-1}|)\ge \frac{|X_n|}{2}.
+\]
+Since $\alpha<2$,
+\[
+  \frac{n^{1/\alpha}}{\sqrt{n\log\log n}}
+  =
+  \frac{n^{1/\alpha-1/2}}{\sqrt{\log\log n}}
+  \longrightarrow \infty.
+\]
+Along the infinitely many large-jump indices above, the LIL scale
+$\sqrt{2n\log\log n}$ is therefore too small to keep the partial sums
+bounded.  Hence the finite-variance LIL conclusion cannot hold.
+
+\section*{Exercise 8.5.2}
+
+\noindent\textbf{Question.}
+Give a direct proof that, under the hypotheses of Theorem 8.5.3, the
+limit set of
+\[
+  \left\{
+  \frac{S_n}{(2n\log\log n)^{1/2}}: n\ge3
+  \right\}
+\]
+is $[-1,1]$.
+
+\Knowledge{
+\path{durrett_ch8_iid_lil};
+\path{durrett_ch8_strassen_invariance_principle}.
+}
+
+\noindent\textbf{Solution.}
+Theorem 8.5.3 says that the limit set in $C[0,1]$ of
+\[
+  Z_n(t)=\frac{S(nt)}{(2n\log\log n)^{1/2}}
+\]
+is
+\[
+  K=\left\{
+  f:f(x)=\int_0^x g(y)\,dy,\ 
+  \int_0^1 g(y)^2\,dy\le1
+  \right\}.
+\]
+The map $e_1:C[0,1]\to\R$ given by $e_1(f)=f(1)$ is continuous.
+Therefore the scalar subsequential limits of
+\[
+  \frac{S_n}{(2n\log\log n)^{1/2}}=Z_n(1)
+\]
+are exactly the values $f(1)$ with $f\in K$.
+
+First let $f\in K$.  Then $f(1)=\int_0^1 g(y)\,dy$ for some $g$ with
+$\int_0^1g^2\le1$.  By Cauchy's inequality,
+\[
+  |f(1)|
+  =
+  \left|\int_0^1 g(y)\,dy\right|
+  \le
+  \left(\int_0^1g(y)^2\,dy\right)^{1/2}
+  \le1.
+\]
+Thus every scalar limit point lies in $[-1,1]$.
+
+Conversely, fix $a\in[-1,1]$ and set $f_a(t)=at$.  Then
+$f_a(t)=\int_0^t a\,dy$ and
+\[
+  \int_0^1 a^2\,dy=a^2\le1,
+\]
+so $f_a\in K$.  By Theorem 8.5.3, there is a subsequence $n_k$ such that
+$Z_{n_k}\to f_a$ uniformly on $[0,1]$.  Evaluating at $1$ gives
+\[
+  \frac{S_{n_k}}{(2n_k\log\log n_k)^{1/2}}
+  =
+  Z_{n_k}(1)
+  \longrightarrow
+  f_a(1)=a.
+\]
+Hence every $a\in[-1,1]$ is a limit point, and the scalar limit set is
+exactly $[-1,1]$.
+
+\end{document}

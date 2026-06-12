@@ -1,0 +1,26 @@
+{
+  "name": "durrett_chapter8_applications_to_random_walk_llm_viki",
+  "description": "Curated LLM/Viki-style knowledge pieces for Chapter 8 of Durrett Probability: Theory and Examples.",
+  "source_file": "Probability/Textbook/Chapters/PTE-Chapter8.pdf",
+  "created_at": "2026-06-11T06:39:22.998264+00:00",
+  "piece_count": 28,
+  "section_count": 5,
+  "files": [
+    "chapter8_knowledge_pieces.jsonl",
+    "chapter8_section_guides.jsonl",
+    "chapter8_viki.md",
+    "chapter8_flashcards.tsv",
+    "manifest.json",
+    "chapter8_exercise_records.jsonl",
+    "chapter8_exercise_method_cards.jsonl",
+    "chapter8_exercise_new_knowledge.jsonl",
+    "chapter8_exercise_method_flashcards.tsv",
+    "chapter8_exercise_viki.md"
+  ],
+  "updated_at": "2026-06-12T15:27:21.817812+00:00",
+  "exercise_record_count": 9,
+  "exercise_method_card_count": 4,
+  "exercise_new_knowledge_count": 10,
+  "source_exercise_tex": "Probability/Exercises/Chapter8/Chapter8Exercises.tex",
+  "source_exercise_pdf": "Probability/Exercises/Chapter8/Chapter8Exercises.pdf"
+}

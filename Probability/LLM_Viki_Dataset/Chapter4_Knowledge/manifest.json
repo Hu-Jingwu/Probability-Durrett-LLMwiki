@@ -1,0 +1,36 @@
+{
+  "name": "durrett_chapter4_martingales_llm_viki",
+  "description": "Curated LLM/Viki-style knowledge pieces for Chapter 4 of Durrett Probability: Theory and Examples.",
+  "source_file": "Probability/Textbook/Chapters/PTE-Chapter4.pdf",
+  "created_at": "2026-06-11T06:40:30.883066+00:00",
+  "piece_count": 54,
+  "section_count": 9,
+  "files": [
+    "chapter4_knowledge_pieces.jsonl",
+    "chapter4_section_guides.jsonl",
+    "chapter4_viki.md",
+    "chapter4_flashcards.tsv",
+    "manifest.json",
+    "chapter4_exercise_records.jsonl",
+    "chapter4_exercise_method_cards.jsonl",
+    "chapter4_exercise_new_knowledge.jsonl",
+    "chapter4_exercise_method_flashcards.tsv",
+    "chapter4_exercise_viki.md"
+  ],
+  "exercise_source_tex": "Probability/Exercises/Chapter4/Chapter4Exercises.tex",
+  "exercise_source_pdf": "Probability/Exercises/Chapter4/Chapter4Exercises.pdf",
+  "exercise_record_count": 68,
+  "exercise_method_card_count": 8,
+  "exercise_new_knowledge_count": 36,
+  "exercise_sections": [
+    "4.1",
+    "4.2",
+    "4.3",
+    "4.4",
+    "4.6",
+    "4.7",
+    "4.8",
+    "4.9"
+  ],
+  "exercise_viki_created_at": "2026-06-12T07:53:25.650856+00:00"
+}

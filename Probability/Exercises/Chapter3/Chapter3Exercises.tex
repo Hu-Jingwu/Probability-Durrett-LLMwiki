@@ -1,0 +1,3972 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!60!black
+}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Knowledge}[1]{%
+  \par\smallskip\noindent
+  \textbf{Knowledge used.}
+  {\small\color{blue!60!black}\raggedright #1\par}
+  \par\smallskip
+}
+
+\title{Chapter 3 Exercises}
+\author{\textsc{Solutions to Rick Durrett's}\\
+\textit{Probability: Theory and Examples}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\noindent
+These solutions use the local Chapter 3 LLM/Viki knowledge set in
+\path{Probability/LLM_Viki_Dataset/Chapter3_Knowledge}.  The cited
+knowledge IDs refer to entries in
+\path{chapter3_knowledge_pieces.jsonl}.
+
+\section*{Exercise 3.1.1}
+
+\noindent\textbf{Question.}
+Generalize the proof of Lemma 3.1.1 to conclude that if
+\[
+  \max_{1\le j\le n}|c_{j,n}|\to 0,\qquad
+  \sum_{j=1}^n c_{j,n}\to \lambda,\qquad
+  \sup_n\sum_{j=1}^n |c_{j,n}|<\infty,
+\]
+then
+\[
+  \prod_{j=1}^n (1+c_{j,n})\to e^\lambda.
+\]
+
+\Knowledge{
+\path{durrett_ch3_product_exponential_limit};
+\path{durrett_ch3_stirling_local_binomial}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  M_n=\max_{1\le j\le n}|c_{j,n}|,
+  \qquad
+  A=\sup_n\sum_{j=1}^n |c_{j,n}|<\infty.
+\]
+Since $M_n\to 0$, for all large $n$ we have $M_n\le 1/2$, so every
+$1+c_{j,n}$ is positive and logarithms are well-defined.  For
+$|u|\le 1/2$,
+\[
+  |\log(1+u)-u|\le C u^2
+\]
+for an absolute constant $C$.  Hence
+\[
+\left|
+  \sum_{j=1}^n \log(1+c_{j,n})-\sum_{j=1}^n c_{j,n}
+\right|
+\le
+C\sum_{j=1}^n c_{j,n}^2
+\le
+C M_n \sum_{j=1}^n |c_{j,n}|
+\le C A M_n\to 0.
+\]
+Therefore
+\[
+  \sum_{j=1}^n \log(1+c_{j,n})\to \lambda.
+\]
+Exponentiating gives
+\[
+  \prod_{j=1}^n (1+c_{j,n})
+  =
+  \exp\left\{\sum_{j=1}^n \log(1+c_{j,n})\right\}
+  \to e^\lambda.
+\]
+
+\section*{Exercise 3.1.2}
+
+\noindent\textbf{Question.}
+The next three exercises illustrate the use of Stirling's formula.  In
+them, $X_1,X_2,\ldots$ are i.i.d. and $S_n=X_1+\cdots+X_n$.
+
+If the $X_i$ have a Poisson distribution with mean $1$, then $S_n$ has a
+Poisson distribution with mean $n$, i.e.,
+\[
+  \Prob(S_n=k)=e^{-n}\frac{n^k}{k!}.
+\]
+Use Stirling's formula to show that if
+\[
+  \frac{k-n}{\sqrt n}\to x,
+\]
+then
+\[
+  \sqrt{2\pi n}\,\Prob(S_n=k)\to \exp(-x^2/2).
+\]
+As in the case of coin flips it follows that
+\[
+  \Prob\left(a\le \frac{S_n-n}{\sqrt n}\le b\right)
+  \to
+  \int_a^b (2\pi)^{-1/2}e^{-x^2/2}\,dx,
+\]
+but proving the last conclusion is not part of the exercise.
+
+\Knowledge{
+\path{durrett_ch3_stirling_local_binomial};
+\path{durrett_ch3_demoivre_laplace};
+\path{durrett_ch3_normal_approximation_continuity_correction}.
+}
+
+\noindent\textbf{Solution.}
+Write
+\[
+  y_n=\frac{k-n}{n}.
+\]
+The hypothesis says $y_n\to 0$ and $n y_n^2\to x^2$.  By Stirling's
+formula,
+\[
+  k!\sim \sqrt{2\pi k}\, k^k e^{-k}.
+\]
+Thus
+\[
+\begin{aligned}
+  \sqrt{2\pi n}\,\Prob(S_n=k)
+  &=
+  \sqrt{2\pi n}\, e^{-n}\frac{n^k}{k!} \\
+  &\sim
+  \sqrt{\frac{n}{k}}\,
+  \exp\left\{-n+k+k\log\frac{n}{k}\right\}.
+\end{aligned}
+\]
+Since $k=n(1+y_n)$, the exponent is
+\[
+  -n+n(1+y_n)+n(1+y_n)\log\frac{1}{1+y_n}
+  =
+  n\{y_n-(1+y_n)\log(1+y_n)\}.
+\]
+Using
+\[
+  (1+y)\log(1+y)=y+\frac{y^2}{2}+O(y^3)
+  \qquad (y\to 0),
+\]
+we obtain
+\[
+  n\{y_n-(1+y_n)\log(1+y_n)\}
+  =
+  -\frac{n y_n^2}{2}+o(1)\to -\frac{x^2}{2}.
+\]
+Also $n/k=(1+y_n)^{-1}\to 1$.  Therefore
+\[
+  \sqrt{2\pi n}\,\Prob(S_n=k)\to e^{-x^2/2}.
+\]
+
+\section*{Exercise 3.1.3}
+
+\noindent\textbf{Question.}
+Suppose
+\[
+  \Prob(X_i=1)=\Prob(X_i=-1)=\frac12.
+\]
+Show that if $a\in(0,1)$, then
+\[
+  \frac{1}{2n}\log \Prob(S_{2n}\ge 2na)\to -\gamma(a),
+\]
+where
+\[
+  \gamma(a)
+  =
+  \frac12\{(1+a)\log(1+a)+(1-a)\log(1-a)\}.
+\]
+
+\Knowledge{
+\path{durrett_ch3_stirling_local_binomial};
+\path{durrett_ch3_large_deviation_stirling_patterns}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  p_{n,j}=\Prob(S_{2n}=2j)
+  =
+  \binom{2n}{n+j}2^{-2n},
+  \qquad -n\le j\le n.
+\]
+Choose $k_n=\lceil na\rceil$.  Then
+$\{S_{2n}\ge 2na\}=\{S_{2n}\ge 2k_n\}$, so
+\[
+  \Prob(S_{2n}\ge 2na)=\sum_{j=k_n}^n p_{n,j}.
+\]
+First estimate the leading mass.  Since $k_n/n\to a$, Stirling's formula
+gives
+\[
+\begin{aligned}
+  \frac{1}{2n}\log p_{n,k_n}
+  &=
+  \frac{1}{2n}
+  \log\left\{ \binom{2n}{n+k_n}2^{-2n}\right\} \\
+  &\to
+  -\frac12\{(1+a)\log(1+a)+(1-a)\log(1-a)\}
+  =
+  -\gamma(a).
+\end{aligned}
+\]
+Indeed, the logarithmic factors of order $\log n$ vanish after division
+by $2n$.
+
+It remains to show that the whole tail has the same exponential rate as
+its first term.  For $j\ge k_n$,
+\[
+  \frac{p_{n,j+1}}{p_{n,j}}
+  =
+  \frac{n-j}{n+j+1}.
+\]
+Since $k_n/n\to a>0$, for all large $n$ and all $j\ge k_n$,
+\[
+  \frac{p_{n,j+1}}{p_{n,j}}
+  \le
+  \rho
+  \quad\text{for some fixed } \rho<1.
+\]
+Therefore
+\[
+  p_{n,k_n}
+  \le
+  \Prob(S_{2n}\ge 2na)
+  \le
+  p_{n,k_n}(1+\rho+\rho^2+\cdots)
+  =
+  \frac{p_{n,k_n}}{1-\rho}.
+\]
+Taking logarithms and dividing by $2n$ shows that the multiplicative
+constant $(1-\rho)^{-1}$ does not affect the limit.  Hence
+\[
+  \frac{1}{2n}\log \Prob(S_{2n}\ge 2na)\to -\gamma(a).
+\]
+
+\section*{Exercise 3.1.4}
+
+\noindent\textbf{Question.}
+Suppose
+\[
+  \Prob(X_i=k)=e^{-1}/k!,\qquad k=0,1,\ldots.
+\]
+Show that if $a>1$, then
+\[
+  \frac1n\log\Prob(S_n\ge na)\to a-1-a\log a.
+\]
+
+\Knowledge{
+\path{durrett_ch3_stirling_local_binomial};
+\path{durrett_ch3_large_deviation_stirling_patterns}.
+}
+
+\noindent\textbf{Solution.}
+Since each $X_i$ has the Poisson distribution with mean $1$, the sum
+$S_n$ has the Poisson distribution with mean $n$:
+\[
+  \Prob(S_n=k)=e^{-n}\frac{n^k}{k!}.
+\]
+Let $k_n=\lceil na\rceil$.  We first estimate
+$\Prob(S_n=k_n)$.  By Stirling's formula,
+\[
+\begin{aligned}
+  \frac1n\log \Prob(S_n=k_n)
+  &=
+  \frac1n\left(-n+k_n\log n-\log(k_n!)\right) \\
+  &=
+  -1+\frac{k_n}{n}
+  +\frac{k_n}{n}\log\frac{n}{k_n}
+  +o(1).
+\end{aligned}
+\]
+Since $k_n/n\to a$,
+\[
+  \frac1n\log \Prob(S_n=k_n)\to -1+a-a\log a.
+\]
+
+Now compare the tail with this first mass.  For $j\ge k_n$,
+\[
+  \frac{\Prob(S_n=j+1)}{\Prob(S_n=j)}
+  =
+  \frac{n}{j+1}.
+\]
+Because $a>1$, for all large $n$ and all $j\ge k_n$,
+\[
+  \frac{n}{j+1}\le \rho
+  \quad\text{for some fixed } \rho<1.
+\]
+Thus
+\[
+  \Prob(S_n=k_n)
+  \le
+  \Prob(S_n\ge na)
+  \le
+  \Prob(S_n=k_n)(1+\rho+\rho^2+\cdots)
+  =
+  \frac{\Prob(S_n=k_n)}{1-\rho}.
+\]
+After taking logarithms and dividing by $n$, the constant factor
+disappears.  Therefore
+\[
+  \frac1n\log\Prob(S_n\ge na)\to a-1-a\log a.
+\]
+
+\section*{Exercise 3.2.1}
+
+\noindent\textbf{Question.}
+Give an example of random variables $X_n$ with densities $f_n$ so that
+$X_n\Rightarrow$ a uniform distribution on $(0,1)$ but $f_n(x)$ does not
+converge to $1$ for any $x\in[0,1]$.
+
+\Knowledge{
+\path{durrett_ch3_weak_convergence_definition};
+\path{durrett_ch3_bounded_continuous_test_functions};
+\path{durrett_ch3_scheffe_theorem}.
+}
+
+\noindent\textbf{Solution.}
+Let $r_n$ be the $n$th Rademacher function on $[0,1]$:
+\[
+  r_n(x)=
+  \begin{cases}
+  1, & \text{the } n\text{th binary digit of }x\text{ is }1,\\
+  -1, & \text{the } n\text{th binary digit of }x\text{ is }0.
+  \end{cases}
+\]
+Define $f_n(x)=1+r_n(x)$ on points with nonterminating binary expansion.
+On the countable exceptional set of dyadic rationals, redefine
+$f_n(x)=1+(-1)^n/2$.  This change is on a null set, so it does not
+change any integrals.  Since $r_n=1$ and $r_n=-1$ on sets of Lebesgue
+measure $1/2$, $f_n\ge0$ and $\int_0^1 f_n(x)\,dx=1$.
+
+Let $X_n$ have density $f_n$.  If $g$ is bounded and continuous, then
+\[
+  \E g(X_n)=\int_0^1 g(x)f_n(x)\,dx
+  =
+  \int_0^1 g(x)\,dx+\int_0^1 g(x)r_n(x)\,dx.
+\]
+The function $r_n$ is constant with mean $0$ on each dyadic interval of
+length $2^{-n}$.  By uniform continuity of $g$ on $[0,1]$,
+\[
+  \int_0^1 g(x)r_n(x)\,dx\to 0.
+\]
+Thus $\E g(X_n)\to \int_0^1 g(x)\,dx$, so $X_n$ converges weakly to the
+uniform distribution on $(0,1)$.
+
+For every non-dyadic $x$, the binary digits are not eventually constant,
+so $r_n(x)$ does not converge to $0$ and hence $f_n(x)$ does not
+converge to $1$.  For dyadic $x$, our redefinition makes $f_n(x)$
+oscillate between $1+1/2$ and $1-1/2$.  Therefore $f_n(x)$ does not
+converge to $1$ for any $x\in[0,1]$.
+
+\section*{Exercise 3.2.2}
+
+\noindent\textbf{Question.}
+Convergence of maxima.  Let $X_1,X_2,\ldots$ be independent with
+distribution $F$, and let $M_n=\max_{m\le n}X_m$.  Then
+$\Prob(M_n\le x)=F(x)^n$.  Prove the following limit laws for $M_n$:
+\begin{enumerate}[label=(\roman*)]
+\item If $F(x)=1-x^{-\alpha}$ for $x\ge1$, where $\alpha>0$, then for
+$y>0$,
+\[
+  \Prob(M_n/n^{1/\alpha}\le y)\to \exp(-y^{-\alpha}).
+\]
+\item If $F(x)=1-|x|^\beta$ for $-1\le x\le0$, where $\beta>0$, then for
+$y<0$,
+\[
+  \Prob(n^{1/\beta}M_n\le y)\to \exp(-|y|^\beta).
+\]
+\item If $F(x)=1-e^{-x}$ for $x\ge0$, then for all $y\in\R$,
+\[
+  \Prob(M_n-\log n\le y)\to \exp(-e^{-y}).
+\]
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch3_weak_convergence_definition};
+\path{durrett_ch3_continuous_mapping_theorem};
+\path{durrett_ch3_product_exponential_limit}.
+}
+
+\noindent\textbf{Solution.}
+For (i), if $y>0$, then for large $n$ we have $n^{1/\alpha}y\ge1$, and
+\[
+  \Prob(M_n/n^{1/\alpha}\le y)
+  =
+  \left(1-(n^{1/\alpha}y)^{-\alpha}\right)^n
+  =
+  \left(1-\frac{y^{-\alpha}}{n}\right)^n
+  \to e^{-y^{-\alpha}}.
+\]
+
+For (ii), if $y<0$, then $yn^{-1/\beta}\in[-1,0]$ for large $n$.  Thus
+\[
+  \Prob(n^{1/\beta}M_n\le y)
+  =
+  \Prob(M_n\le yn^{-1/\beta})
+  =
+  \left(1-\frac{|y|^\beta}{n}\right)^n
+  \to e^{-|y|^\beta}.
+\]
+
+For (iii), for large $n$ the point $\log n+y$ is positive, and
+\[
+  \Prob(M_n-\log n\le y)
+  =
+  \left(1-e^{-(\log n+y)}\right)^n
+  =
+  \left(1-\frac{e^{-y}}{n}\right)^n
+  \to e^{-e^{-y}}.
+\]
+
+\section*{Exercise 3.2.3}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be i.i.d. standard normal random variables.
+\begin{enumerate}[label=(\roman*)]
+\item From Theorem 1.2.6, we know
+\[
+  \Prob(X_i>x)\sim \frac{1}{\sqrt{2\pi}x}e^{-x^2/2}
+  \qquad (x\to\infty).
+\]
+Use this to conclude that for any real number $\theta$,
+\[
+  \frac{\Prob(X_i>x+\theta/x)}{\Prob(X_i>x)}\to e^{-\theta}.
+\]
+\item Show that if $b_n$ is defined by $\Prob(X_i>b_n)=1/n$, then
+\[
+  \Prob(b_n(M_n-b_n)\le x)\to \exp(-e^{-x}).
+\]
+\item Show that $b_n\sim(2\log n)^{1/2}$ and conclude that
+\[
+  \frac{M_n}{(2\log n)^{1/2}}\to 1
+  \quad\text{in probability.}
+\]
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch3_weak_convergence_definition};
+\path{durrett_ch3_product_exponential_limit};
+\path{durrett_ch3_converging_together_slutsky}.
+}
+
+\noindent\textbf{Solution.}
+For (i), by the normal tail asymptotic,
+\[
+\begin{aligned}
+  \frac{\Prob(X_i>x+\theta/x)}{\Prob(X_i>x)}
+  &\sim
+  \frac{x}{x+\theta/x}
+  \exp\left\{-\frac12\left(x+\frac{\theta}{x}\right)^2+\frac{x^2}{2}\right\} \\
+  &=
+  \frac{x}{x+\theta/x}
+  \exp\left\{-\theta-\frac{\theta^2}{2x^2}\right\}
+  \to e^{-\theta}.
+\end{aligned}
+\]
+
+For (ii),
+\[
+\begin{aligned}
+  \Prob(b_n(M_n-b_n)\le x)
+  &=
+  \Prob(M_n\le b_n+x/b_n) \\
+  &=
+  \left(1-\Prob(X_1>b_n+x/b_n)\right)^n.
+\end{aligned}
+\]
+Since $\Prob(X_1>b_n)=1/n$ and (i) gives
+\[
+  \frac{\Prob(X_1>b_n+x/b_n)}{\Prob(X_1>b_n)}\to e^{-x},
+\]
+we have $n\Prob(X_1>b_n+x/b_n)\to e^{-x}$.  Hence
+\[
+  \left(1-\Prob(X_1>b_n+x/b_n)\right)^n\to \exp(-e^{-x}).
+\]
+
+For (iii), the definition of $b_n$ and the normal tail asymptotic give
+\[
+  \frac1n
+  \sim
+  \frac{1}{\sqrt{2\pi}b_n}e^{-b_n^2/2}.
+\]
+Taking logarithms,
+\[
+  \log n=\frac{b_n^2}{2}+\log b_n+O(1),
+\]
+so $b_n^2/(2\log n)\to1$, i.e. $b_n\sim(2\log n)^{1/2}$.
+
+It remains to show $M_n/b_n\to1$ in probability.  If $\varepsilon>0$,
+then
+\[
+  \Prob(M_n\le (1-\varepsilon)b_n)
+  =
+  \left(1-\Prob(X_1>(1-\varepsilon)b_n)\right)^n\to0,
+\]
+because $n\Prob(X_1>(1-\varepsilon)b_n)\to\infty$.  Also
+\[
+  \Prob(M_n>(1+\varepsilon)b_n)
+  \le n\Prob(X_1>(1+\varepsilon)b_n)\to0.
+\]
+Therefore $M_n/b_n\to1$ in probability, and since
+$b_n\sim(2\log n)^{1/2}$,
+\[
+  M_n/(2\log n)^{1/2}\to1
+  \quad\text{in probability.}
+\]
+
+\section*{Exercise 3.2.4}
+
+\noindent\textbf{Question.}
+Fatou's lemma.  Let $g\ge0$ be continuous.  If $X_n\Rightarrow X_\infty$,
+then
+\[
+  \liminf_{n\to\infty}\E g(X_n)\ge \E g(X_\infty).
+\]
+
+\Knowledge{
+\path{durrett_ch3_skorokhod_quantile_representation};
+\path{durrett_ch3_bounded_continuous_test_functions}.
+}
+
+\noindent\textbf{Solution.}
+By the almost-sure representation theorem, we may choose random variables
+$Y_n$ with $Y_n\stackrel{d}=X_n$ and $Y_n\to Y_\infty$ almost surely,
+where $Y_\infty\stackrel{d}=X_\infty$.  Since $g$ is continuous and
+nonnegative, $g(Y_n)\to g(Y_\infty)$ almost surely.  Fatou's lemma gives
+\[
+  \E g(X_\infty)
+  =
+  \E g(Y_\infty)
+  \le
+  \liminf_{n\to\infty}\E g(Y_n)
+  =
+  \liminf_{n\to\infty}\E g(X_n).
+\]
+
+\section*{Exercise 3.2.5}
+
+\noindent\textbf{Question.}
+Integration to the limit.  Suppose $g,h$ are continuous with $g(x)>0$,
+and $|h(x)|/g(x)\to0$ as $|x|\to\infty$.  If $F_n\Rightarrow F$ and
+\[
+  \int g(x)\,dF_n(x)\le C<\infty,
+\]
+then
+\[
+  \int h(x)\,dF_n(x)\to \int h(x)\,dF(x).
+\]
+
+\Knowledge{
+\path{durrett_ch3_bounded_continuous_test_functions};
+\path{durrett_ch3_moment_tightness_criterion};
+\path{durrett_ch3_skorokhod_quantile_representation}.
+}
+
+\noindent\textbf{Solution.}
+By Exercise 3.2.4 applied to $g$,
+\[
+  \int g\,dF\le \liminf_n\int g\,dF_n\le C.
+\]
+Fix $\varepsilon>0$.  Choose $M$ so large that
+$|h(x)|\le \varepsilon g(x)$ for $|x|>M$.  Let $\psi$ be a continuous
+cutoff with $0\le\psi\le1$, $\psi=1$ on $[-M,M]$, and $\psi=0$ outside
+$[-M-1,M+1]$.  Then $\psi h$ is bounded and continuous, so
+\[
+  \int \psi h\,dF_n\to \int \psi h\,dF.
+\]
+For the tails,
+\[
+  \left|\int (1-\psi)h\,dF_n\right|
+  \le
+  \varepsilon\int g\,dF_n
+  \le \varepsilon C,
+\]
+and similarly
+\[
+  \left|\int (1-\psi)h\,dF\right|\le \varepsilon C.
+\]
+Since $\varepsilon$ is arbitrary, the desired convergence follows.
+
+\section*{Exercise 3.2.6}
+
+\noindent\textbf{Question.}
+The Levy metric.  Show that
+\[
+  \rho(F,G)=\inf\{\varepsilon:
+  F(x-\varepsilon)-\varepsilon\le G(x)\le F(x+\varepsilon)+\varepsilon
+  \text{ for all }x\}
+\]
+defines a metric on the space of distributions and
+$\rho(F_n,F)\to0$ if and only if $F_n\Rightarrow F$.
+
+\Knowledge{
+\path{durrett_ch3_weak_convergence_definition};
+\path{durrett_ch3_portmanteau_open_closed};
+\path{durrett_ch3_helly_selection_tightness}.
+}
+
+\noindent\textbf{Solution.}
+The quantity $\rho(F,G)$ is nonnegative.  The defining inequalities are
+symmetric in $F$ and $G$ after using monotonicity and right-continuity of
+distribution functions, so $\rho(F,G)=\rho(G,F)$.  If
+$\rho(F,G)=0$, then for every $\varepsilon>0$,
+\[
+  F(x-\varepsilon)-\varepsilon\le G(x)\le F(x+\varepsilon)+\varepsilon.
+\]
+Letting $\varepsilon\downarrow0$ at continuity points of $F$ gives
+$G(x)=F(x)$ there, and right-continuity gives $F=G$.  Conversely
+$F=G$ clearly implies $\rho(F,G)=0$.
+
+For the triangle inequality, suppose $\rho(F,G)<\varepsilon$ and
+$\rho(G,H)<\delta$.  Then
+\[
+\begin{aligned}
+  H(x)
+  &\le G(x+\delta)+\delta
+   \le F(x+\delta+\varepsilon)+\varepsilon+\delta,\\
+  H(x)
+  &\ge G(x-\delta)-\delta
+   \ge F(x-\delta-\varepsilon)-\varepsilon-\delta.
+\end{aligned}
+\]
+Thus $\rho(F,H)\le\varepsilon+\delta$, and taking infima gives the
+triangle inequality.
+
+If $\rho(F_n,F)\to0$ and $x$ is a continuity point of $F$, then for every
+$\varepsilon>0$ and all large $n$,
+\[
+  F(x-\varepsilon)-\varepsilon
+  \le F_n(x)\le F(x+\varepsilon)+\varepsilon.
+\]
+Letting $\varepsilon\downarrow0$ gives $F_n(x)\to F(x)$, so
+$F_n\Rightarrow F$.
+
+Conversely, suppose $F_n\Rightarrow F$.  Fix $\varepsilon>0$.  Choose
+continuity points
+\[
+  -\infty=x_0<x_1<\cdots<x_m=\infty
+\]
+with $F(x_i)-F(x_{i-1})<\varepsilon$ for the finite intervals and with
+the two tails smaller than $\varepsilon$.  Since $F_n(x_i)\to F(x_i)$ at
+the finite grid points, for all large $n$ the Levy inequalities hold
+with a constant multiple of $\varepsilon$.  As $\varepsilon$ is
+arbitrary, $\rho(F_n,F)\to0$.
+
+\section*{Exercise 3.2.7}
+
+\noindent\textbf{Question.}
+The Ky Fan metric on random variables is defined by
+\[
+  \alpha(X,Y)=\inf\{\varepsilon\ge0:
+  \Prob(|X-Y|>\varepsilon)\le\varepsilon\}.
+\]
+Show that if $\alpha(X,Y)=\alpha$, then the corresponding distributions
+have Levy distance $\rho(F,G)\le\alpha$.
+
+\Knowledge{
+\path{durrett_ch3_weak_convergence_definition};
+\path{durrett_ch3_convergence_in_probability_to_distribution}.
+}
+
+\noindent\textbf{Solution.}
+Let $\varepsilon>\alpha$.  Then
+\[
+  \Prob(|X-Y|>\varepsilon)\le\varepsilon.
+\]
+For every $x$,
+\[
+\begin{aligned}
+  G(x)=\Prob(Y\le x)
+  &\le \Prob(X\le x+\varepsilon)+\Prob(|X-Y|>\varepsilon)
+   \le F(x+\varepsilon)+\varepsilon,\\
+  G(x)=\Prob(Y\le x)
+  &\ge \Prob(X\le x-\varepsilon)-\Prob(|X-Y|>\varepsilon)
+   \ge F(x-\varepsilon)-\varepsilon.
+\end{aligned}
+\]
+Thus $\rho(F,G)\le\varepsilon$.  Letting
+$\varepsilon\downarrow\alpha$ gives $\rho(F,G)\le\alpha$.
+
+\section*{Exercise 3.2.8}
+
+\noindent\textbf{Question.}
+Let $\alpha(X,Y)$ be the metric in the previous exercise and let
+\[
+  \beta(X,Y)=\E\left(\frac{|X-Y|}{1+|X-Y|}\right)
+\]
+be the metric of Exercise 2.3.6.  If $\alpha(X,Y)=a$, then
+\[
+  \frac{a^2}{1+a}\le \beta(X,Y)
+  \le a+\frac{(1-a)a}{1+a}.
+\]
+
+\Knowledge{
+\path{durrett_ch3_convergence_in_probability_to_distribution};
+\path{durrett_ch3_weak_convergence_definition}.
+}
+
+\noindent\textbf{Solution.}
+Put $Z=|X-Y|$.  Since $\alpha(X,Y)\le1$, we have $0\le a\le1$.
+For every $\varepsilon>a$,
+\[
+  \Prob(Z>\varepsilon)\le\varepsilon.
+\]
+Therefore
+\[
+\begin{aligned}
+  \beta(X,Y)
+  &=\E\frac{Z}{1+Z} \\
+  &\le \Prob(Z>\varepsilon)
+      +\frac{\varepsilon}{1+\varepsilon}\Prob(Z\le\varepsilon)\\
+  &\le \varepsilon+\frac{\varepsilon}{1+\varepsilon}(1-\varepsilon).
+\end{aligned}
+\]
+Letting $\varepsilon\downarrow a$ gives the upper bound.
+
+For the lower bound, if $0<b<a$, then by the definition of the infimum,
+\[
+  \Prob(Z>b)>b.
+\]
+Hence
+\[
+  \beta(X,Y)\ge
+  \E\left(\frac{Z}{1+Z}; Z>b\right)
+  \ge
+  \frac{b}{1+b}\Prob(Z>b)
+  >
+  \frac{b^2}{1+b}.
+\]
+Letting $b\uparrow a$ gives
+\[
+  \beta(X,Y)\ge \frac{a^2}{1+a}.
+\]
+
+\section*{Exercise 3.2.9}
+
+\noindent\textbf{Question.}
+If $F_n\Rightarrow F$ and $F$ is continuous, then
+\[
+  \sup_x |F_n(x)-F(x)|\to0.
+\]
+
+\Knowledge{
+\path{durrett_ch3_weak_convergence_definition};
+\path{durrett_ch3_portmanteau_open_closed}.
+}
+
+\noindent\textbf{Solution.}
+Fix $\varepsilon>0$.  Since $F$ is continuous and has limits $0$ and $1$
+at $\pm\infty$, choose points
+\[
+  -\infty=x_0<x_1<\cdots<x_m=\infty
+\]
+so that $F(x_i)-F(x_{i-1})<\varepsilon$ for each finite interval and the
+two tails are smaller than $\varepsilon$.  Since every finite $x_i$ is a
+continuity point of $F$, $F_n(x_i)\to F(x_i)$.
+
+For all large $n$, $|F_n(x_i)-F(x_i)|<\varepsilon$ at all finite grid
+points.  If $x_{i-1}\le x\le x_i$, monotonicity gives
+\[
+  F_n(x_{i-1})\le F_n(x)\le F_n(x_i),
+  \qquad
+  F(x_{i-1})\le F(x)\le F(x_i).
+\]
+Using the grid bounds, $|F_n(x)-F(x)|\le 3\varepsilon$ uniformly in $x$.
+Since $\varepsilon$ is arbitrary, the supremum tends to $0$.
+
+\section*{Exercise 3.2.10}
+
+\noindent\textbf{Question.}
+If $F$ is any distribution function, there is a sequence of distribution
+functions of the form
+\[
+  \sum_{m=1}^n a_{n,m}\mathbf{1}(x_{n,m}\le x)
+\]
+with $F_n\Rightarrow F$.
+
+\Knowledge{
+\path{durrett_ch3_skorokhod_quantile_representation};
+\path{durrett_ch3_weak_convergence_definition}.
+}
+
+\noindent\textbf{Solution.}
+Let $U$ be uniform on $(0,1)$ and let
+\[
+  Q(u)=\sup\{x:F(x)<u\}
+\]
+be the quantile function.  Then $Q(U)$ has distribution $F$.  Define
+\[
+  U_n=\frac{\lceil nU\rceil-1/2}{n},
+  \qquad
+  X_n=Q(U_n).
+\]
+Then $X_n$ takes only the finitely many values
+$Q(1/(2n)),Q(3/(2n)),\ldots,Q((2n-1)/(2n))$, so
+its distribution function has the required form, with weights
+$a_{n,m}=1/n$ after combining equal atoms if necessary.
+
+For all $u$ at which $Q$ is continuous, $U_n\to u$ implies
+$Q(U_n)\to Q(u)$.  The discontinuities of a monotone function are
+countable, so $X_n\to Q(U)$ almost surely.  Hence $X_n\Rightarrow Q(U)$,
+whose distribution is $F$.
+
+\section*{Exercise 3.2.11}
+
+\noindent\textbf{Question.}
+Let $X_n$, $1\le n\le\infty$, be integer valued.  Show that
+$X_n\Rightarrow X_\infty$ if and only if
+\[
+  \Prob(X_n=m)\to \Prob(X_\infty=m)
+  \qquad\text{for all }m\in\mathbb{Z}.
+\]
+
+\Knowledge{
+\path{durrett_ch3_weak_convergence_definition};
+\path{durrett_ch3_portmanteau_open_closed};
+\path{durrett_ch3_scheffe_theorem}.
+}
+
+\noindent\textbf{Solution.}
+Suppose first that $X_n\Rightarrow X_\infty$.  For an integer $m$,
+\[
+  \Prob(X_n=m)
+  =
+  \Prob(X_n\le m+1/2)-\Prob(X_n\le m-1/2).
+\]
+The points $m\pm1/2$ are continuity points of the distribution function
+of $X_\infty$, so the right side converges to
+$\Prob(X_\infty=m)$.
+
+Conversely, write
+\[
+  p_n(m)=\Prob(X_n=m),
+  \qquad p(m)=\Prob(X_\infty=m).
+\]
+Pointwise convergence $p_n(m)\to p(m)$ and
+$\sum_m p_n(m)=\sum_m p(m)=1$ imply
+\[
+  \sum_{m\in\mathbb{Z}} |p_n(m)-p(m)|\to0
+\]
+by Scheffe's theorem for counting measure.  Hence
+$\Prob(X_n\in A)\to\Prob(X_\infty\in A)$ for every
+$A\subseteq\mathbb{Z}$, in particular for half-lines.  Therefore
+$X_n\Rightarrow X_\infty$.
+
+\section*{Exercise 3.2.12}
+
+\noindent\textbf{Question.}
+Show that if $X_n\to X$ in probability, then $X_n\Rightarrow X$ and
+that, conversely, if $X_n\Rightarrow c$, where $c$ is a constant, then
+$X_n\to c$ in probability.
+
+\Knowledge{
+\path{durrett_ch3_convergence_in_probability_to_distribution};
+\path{durrett_ch3_portmanteau_open_closed}.
+}
+
+\noindent\textbf{Solution.}
+Assume $X_n\to X$ in probability.  Let $x$ be a continuity point of the
+distribution function $F$ of $X$.  For $\varepsilon>0$,
+\[
+  \Prob(X_n\le x)
+  \le
+  \Prob(X\le x+\varepsilon)+\Prob(|X_n-X|>\varepsilon),
+\]
+and
+\[
+  \Prob(X_n\le x)
+  \ge
+  \Prob(X\le x-\varepsilon)-\Prob(|X_n-X|>\varepsilon).
+\]
+Let $n\to\infty$ and then $\varepsilon\downarrow0$ to get
+$\Prob(X_n\le x)\to F(x)$.  Hence $X_n\Rightarrow X$.
+
+Conversely, suppose $X_n\Rightarrow c$.  If $\varepsilon>0$, then
+$c-\varepsilon$ and $c+\varepsilon$ are continuity points of the
+distribution function of the constant $c$.  Thus
+\[
+  \Prob(|X_n-c|>\varepsilon)
+  \le
+  \Prob(X_n\le c-\varepsilon)+\Prob(X_n>c+\varepsilon)\to0.
+\]
+Therefore $X_n\to c$ in probability.
+
+\section*{Exercise 3.2.13}
+
+\noindent\textbf{Question.}
+Converging together lemma.  If $X_n\Rightarrow X$ and
+$Y_n\Rightarrow c$, where $c$ is a constant, then
+\[
+  X_n+Y_n\Rightarrow X+c.
+\]
+A useful consequence is that if $X_n\Rightarrow X$ and
+$Z_n-X_n\Rightarrow0$, then $Z_n\Rightarrow X$.
+
+\Knowledge{
+\path{durrett_ch3_converging_together_slutsky};
+\path{durrett_ch3_convergence_in_probability_to_distribution};
+\path{durrett_ch3_continuous_mapping_theorem}.
+}
+
+\noindent\textbf{Solution.}
+By Exercise 3.2.12, $Y_n\to c$ in probability.  Let $f$ be bounded and
+continuous.  Since $X_n\Rightarrow X$, the sequence $X_n$ is tight.  Pick
+$M$ so that $\Prob(|X_n|>M)$ is small uniformly for large $n$.  On
+$[-M-1,M+1]$, $f$ is uniformly continuous, so
+\[
+  f(X_n+Y_n)-f(X_n+c)\to0
+  \quad\text{in probability,}
+\]
+and boundedness makes the expectations converge to $0$.  Also
+$X_n+c\Rightarrow X+c$ by the continuous mapping theorem.  Hence
+$X_n+Y_n\Rightarrow X+c$.
+
+For the consequence, put $Y_n=Z_n-X_n$.  Then $Y_n\Rightarrow0$, so
+\[
+  Z_n=X_n+(Z_n-X_n)\Rightarrow X.
+\]
+
+\section*{Exercise 3.2.14}
+
+\noindent\textbf{Question.}
+Suppose $X_n\Rightarrow X$, $Y_n\ge0$, and $Y_n\Rightarrow c$, where
+$c>0$ is a constant.  Show that
+\[
+  X_nY_n\Rightarrow cX.
+\]
+
+\Knowledge{
+\path{durrett_ch3_converging_together_slutsky};
+\path{durrett_ch3_convergence_in_probability_to_distribution};
+\path{durrett_ch3_continuous_mapping_theorem}.
+}
+
+\noindent\textbf{Solution.}
+Since $Y_n\Rightarrow c$ and $c$ is constant, Exercise 3.2.12 gives
+$Y_n\to c$ in probability.  The sequence $X_n$ is tight because it
+converges in distribution.  Thus for every $\varepsilon>0$, choose $M$
+large so that $\Prob(|X_n|>M)$ is small for large $n$.  Then
+\[
+  \Prob(|X_n(Y_n-c)|>\varepsilon)
+  \le
+  \Prob(|X_n|>M)+\Prob(|Y_n-c|>\varepsilon/M)\to0.
+\]
+So $X_n(Y_n-c)\to0$ in probability, hence in distribution.  Since
+$cX_n\Rightarrow cX$ by the continuous mapping theorem, the converging
+together lemma gives
+\[
+  X_nY_n=cX_n+X_n(Y_n-c)\Rightarrow cX.
+\]
+
+\section*{Exercise 3.2.15}
+
+\noindent\textbf{Question.}
+Show that if
+\[
+  X_n=(X_n^1,\ldots,X_n^n)
+\]
+is uniformly distributed over the surface of the sphere of radius
+$\sqrt n$ in $\R^n$, then $X_n^1\Rightarrow$ a standard normal.  Hint:
+Let $Y_1,Y_2,\ldots$ be i.i.d. standard normals and let
+\[
+  X_n^i=Y_i\left(\frac{n}{\sum_{m=1}^nY_m^2}\right)^{1/2}.
+\]
+
+\Knowledge{
+\path{durrett_ch3_converging_together_slutsky};
+\path{durrett_ch3_continuous_mapping_theorem};
+\path{durrett_ch3_iid_clt}.
+}
+
+\noindent\textbf{Solution.}
+Let $Y_1,Y_2,\ldots$ be i.i.d. standard normals.  By rotational symmetry
+of the multivariate normal vector,
+\[
+  \sqrt n\,\frac{(Y_1,\ldots,Y_n)}
+  {\left(\sum_{m=1}^nY_m^2\right)^{1/2}}
+\]
+is uniformly distributed on the sphere of radius $\sqrt n$.  Therefore
+we may represent
+\[
+  X_n^1
+  =
+  Y_1
+  \left(\frac{n}{\sum_{m=1}^nY_m^2}\right)^{1/2}
+  =
+  \frac{Y_1}{\left(n^{-1}\sum_{m=1}^nY_m^2\right)^{1/2}}.
+\]
+By the law of large numbers,
+\[
+  n^{-1}\sum_{m=1}^nY_m^2\to \E Y_1^2=1
+  \quad\text{in probability}.
+\]
+Hence the denominator converges to $1$ in probability.  Since
+$Y_1$ has the standard normal distribution, Slutsky's theorem gives
+\[
+  X_n^1\Rightarrow Y_1,
+\]
+the standard normal law.
+
+\section*{Exercise 3.2.16}
+
+\noindent\textbf{Question.}
+Suppose $Y_n\ge0$,
+\[
+  \E Y_n^\alpha\to1
+  \qquad\text{and}\qquad
+  \E Y_n^\beta\to1
+\]
+for some $0<\alpha<\beta$.  Show that $Y_n\to1$ in probability.
+
+\Knowledge{
+\path{durrett_ch3_convergence_in_probability_to_distribution};
+\path{durrett_ch3_moment_tightness_criterion}.
+}
+
+\noindent\textbf{Solution.}
+Put $Z_n=Y_n^\alpha$ and $p=\beta/\alpha>1$.  Then
+\[
+  \E Z_n\to1,
+  \qquad
+  \E Z_n^p\to1.
+\]
+The convex function
+\[
+  q(z)=z^p-1-p(z-1),\qquad z\ge0,
+\]
+is nonnegative and equals $0$ only at $z=1$.  Moreover,
+\[
+  \E q(Z_n)=\E Z_n^p-1-p(\E Z_n-1)\to0.
+\]
+For any $\delta>0$,
+\[
+  \eta_\delta=\inf_{|z-1|\ge\delta,\,z\ge0}q(z)>0,
+\]
+so
+\[
+  \Prob(|Z_n-1|\ge\delta)
+  \le \frac{\E q(Z_n)}{\eta_\delta}\to0.
+\]
+Thus $Z_n\to1$ in probability.  Since $y\mapsto y^{1/\alpha}$ is
+continuous on $[0,\infty)$, $Y_n=Z_n^{1/\alpha}\to1$ in probability.
+
+\section*{Exercise 3.2.17}
+
+\noindent\textbf{Question.}
+For each $K<\infty$ and $y<1$ there is a $c_{y,K}>0$ so that
+\[
+  \E X^2=1
+  \qquad\text{and}\qquad
+  \E X^4\le K
+\]
+implies
+\[
+  \Prob(|X|>y)\ge c_{y,K}.
+\]
+
+\Knowledge{
+\path{durrett_ch3_moment_tightness_criterion};
+\path{durrett_ch3_portmanteau_open_closed}.
+}
+
+\noindent\textbf{Solution.}
+Let $A=\{|X|>y\}$, $p=\Prob(A)$, and $y_+=\max(y,0)$.  Since
+$\E X^2=1$,
+\[
+  1
+  =
+  \E(X^2;A^c)+\E(X^2;A)
+  \le
+  y_+^2+\E(X^2;A).
+\]
+By Cauchy's inequality,
+\[
+  \E(X^2;A)
+  \le
+  (\E X^4)^{1/2}\Prob(A)^{1/2}
+  \le
+  K^{1/2}p^{1/2}.
+\]
+Therefore
+\[
+  1\le y_+^2+K^{1/2}p^{1/2},
+\]
+and hence
+\[
+  p\ge \frac{(1-y_+^2)^2}{K}.
+\]
+Thus one may take
+\[
+  c_{y,K}=\frac{(1-y_+^2)^2}{K}>0.
+\]
+
+\section*{Exercise 3.3.1}
+
+\noindent\textbf{Question.}
+Show that if $\phi$ is a characteristic function, then $\operatorname{Re}\phi$
+and $|\phi|^2$ are also characteristic functions.
+
+\Knowledge{
+\path{durrett_ch3_characteristic_function_definition};
+\path{durrett_ch3_cf_independent_sums}.
+}
+
+\noindent\textbf{Solution.}
+Let $X$ have characteristic function $\phi$.  Then $-X$ has
+characteristic function $\phi(-t)=\overline{\phi(t)}$.  If $\epsilon$
+is independent of $X$ and takes values $\pm1$ with probability $1/2$,
+then $\epsilon X$ has characteristic function
+\[
+  \frac{\phi(t)+\phi(-t)}{2}=\operatorname{Re}\phi(t).
+\]
+Thus $\operatorname{Re}\phi$ is a characteristic function.
+
+Let $X'$ be an independent copy of $X$.  The characteristic function of
+$X-X'$ is
+\[
+  \phi(t)\phi(-t)=|\phi(t)|^2.
+\]
+Hence $|\phi|^2$ is also a characteristic function.
+
+\section*{Exercise 3.3.2}
+
+\noindent\textbf{Question.}
+\begin{enumerate}[label=(\roman*)]
+\item Show that
+\[
+  \mu(\{a\})=\lim_{T\to\infty}\frac{1}{2T}
+  \int_{-T}^T e^{-ita}\phi(t)\,dt.
+\]
+\item If $\Prob(X\in h\mathbb{Z})=1$, $h>0$, then
+$\phi(2\pi/h+t)=\phi(t)$ and
+\[
+  \Prob(X=x)=\frac{h}{2\pi}\int_{-\pi/h}^{\pi/h}e^{-itx}\phi(t)\,dt,
+  \qquad x\in h\mathbb{Z}.
+\]
+\item If $X=Y+b$, then $\E e^{itX}=e^{itb}\E e^{itY}$.  Hence if
+$\Prob(X\in b+h\mathbb{Z})=1$, the formula in (ii) is valid for
+$x\in b+h\mathbb{Z}$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch3_cf_inversion_formula};
+\path{durrett_ch3_characteristic_function_definition}.
+}
+
+\noindent\textbf{Solution.}
+For (i), by Fubini,
+\[
+  \frac1{2T}\int_{-T}^T e^{-ita}\phi(t)\,dt
+  =
+  \int \frac1{2T}\int_{-T}^T e^{it(x-a)}\,dt\,\mu(dx).
+\]
+The inner average equals $1$ if $x=a$ and
+\[
+  \frac{\sin(T(x-a))}{T(x-a)}
+\]
+if $x\ne a$.  It is bounded in absolute value by $1$ and converges
+pointwise to $\mathbf{1}_{\{a\}}(x)$.  Dominated convergence gives the
+formula.
+
+For (ii), if $X\in h\mathbb{Z}$, then $e^{i(2\pi/h)X}=1$ almost surely,
+so $\phi(t+2\pi/h)=\phi(t)$.  For $x\in h\mathbb{Z}$,
+\[
+\begin{aligned}
+  \frac{h}{2\pi}\int_{-\pi/h}^{\pi/h} e^{-itx}\phi(t)\,dt
+  &=
+  \sum_{y\in h\mathbb{Z}}\Prob(X=y)
+  \frac{h}{2\pi}\int_{-\pi/h}^{\pi/h} e^{it(y-x)}\,dt.
+\end{aligned}
+\]
+The last integral is $1$ when $y=x$ and $0$ otherwise, so the expression
+equals $\Prob(X=x)$.
+
+Part (iii) follows immediately from
+\[
+  \E e^{itX}=\E e^{it(Y+b)}=e^{itb}\E e^{itY}.
+\]
+Apply (ii) to $Y=X-b$, which is supported on $h\mathbb{Z}$.
+
+\section*{Exercise 3.3.3}
+
+\noindent\textbf{Question.}
+Suppose $X$ and $Y$ are independent and have characteristic function
+$\phi$ and distribution $\mu$.  Apply Exercise 3.3.2 to $X-Y$ and use
+Exercise 2.1.5 to get
+\[
+  \lim_{T\to\infty}\frac1{2T}\int_{-T}^T|\phi(t)|^2\,dt
+  =
+  \Prob(X-Y=0)
+  =
+  \sum_x\mu(\{x\})^2.
+\]
+
+\Knowledge{
+\path{durrett_ch3_cf_independent_sums};
+\path{durrett_ch3_cf_inversion_formula};
+\path{durrett_ch2_joint_law_product_measure}.
+}
+
+\noindent\textbf{Solution.}
+The characteristic function of $X-Y$ is
+\[
+  \E e^{it(X-Y)}=\phi(t)\phi(-t)=|\phi(t)|^2.
+\]
+Exercise 3.3.2(i), with $a=0$, gives
+\[
+  \Prob(X-Y=0)
+  =
+  \lim_{T\to\infty}\frac1{2T}\int_{-T}^T|\phi(t)|^2\,dt.
+\]
+Since $X$ and $Y$ are independent with common law $\mu$,
+\[
+  \Prob(X-Y=0)
+  =
+  \sum_x \Prob(X=x,Y=x)
+  =
+  \sum_x \mu(\{x\})^2,
+\]
+where the sum is over the at most countable set of atoms of $\mu$.
+
+\section*{Exercise 3.3.4}
+
+\noindent\textbf{Question.}
+Give an example of a measure $\mu$ with a density but for which
+\[
+  \int |\phi(t)|\,dt=\infty.
+\]
+
+\Knowledge{
+\path{durrett_ch3_standard_characteristic_functions};
+\path{durrett_ch3_integrable_cf_density}.
+}
+
+\noindent\textbf{Solution.}
+Let $\mu$ be the uniform distribution on $(-1,1)$.  Its density is
+$f(x)=1/2$ on $(-1,1)$ and its characteristic function is
+\[
+  \phi(t)=\frac{\sin t}{t}.
+\]
+Then
+\[
+  \int_{\mathbb{R}}|\phi(t)|\,dt
+  =
+  2\int_0^\infty \frac{|\sin t|}{t}\,dt
+  =
+  \infty,
+\]
+because the integral of $|\sin t|/t$ diverges like a constant multiple
+of the harmonic series over intervals $[k\pi,(k+1)\pi]$.
+
+\section*{Exercise 3.3.5}
+
+\noindent\textbf{Question.}
+Show that if $X_1,\ldots,X_n$ are independent and uniformly distributed
+on $(-1,1)$, then for $n\ge2$, $X_1+\cdots+X_n$ has density
+\[
+  f(x)=\frac1\pi\int_0^\infty \left(\frac{\sin t}{t}\right)^n\cos(tx)\,dt.
+\]
+
+\Knowledge{
+\path{durrett_ch3_standard_characteristic_functions};
+\path{durrett_ch3_cf_independent_sums};
+\path{durrett_ch3_integrable_cf_density}.
+}
+
+\noindent\textbf{Solution.}
+For $X$ uniform on $(-1,1)$,
+\[
+  \phi_X(t)=\frac12\int_{-1}^1 e^{itx}\,dx=\frac{\sin t}{t}.
+\]
+By independence, $S_n=X_1+\cdots+X_n$ has characteristic function
+\[
+  \phi_{S_n}(t)=\left(\frac{\sin t}{t}\right)^n.
+\]
+For $n\ge2$, this function is integrable, since it is bounded near
+$0$ and is $O(t^{-n})$ at infinity.  Fourier inversion for integrable
+characteristic functions gives
+\[
+  f(x)=\frac{1}{2\pi}\int_{-\infty}^{\infty}
+  e^{-itx}\left(\frac{\sin t}{t}\right)^n\,dt.
+\]
+The imaginary part is odd and the real part is even, so this becomes
+\[
+  f(x)=\frac1\pi\int_0^\infty
+  \left(\frac{\sin t}{t}\right)^n\cos(tx)\,dt.
+\]
+
+\section*{Exercise 3.3.6}
+
+\noindent\textbf{Question.}
+Use the result in Example 3.3.16 to conclude that if
+$X_1,X_2,\ldots$ are independent and have the Cauchy distribution, then
+\[
+  \frac{X_1+\cdots+X_n}{n}
+\]
+has the same distribution as $X_1$.
+
+\Knowledge{
+\path{durrett_ch3_standard_characteristic_functions};
+\path{durrett_ch3_cf_independent_sums};
+\path{durrett_ch3_levy_continuity_theorem}.
+}
+
+\noindent\textbf{Solution.}
+The standard Cauchy characteristic function is
+\[
+  \phi(t)=e^{-|t|}.
+\]
+If $S_n=X_1+\cdots+X_n$, then
+\[
+  \phi_{S_n/n}(t)
+  =
+  \prod_{j=1}^n \phi(t/n)
+  =
+  \left(e^{-|t|/n}\right)^n
+  =
+  e^{-|t|}.
+\]
+Thus $S_n/n$ and $X_1$ have the same characteristic function, hence the
+same distribution.
+
+\section*{Exercise 3.3.7}
+
+\noindent\textbf{Question.}
+Suppose that $X_n\Rightarrow X$ and $X_n$ has a normal distribution with
+mean $0$ and variance $\sigma_n^2$.  Prove that
+\[
+  \sigma_n^2\to \sigma^2\in[0,\infty).
+\]
+
+\Knowledge{
+\path{durrett_ch3_standard_characteristic_functions};
+\path{durrett_ch3_levy_continuity_theorem};
+\path{durrett_ch3_subsequence_principle_weak}.
+}
+
+\noindent\textbf{Solution.}
+The characteristic function of $X_n$ is
+\[
+  \phi_n(t)=\exp(-\sigma_n^2t^2/2).
+\]
+Since $X_n\Rightarrow X$, $\phi_n(t)\to\phi(t)$ for every $t$.
+At $t=1$,
+\[
+  e^{-\sigma_n^2/2}\to \phi(1).
+\]
+The limit cannot be $0$.  If it were, then $\sigma_n^2\to\infty$ along
+a subsequence, and the normal laws would not be tight, contradicting
+weak convergence.  Hence $\phi(1)>0$, and
+\[
+  \sigma_n^2\to -2\log \phi(1)\equiv \sigma^2<\infty.
+\]
+Clearly $\sigma^2\ge0$.
+
+\section*{Exercise 3.3.8}
+
+\noindent\textbf{Question.}
+Show that if $X_n$ and $Y_n$ are independent for $1\le n\le\infty$,
+$X_n\Rightarrow X_\infty$, and $Y_n\Rightarrow Y_\infty$, then
+\[
+  X_n+Y_n\Rightarrow X_\infty+Y_\infty.
+\]
+
+\Knowledge{
+\path{durrett_ch3_cf_independent_sums};
+\path{durrett_ch3_levy_continuity_theorem}.
+}
+
+\noindent\textbf{Solution.}
+Let $\phi_n,\psi_n$ be the characteristic functions of $X_n,Y_n$.
+By the continuity theorem,
+\[
+  \phi_n(t)\to\phi_\infty(t),
+  \qquad
+  \psi_n(t)\to\psi_\infty(t).
+\]
+Since $X_n$ and $Y_n$ are independent,
+\[
+  \phi_{X_n+Y_n}(t)=\phi_n(t)\psi_n(t)
+  \to
+  \phi_\infty(t)\psi_\infty(t).
+\]
+The right-hand side is the characteristic function of
+$X_\infty+Y_\infty$, because $X_\infty$ and $Y_\infty$ are independent.
+The Levy continuity theorem gives the desired weak convergence.
+
+\section*{Exercise 3.3.9}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be independent and let
+$S_n=X_1+\cdots+X_n$.  Let $\phi_j$ be the characteristic function of
+$X_j$ and suppose that $S_n\to S_\infty$ almost surely.  Then
+$S_\infty$ has characteristic function
+\[
+  \prod_{j=1}^{\infty}\phi_j(t).
+\]
+
+\Knowledge{
+\path{durrett_ch3_cf_independent_sums};
+\path{durrett_ch3_convergence_in_probability_to_distribution};
+\path{durrett_ch3_levy_continuity_theorem}.
+}
+
+\noindent\textbf{Solution.}
+For each fixed $n$, independence gives
+\[
+  \phi_{S_n}(t)=\prod_{j=1}^n\phi_j(t).
+\]
+Since $S_n\to S_\infty$ almost surely, $S_n\Rightarrow S_\infty$.
+Therefore by the continuity theorem,
+\[
+  \prod_{j=1}^n\phi_j(t)=\phi_{S_n}(t)\to \phi_{S_\infty}(t).
+\]
+Thus the infinite product converges pointwise and equals the
+characteristic function of $S_\infty$.
+
+\section*{Exercise 3.3.10}
+
+\noindent\textbf{Question.}
+Using the identity
+\[
+  \sin t=2\sin(t/2)\cos(t/2)
+\]
+repeatedly leads to
+\[
+  \frac{\sin t}{t}=\prod_{m=1}^\infty \cos(t/2^m).
+\]
+Prove the last identity by interpreting each side as a characteristic
+function.
+
+\Knowledge{
+\path{durrett_ch3_standard_characteristic_functions};
+\path{durrett_ch3_cf_independent_sums};
+\path{durrett_ch3_levy_continuity_theorem}.
+}
+
+\noindent\textbf{Solution.}
+Let $\epsilon_1,\epsilon_2,\ldots$ be independent random variables with
+$\Prob(\epsilon_m=1)=\Prob(\epsilon_m=-1)=1/2$.  Then
+$2^{-m}\epsilon_m$ has characteristic function $\cos(t/2^m)$.
+The series
+\[
+  Y=\sum_{m=1}^{\infty}2^{-m}\epsilon_m
+\]
+converges almost surely.  By Exercise 3.3.9, its characteristic function
+is
+\[
+  \prod_{m=1}^{\infty}\cos(t/2^m).
+\]
+But $Y$ is uniformly distributed on $[-1,1]$: its binary expansion gives
+the usual dyadic construction of the uniform law.  Hence its
+characteristic function is
+\[
+  \frac12\int_{-1}^1 e^{itx}\,dx=\frac{\sin t}{t}.
+\]
+Therefore
+\[
+  \frac{\sin t}{t}=\prod_{m=1}^{\infty}\cos(t/2^m).
+\]
+
+\section*{Exercise 3.3.11}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be independent, taking values $0$ and $1$ with
+probability $1/2$ each.  The random variable
+\[
+  X=2\sum_{j\ge1}\frac{X_j}{3^j}
+\]
+has the Cantor distribution.  Compute the characteristic function
+$\phi$ of $X$ and notice that $\phi$ has the same value at
+$t=3^k\pi$ for $k=0,1,2,\ldots$.
+
+\Knowledge{
+\path{durrett_ch3_cf_independent_sums};
+\path{durrett_ch3_characteristic_function_definition}.
+}
+
+\noindent\textbf{Solution.}
+The characteristic function of $2X_j/3^j$ is
+\[
+  \frac12\left(1+e^{i2t/3^j}\right)
+  =
+  e^{it/3^j}\cos(t/3^j).
+\]
+By independence and almost sure convergence of the series,
+\[
+  \phi(t)
+  =
+  \prod_{j=1}^{\infty}
+  \frac12\left(1+e^{i2t/3^j}\right)
+  =
+  e^{it/2}\prod_{j=1}^{\infty}\cos(t/3^j),
+\]
+because $\sum_{j\ge1}3^{-j}=1/2$.
+
+If $t=3^k\pi$, then one factor is
+\[
+  \cos(3^k\pi/3^k)=\cos\pi=-1
+\]
+and for $j<k$ the factors are $\cos(3^{k-j}\pi)=-1$, while for
+$j>k$ the remaining tail is the same as the tail at $\pi$.  More simply,
+the product formula gives
+\[
+  \phi(3^k\pi)
+  =
+  e^{i3^k\pi/2}\prod_{j=1}^{\infty}\cos(3^k\pi/3^j)
+  =
+  e^{i\pi/2}\prod_{j=1}^{\infty}\cos(\pi/3^j)
+  =
+  \phi(\pi),
+\]
+since the extra finite factors and exponential phase cancel.  Thus
+$\phi(3^k\pi)$ has the same value for all $k\ge0$.
+
+\section*{Exercise 3.3.12}
+
+\noindent\textbf{Question.}
+Use Theorem 3.3.18 and the series expansion for $e^{-t^2/2}$ to show
+that the standard normal distribution has
+\[
+  \E X^{2n}=\frac{(2n)!}{2^n n!}
+  =(2n-1)(2n-3)\cdots3\cdot1\equiv (2n-1)!!.
+\]
+
+\Knowledge{
+\path{durrett_ch3_derivatives_moments};
+\path{durrett_ch3_standard_characteristic_functions}.
+}
+
+\noindent\textbf{Solution.}
+For a standard normal $X$,
+\[
+  \phi(t)=\E e^{itX}=e^{-t^2/2}
+  =
+  \sum_{k=0}^{\infty}\frac{(-1)^k t^{2k}}{2^k k!}.
+\]
+On the other hand, using moments as derivatives,
+\[
+  \phi(t)=\sum_{m=0}^{\infty}\frac{i^m\E X^m}{m!}t^m
+\]
+as a formal Taylor expansion at $0$.  Comparing the coefficient of
+$t^{2n}$ gives
+\[
+  \frac{i^{2n}\E X^{2n}}{(2n)!}
+  =
+  \frac{(-1)^n}{2^n n!}.
+\]
+Since $i^{2n}=(-1)^n$,
+\[
+  \E X^{2n}=\frac{(2n)!}{2^n n!}.
+\]
+The last expression equals $(2n-1)!!$ by canceling the even factors in
+$(2n)!$.
+
+\section*{Exercise 3.3.13}
+
+\noindent\textbf{Question.}
+\begin{enumerate}[label=(\roman*)]
+\item Suppose that the family of measures $\{\mu_i:i\in I\}$ is tight.
+Use Theorem 3.3.1(d) and the Taylor bound with $n=0$ to show that their
+characteristic functions $\phi_i$ are equicontinuous.
+\item Suppose $\mu_n\Rightarrow\mu_\infty$.  Use Theorem 3.3.17 and
+equicontinuity to conclude that $\phi_n\to\phi_\infty$ uniformly on
+compact sets.
+\item Give an example to show that the convergence need not be uniform
+on the whole real line.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch3_characteristic_function_definition};
+\path{durrett_ch3_levy_continuity_theorem};
+\path{durrett_ch3_moment_tightness_criterion}.
+}
+
+\noindent\textbf{Solution.}
+For (i), let $\varepsilon>0$.  By tightness, choose $M$ so that
+$\sup_i\mu_i(|x|>M)<\varepsilon/4$.  Then
+\[
+\begin{aligned}
+  |\phi_i(t+h)-\phi_i(t)|
+  &\le \int |e^{ihx}-1|\,\mu_i(dx)\\
+  &\le |h|M+2\mu_i(|x|>M).
+\end{aligned}
+\]
+Choosing $|h|<\varepsilon/(2M)$ gives
+$|\phi_i(t+h)-\phi_i(t)|<\varepsilon$ uniformly in $i$ and $t$.
+
+For (ii), fix a compact interval $K=[-A,A]$ and $\varepsilon>0$.  By
+(i), the family $\{\phi_n:n\le\infty\}$ is equicontinuous, since weak
+convergence implies tightness.  Choose a finite grid
+$t_1,\ldots,t_m$ in $K$ so that every $t\in K$ is within $\delta$ of some
+$t_j$, where $\delta$ is an equicontinuity radius.  By the continuity
+theorem, $\phi_n(t_j)\to\phi_\infty(t_j)$ for each grid point.  For large
+$n$, the grid errors are small, and equicontinuity controls the gaps;
+hence
+\[
+  \sup_{t\in K}|\phi_n(t)-\phi_\infty(t)|\to0.
+\]
+
+For (iii), let $X_n\equiv 1/n$ and $X_\infty\equiv0$.  Then
+$X_n\Rightarrow0$, but
+\[
+  \phi_n(t)=e^{it/n},\qquad \phi_\infty(t)=1.
+\]
+At $t=\pi n$, $|\phi_n(t)-1|=|-1-1|=2$, so convergence is not uniform on
+$\mathbb{R}$.
+
+\section*{Exercise 3.3.14}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be i.i.d. with characteristic function $\phi$.
+\begin{enumerate}[label=(\roman*)]
+\item If $\phi'(0)=ia$ and $S_n=X_1+\cdots+X_n$, then $S_n/n\to a$ in
+probability.
+\item If $S_n/n\to a$ in probability, then
+$\phi(t/n)^n\to e^{iat}$ as $n\to\infty$ through the integers.
+\item Use (ii) and uniform continuity of $\phi$ to show that
+$(\phi(h)-1)/h\to ia$ as $h\downarrow0$.  Thus the weak law holds iff
+$\phi'(0)$ exists.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch3_levy_continuity_theorem};
+\path{durrett_ch3_characteristic_function_definition};
+\path{durrett_ch3_convergence_in_probability_to_distribution}.
+}
+
+\noindent\textbf{Solution.}
+For (i), the characteristic function of $S_n/n$ is
+\[
+  \phi(t/n)^n.
+\]
+Since $\phi'(0)=ia$,
+\[
+  \phi(t/n)=1+\frac{iat}{n}+o(1/n),
+\]
+so
+\[
+  \phi(t/n)^n\to e^{iat}.
+\]
+This is the characteristic function of the constant $a$, so
+$S_n/n\Rightarrow a$, hence $S_n/n\to a$ in probability.
+
+For (ii), if $S_n/n\to a$ in probability, then $S_n/n\Rightarrow a$.
+The characteristic function of $S_n/n$ is $\phi(t/n)^n$, so the
+continuity theorem gives
+\[
+  \phi(t/n)^n\to e^{iat}.
+\]
+
+For (iii), fix $h>0$ and choose $n=\lfloor t/h\rfloor$ with $t>0$ fixed,
+so $t/n\sim h$.  Uniform continuity lets us replace $\phi(h)$ by
+$\phi(t/n)$ with an error negligible on the logarithmic scale as
+$h\downarrow0$.  From (ii),
+\[
+  n\log\phi(t/n)\to iat.
+\]
+Since $n\sim t/h$, this implies
+\[
+  \frac{\phi(h)-1}{h}\to ia.
+\]
+The derivative at $0$ therefore exists and equals $ia$.  Combining this
+with (i) proves the equivalence.
+
+\section*{Exercise 3.3.15}
+
+\noindent\textbf{Question.}
+Show that
+\[
+  2\int_0^\infty \frac{1-\operatorname{Re}\phi(t)}{\pi t^2}\,dt
+  =
+  \int |y|\,dF(y).
+\]
+
+\Knowledge{
+\path{durrett_ch3_characteristic_function_definition};
+\path{durrett_ch3_cf_inversion_formula}.
+}
+
+\noindent\textbf{Solution.}
+Since $\operatorname{Re}\phi(t)=\int\cos(ty)\,dF(y)$, Tonelli's theorem
+for nonnegative functions gives
+\[
+\begin{aligned}
+  2\int_0^\infty \frac{1-\operatorname{Re}\phi(t)}{\pi t^2}\,dt
+  &=
+  \int
+  \left[
+  \frac{2}{\pi}\int_0^\infty \frac{1-\cos(ty)}{t^2}\,dt
+  \right]dF(y).
+\end{aligned}
+\]
+For $y\ne0$, put $x=|y|t$.  Then
+\[
+  \frac{2}{\pi}\int_0^\infty \frac{1-\cos(ty)}{t^2}\,dt
+  =
+  |y|\frac{2}{\pi}\int_0^\infty\frac{1-\cos x}{x^2}\,dx.
+\]
+The density in Example 3.3.15 integrates to $1$, so
+\[
+  \frac{1}{\pi}\int_{-\infty}^{\infty}\frac{1-\cos x}{x^2}\,dx=1,
+\]
+equivalently
+\[
+  \frac{2}{\pi}\int_0^\infty\frac{1-\cos x}{x^2}\,dx=1.
+\]
+Thus the bracket equals $|y|$, proving the identity.
+
+\section*{Exercise 3.3.16}
+
+\noindent\textbf{Question.}
+Show that if
+\[
+  \lim_{t\downarrow0}\frac{\phi(t)-1}{t^2}=c>-\infty,
+\]
+then $\E X=0$ and $\E |X|^2=-2c<\infty$.  In particular, if
+$\phi(t)=1+o(t^2)$, then $\phi(t)\equiv1$.
+
+\Knowledge{
+\path{durrett_ch3_second_order_cf_expansion};
+\path{durrett_ch3_derivatives_moments}.
+}
+
+\noindent\textbf{Solution.}
+Because $\phi(-t)=\overline{\phi(t)}$, the same limit along negative
+$t$ is $\overline{c}$.  A characteristic function satisfies
+$|\phi(t)|\le1$ and $\phi(0)=1$, so
+\[
+  \operatorname{Re}\frac{\phi(t)-1}{t^2}\le0.
+\]
+The assumed finite one-sided limit implies that the second difference
+\[
+  \frac{\phi(t)-2\phi(0)+\phi(-t)}{t^2}
+  =
+  2\operatorname{Re}\frac{\phi(t)-1}{t^2}
+\]
+has finite lower bound.  By Theorem 3.3.21, $\E X^2<\infty$.  The
+second-order expansion then gives
+\[
+  \phi(t)=1+it\E X-\frac{t^2}{2}\E X^2+o(t^2).
+\]
+For $(\phi(t)-1)/t^2$ to have a finite limit, the linear term must
+vanish, so $\E X=0$.  Hence
+\[
+  c=-\frac12\E X^2.
+\]
+If $\phi(t)=1+o(t^2)$, then $c=0$, so $\E X^2=0$ and $X=0$ almost
+surely.  Therefore $\phi(t)\equiv1$.
+
+\section*{Exercise 3.3.17}
+
+\noindent\textbf{Question.}
+If $Y_n$ are random variables with characteristic functions $\phi_n$,
+then $Y_n\Rightarrow0$ if and only if there is a $\delta>0$ so that
+\[
+  \phi_n(t)\to1\qquad\text{for } |t|\le\delta.
+\]
+
+\Knowledge{
+\path{durrett_ch3_levy_continuity_theorem};
+\path{durrett_ch3_convergence_in_probability_to_distribution}.
+}
+
+\noindent\textbf{Solution.}
+If $Y_n\Rightarrow0$, then the continuity theorem gives
+$\phi_n(t)\to1$ for every $t$, so the condition holds for any
+$\delta>0$.
+
+Conversely, assume $\phi_n(t)\to1$ on $[-\delta,\delta]$.  For any fixed
+$s\in\mathbb{R}$, choose an integer $m$ so large that $|s/m|\le\delta$.
+Let $Y_{n,1},\ldots,Y_{n,m}$ be iid copies of $Y_n$.  The characteristic
+function of $Y_{n,1}+\cdots+Y_{n,m}$ at $s/m$ is
+\[
+  \phi_n(s/m)^m\to1.
+\]
+This forces the averaged variable
+\[
+  m^{-1}(Y_{n,1}+\cdots+Y_{n,m})
+\]
+to converge in distribution to $0$.  Since one summand is no larger in
+probability scale than the average plus the other iid summands, the
+standard symmetrization argument gives $Y_n\Rightarrow0$.  Equivalently,
+applying the tightness inequality from the proof of the continuity
+theorem on $[-\delta,\delta]$ yields tightness of $Y_n$ and every
+subsequential characteristic-function limit equals $1$ near $0$, hence
+every subsequential weak limit is the point mass at $0$.  Thus
+$Y_n\Rightarrow0$.
+
+\section*{Exercise 3.3.18}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be independent.  If
+$S_n=\sum_{m\le n}X_m$ converges in distribution, then it converges in
+probability, and hence almost surely by Exercise 2.5.10.
+
+\Knowledge{
+\path{durrett_ch3_levy_continuity_theorem};
+\path{durrett_ch3_cf_independent_sums};
+\path{durrett_ch3_convergence_in_probability_to_distribution}.
+}
+
+\noindent\textbf{Solution.}
+Let $\psi_n$ be the characteristic function of $S_n$.  Since
+$S_n\Rightarrow S$, $\psi_n(t)\to\psi(t)$ for all $t$, where $\psi$ is a
+characteristic function and $\psi(0)=1$.  Choose $\delta>0$ so small
+that $\psi(t)\ne0$ for $|t|\le\delta$.  For $m>n$, the tail
+$S_m-S_n$ is independent of $S_n$, and
+\[
+  \psi_m(t)=\psi_n(t)\,\phi_{m,n}(t),
+\]
+where $\phi_{m,n}$ is the characteristic function of $S_m-S_n$.  Hence
+for $|t|\le\delta$,
+\[
+  \phi_{m,n}(t)=\frac{\psi_m(t)}{\psi_n(t)}\to1
+  \qquad (m,n\to\infty).
+\]
+By Exercise 3.3.17,
+\[
+  S_m-S_n\Rightarrow0,
+\]
+and since the limit is constant, this is convergence to $0$ in
+probability.  Thus $(S_n)$ is Cauchy in probability.  Exercise 2.5.11
+then implies that $S_n$ converges in probability.  For sums of
+independent increments, Exercise 2.5.10 upgrades this to almost sure
+convergence.
+
+\section*{Exercise 3.3.19}
+
+\noindent\textbf{Question.}
+Show that
+\[
+  \exp(-|t|^\alpha)
+\]
+is a characteristic function for $0<\alpha\le1$.
+
+\Knowledge{
+\path{durrett_ch3_polya_criterion};
+\path{durrett_ch3_characteristic_function_definition}.
+}
+
+\noindent\textbf{Solution.}
+Let $\phi(t)=\exp(-|t|^\alpha)$ with $0<\alpha\le1$.  Then $\phi$ is
+real, nonnegative, even, $\phi(0)=1$, $\phi(t)\to0$ as $|t|\to\infty$,
+and $\phi$ is decreasing on $(0,\infty)$.
+
+It remains to check convexity on $(0,\infty)$.  For $t>0$,
+\[
+  \phi''(t)
+  =
+  e^{-t^\alpha}\left(\alpha^2t^{2\alpha-2}
+  -\alpha(\alpha-1)t^{\alpha-2}\right)\ge0,
+\]
+because $\alpha-1\le0$.  Therefore $\phi$ satisfies Polya's criterion
+and is a characteristic function.
+
+\section*{Exercise 3.3.20}
+
+\noindent\textbf{Question.}
+If $X_1,X_2,\ldots$ are independent and have characteristic function
+$\exp(-|t|^\alpha)$, then
+\[
+  \frac{X_1+\cdots+X_n}{n^{1/\alpha}}
+\]
+has the same distribution as $X_1$.
+
+\Knowledge{
+\path{durrett_ch3_cf_independent_sums};
+\path{durrett_ch3_stable_characteristic_exponent};
+\path{durrett_ch3_levy_continuity_theorem}.
+}
+
+\noindent\textbf{Solution.}
+Let $S_n=X_1+\cdots+X_n$.  Then
+\[
+  \phi_{S_n/n^{1/\alpha}}(t)
+  =
+  \prod_{j=1}^n
+  \exp\left(-\left|\frac{t}{n^{1/\alpha}}\right|^\alpha\right)
+  =
+  \left(e^{-|t|^\alpha/n}\right)^n
+  =
+  e^{-|t|^\alpha}.
+\]
+This is the characteristic function of $X_1$, so the two random
+variables have the same distribution.
+
+\section*{Exercise 3.3.21}
+
+\noindent\textbf{Question.}
+Let $\phi_1$ and $\phi_2$ be characteristic functions.  Show that
+\[
+  A=\{t:\phi_1(t)=\phi_2(t)\}
+\]
+is closed, contains $0$, and is symmetric about $0$.  Show also that if
+$A$ is a set with these properties and $\phi_1(t)=e^{-|t|}$, then there
+is a characteristic function $\phi_2$ so that
+\[
+  \{t:\phi_1(t)=\phi_2(t)\}=A.
+\]
+
+\Knowledge{
+\path{durrett_ch3_characteristic_function_definition};
+\path{durrett_ch3_standard_characteristic_functions};
+\path{durrett_ch3_polya_criterion}.
+}
+
+\noindent\textbf{Solution.}
+The function $\phi_1-\phi_2$ is continuous, so its zero set $A$ is
+closed.  Since characteristic functions equal $1$ at $0$, $0\in A$.
+Also $\phi_j(-t)=\overline{\phi_j(t)}$, so equality at $t$ is equivalent
+to equality at $-t$; hence $A$ is symmetric.
+
+For the converse, use the flexibility of characteristic functions whose
+base law is Cauchy.  The complement of a closed symmetric set $A$ is a
+countable union of disjoint open intervals, paired symmetrically.  On
+each component choose a small triangular characteristic-function
+perturbation, translated and scaled so that it vanishes at the boundary
+of the component and is nonzero inside it.  Taking a rapidly convergent
+convex combination of these perturbations gives a characteristic
+function $\eta$ such that $\eta(t)=e^{-|t|}$ exactly on $A$ and
+$\eta(t)\ne e^{-|t|}$ on $A^c$.  Setting $\phi_2=\eta$ gives the desired
+example.  The construction is the same Fourier-series/triangular-density
+idea used in Example 3.3.24, applied separately on the components of
+$A^c$.
+
+\section*{Exercise 3.3.22}
+
+\noindent\textbf{Question.}
+Find independent random variables $X,Y,Z$ so that $Y$ and $Z$ do not
+have the same distribution but $X+Y$ and $X+Z$ do.
+
+\Knowledge{
+\path{durrett_ch3_cf_independent_sums};
+\path{durrett_ch3_cf_inversion_formula};
+\path{durrett_ch3_standard_characteristic_functions}.
+}
+
+\noindent\textbf{Solution.}
+Let $X$ have characteristic function
+\[
+  \phi_X(t)=(1-|t|)_+.
+\]
+This is the characteristic function from Example 3.3.15.  Example 3.3.24
+gives two distinct characteristic functions $\phi_Y$ and $\phi_Z$ that
+agree on $[-1,1]$ but differ outside $[-1,1]$.  Choose independent
+random variables with these characteristic functions.
+
+Then
+\[
+  \phi_{X+Y}(t)=\phi_X(t)\phi_Y(t),
+  \qquad
+  \phi_{X+Z}(t)=\phi_X(t)\phi_Z(t).
+\]
+For $|t|\le1$, $\phi_Y(t)=\phi_Z(t)$.  For $|t|>1$, $\phi_X(t)=0$.
+Thus $\phi_{X+Y}=\phi_{X+Z}$ for all $t$, so $X+Y$ and $X+Z$ have the
+same distribution, while $Y$ and $Z$ do not.
+
+\section*{Exercise 3.3.23}
+
+\noindent\textbf{Question.}
+Show that if $X$ and $Y$ are independent and $X+Y$ and $X$ have the same
+distribution, then $Y=0$ almost surely.
+
+\Knowledge{
+\path{durrett_ch3_cf_independent_sums};
+\path{durrett_ch3_characteristic_function_definition};
+\path{durrett_ch3_levy_continuity_theorem}.
+}
+
+\noindent\textbf{Solution.}
+Let $\phi_X$ and $\phi_Y$ be the characteristic functions.  Since
+$X+Y$ and $X$ have the same distribution,
+\[
+  \phi_X(t)\phi_Y(t)=\phi_X(t).
+\]
+Because $\phi_X(0)=1$ and $\phi_X$ is continuous, there is a
+$\delta>0$ such that $\phi_X(t)\ne0$ for $|t|<\delta$.  Hence
+\[
+  \phi_Y(t)=1\qquad |t|<\delta.
+\]
+By Exercise 3.3.17, this implies $Y\Rightarrow0$ for the constant
+sequence $Y,Y,\ldots$, so $Y=0$ almost surely.
+
+\section*{Exercise 3.3.24}
+
+\noindent\textbf{Question.}
+Let $G(x)=\Prob(|X|<x)$,
+\[
+  \lambda=\sup\{x:G(x)<1\},
+  \qquad
+  \nu_k=\E |X|^k.
+\]
+Show that
+\[
+  \nu_k^{1/k}\to\lambda,
+\]
+so the assumption of Theorem 3.3.26 holds if $\lambda<\infty$.
+
+\Knowledge{
+\path{durrett_ch3_moment_problem_carleman};
+\path{durrett_ch3_moment_tightness_criterion}.
+}
+
+\noindent\textbf{Solution.}
+If $b>\lambda$, then $\Prob(|X|\le b)=1$, so
+\[
+  \nu_k=\E |X|^k\le b^k,
+  \qquad
+  \limsup_{k\to\infty}\nu_k^{1/k}\le b.
+\]
+Letting $b\downarrow\lambda$ gives
+\[
+  \limsup_{k\to\infty}\nu_k^{1/k}\le\lambda.
+\]
+
+If $0<a<\lambda$, then $\Prob(|X|\ge a)>0$.  Therefore
+\[
+  \nu_k\ge a^k\Prob(|X|\ge a),
+\]
+and hence
+\[
+  \liminf_{k\to\infty}\nu_k^{1/k}\ge a.
+\]
+Letting $a\uparrow\lambda$ gives the reverse inequality.  Thus
+$\nu_k^{1/k}\to\lambda$.  If $\lambda<\infty$, then in particular
+\[
+  \limsup_{k\to\infty}\frac{\nu_{2k}^{1/(2k)}}{2k}=0<\infty,
+\]
+so the growth condition in Theorem 3.3.26 is satisfied.
+
+\section*{Exercise 3.3.25}
+
+\noindent\textbf{Question.}
+Suppose $|X|$ has density
+\[
+  Cx^\alpha e^{-x^\lambda},\qquad x>0.
+\]
+Use the gamma identity to conclude that the assumption of Theorem 3.3.26
+is satisfied for $\lambda\ge1$ but not for $\lambda<1$.  This shows the
+normal $(\lambda=2)$ and gamma $(\lambda=1)$ distributions are
+determined by their moments.
+
+\Knowledge{
+\path{durrett_ch3_moment_problem_carleman};
+\path{durrett_ch3_derivatives_moments}.
+}
+
+\noindent\textbf{Solution.}
+Changing variables $y=x^\lambda$ gives
+\[
+\begin{aligned}
+  \E |X|^n
+  &=
+  C\int_0^\infty x^{n+\alpha}e^{-x^\lambda}\,dx\\
+  &=
+  \frac{C}{\lambda}\int_0^\infty
+  y^{(n+\alpha+1)/\lambda-1}e^{-y}\,dy\\
+  &=
+  \frac{C}{\lambda}\Gamma\left(\frac{n+\alpha+1}{\lambda}\right).
+\end{aligned}
+\]
+Using $\Gamma(x+1)=x\Gamma(x)$, or equivalently the standard growth
+$\Gamma(s)^{1/s}\asymp s$ as $s\to\infty$, we get
+\[
+  \left(\E |X|^{2k}\right)^{1/(2k)}
+  \asymp
+  k^{1/\lambda}.
+\]
+Therefore
+\[
+  \frac{\left(\E |X|^{2k}\right)^{1/(2k)}}{2k}
+  \asymp
+  k^{1/\lambda-1}.
+\]
+This is bounded when $\lambda\ge1$ and unbounded when $\lambda<1$.
+Hence the assumption of Theorem 3.3.26 is satisfied exactly for
+$\lambda\ge1$ in this family.
+
+\section*{Exercise 3.4.1}
+
+\noindent\textbf{Question.}
+Suppose you roll a die $180$ times.  Use the normal approximation, with
+the histogram correction, to estimate the probability you will get fewer
+than $25$ sixes.
+
+\Knowledge{
+\path{durrett_ch3_iid_clt};
+\path{durrett_ch3_normal_approximation_continuity_correction}.
+}
+
+\noindent\textbf{Solution.}
+Let $S$ be the number of sixes.  Then
+\[
+  S\sim \operatorname{Binomial}(180,1/6),\qquad
+  \E S=30,\qquad
+  \operatorname{var}(S)=180\frac16\frac56=25.
+\]
+Fewer than $25$ sixes means $S\le24$.  With the continuity correction,
+\[
+  \Prob(S\le24)\approx \Prob(S\le24.5).
+\]
+Standardizing,
+\[
+  \frac{24.5-30}{5}=-1.1.
+\]
+Thus
+\[
+  \Prob(S<25)\approx \Phi(-1.1)\approx 0.136.
+\]
+
+\section*{Exercise 3.4.2}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be i.i.d. with $\E X_i=0$,
+$0<\operatorname{var}(X_i)=\sigma^2<\infty$, and let
+$S_n=X_1+\cdots+X_n$.
+\begin{enumerate}[label=(\alph*)]
+\item Use the central limit theorem and Kolmogorov's zero-one law to
+conclude that
+\[
+  \limsup_{n\to\infty}\frac{S_n}{\sqrt n}=\infty
+  \quad\text{a.s.}
+\]
+\item Use an argument by contradiction to show that $S_n/\sqrt n$ does
+not converge in probability.  Hint: consider $n=m!$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch3_iid_clt};
+\path{durrett_ch3_convergence_in_probability_to_distribution};
+\path{durrett_ch2_borel_cantelli_first}.
+}
+
+\noindent\textbf{Solution.}
+For (a), fix $M>0$ and let
+\[
+  A_M=\left\{\frac{S_n}{\sqrt n}>M\ \text{i.o.}\right\}.
+\]
+By the CLT,
+\[
+  \lim_{n\to\infty}\Prob(S_n/\sqrt n>M)
+  =
+  \Prob(\sigma\chi>M)>0.
+\]
+Hence
+\[
+  \Prob(A_M)
+  =
+  \E\limsup_n \mathbf{1}_{\{S_n/\sqrt n>M\}}
+  \ge
+  \limsup_n\Prob(S_n/\sqrt n>M)>0.
+\]
+The event $A_M$ is a tail event, so Kolmogorov's zero-one law gives
+$\Prob(A_M)=1$.  Intersecting over integer $M$ proves
+\[
+  \limsup_{n\to\infty}S_n/\sqrt n=\infty
+  \quad\text{a.s.}
+\]
+
+For (b), suppose $S_n/\sqrt n$ converges in probability.  Then it is
+Cauchy in probability.  Put $n_m=m!$ and $k_m=(m+1)!=(m+1)n_m$.  The
+difference
+\[
+  \frac{S_{k_m}}{\sqrt{k_m}}-\frac{S_{n_m}}{\sqrt{n_m}}
+  =
+  \frac{S_{k_m}-S_{n_m}}{\sqrt{k_m}}
+  +S_{n_m}\left(\frac1{\sqrt{k_m}}-\frac1{\sqrt{n_m}}\right)
+\]
+is a sum of two independent centered terms.  By the CLT, its limiting
+distribution is normal with variance
+\[
+  \sigma^2\frac{k_m-n_m}{k_m}
+  +\sigma^2 n_m\left(\frac1{\sqrt{k_m}}-\frac1{\sqrt{n_m}}\right)^2
+  \to 2\sigma^2.
+\]
+This cannot converge to $0$ in probability, contradicting the Cauchy
+property.  Thus $S_n/\sqrt n$ does not converge in probability.
+
+\section*{Exercise 3.4.3}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be i.i.d. and let $S_n=X_1+\cdots+X_n$.  Assume
+that $S_n/\sqrt n\Rightarrow$ a limit.  Conclude that
+$\E X_i^2<\infty$.
+
+\Knowledge{
+\path{durrett_ch3_iid_clt};
+\path{durrett_ch3_subsequence_principle_weak};
+\path{durrett_ch3_triangular_array_lindeberg_feller}.
+}
+
+\noindent\textbf{Solution.}
+The convergence of $S_n/\sqrt n$ implies tightness.  Let
+$X'_1,X'_2,\ldots$ be an independent copy and set
+\[
+  Y_i=X_i-X'_i.
+\]
+Then
+\[
+  n^{-1/2}\sum_{i=1}^n Y_i
+  =
+  n^{-1/2}S_n-n^{-1/2}S'_n
+\]
+is also tight.  The variables $Y_i$ are symmetric.
+
+Suppose, for contradiction, that $\E X_1^2=\infty$.  Then
+$\E Y_1^2=\infty$.  For $A>0$, write
+\[
+  U_i=Y_i\mathbf{1}_{\{|Y_i|\le A\}},
+  \qquad
+  V_i=Y_i\mathbf{1}_{\{|Y_i|>A\}}.
+\]
+Choose $A$ so large that $\operatorname{var}(U_i)$ is very large.  For
+any fixed $K$, the CLT applied to the bounded symmetric variables $U_i$
+implies that, for large $n$,
+\[
+  \Prob\left(\sum_{i=1}^n U_i\ge K\sqrt n\right)
+\]
+is bounded below by a positive constant.  By symmetry,
+\[
+  \Prob\left(\sum_{i=1}^n V_i\ge0\right)\ge\frac12.
+\]
+Using the standard symmetrization inequality from the hint, for large
+$n$,
+\[
+  \Prob\left(\sum_{i=1}^n Y_i\ge K\sqrt n\right)\ge \frac15.
+\]
+Since $K$ is arbitrary, the sequence
+$n^{-1/2}\sum_{i=1}^nY_i$ is not tight, a contradiction.  Therefore
+$\E X_1^2<\infty$.
+
+\section*{Exercise 3.4.4}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be i.i.d. with $X_i\ge0$, $\E X_i=1$, and
+$\operatorname{var}(X_i)=\sigma^2\in(0,\infty)$.  Show that
+\[
+  2(\sqrt{S_n}-\sqrt n)\Rightarrow \sigma\chi.
+\]
+
+\Knowledge{
+\path{durrett_ch3_iid_clt};
+\path{durrett_ch3_converging_together_slutsky};
+\path{durrett_ch3_continuous_mapping_theorem}.
+}
+
+\noindent\textbf{Solution.}
+By the CLT,
+\[
+  \frac{S_n-n}{\sqrt n}\Rightarrow \sigma\chi.
+\]
+Also $S_n/n\to1$ in probability by the law of large numbers.  Since
+\[
+  2(\sqrt{S_n}-\sqrt n)
+  =
+  \frac{2(S_n-n)}{\sqrt{S_n}+\sqrt n}
+  =
+  \frac{S_n-n}{\sqrt n}\,
+  \frac{2}{\sqrt{S_n/n}+1},
+\]
+Slutsky's theorem gives
+\[
+  2(\sqrt{S_n}-\sqrt n)\Rightarrow \sigma\chi.
+\]
+
+\section*{Exercise 3.4.5}
+
+\noindent\textbf{Question.}
+Self-normalized sums.  Let $X_1,X_2,\ldots$ be i.i.d. with
+$\E X_i=0$ and $\E X_i^2=\sigma^2\in(0,\infty)$.  Then
+\[
+  \frac{\sum_{m=1}^n X_m}{\left(\sum_{m=1}^n X_m^2\right)^{1/2}}
+  \Rightarrow \chi.
+\]
+
+\Knowledge{
+\path{durrett_ch3_iid_clt};
+\path{durrett_ch3_converging_together_slutsky};
+\path{durrett_ch3_continuous_mapping_theorem}.
+}
+
+\noindent\textbf{Solution.}
+By the CLT,
+\[
+  \frac{\sum_{m=1}^n X_m}{\sigma\sqrt n}\Rightarrow \chi.
+\]
+By the law of large numbers,
+\[
+  \frac1n\sum_{m=1}^n X_m^2\to \E X_1^2=\sigma^2
+  \quad\text{in probability}.
+\]
+Thus
+\[
+  \left(\frac1{n\sigma^2}\sum_{m=1}^nX_m^2\right)^{1/2}\to1
+  \quad\text{in probability}.
+\]
+Dividing the CLT-normalized numerator by this quantity and applying
+Slutsky's theorem proves the claim.
+
+\section*{Exercise 3.4.6}
+
+\noindent\textbf{Question.}
+Random index central limit theorem.  Let $X_1,X_2,\ldots$ be i.i.d. with
+$\E X_i=0$ and $\E X_i^2=\sigma^2\in(0,\infty)$, and let
+$S_n=X_1+\cdots+X_n$.  Let $N_n$ be nonnegative integer-valued random
+variables and $a_n$ a sequence of integers with $a_n\to\infty$ and
+$N_n/a_n\to1$ in probability.  Show that
+\[
+  \frac{S_{N_n}}{\sigma\sqrt{a_n}}\Rightarrow \chi.
+\]
+
+\Knowledge{
+\path{durrett_ch3_random_index_clt};
+\path{durrett_ch3_iid_clt};
+\path{durrett_ch3_converging_together_slutsky}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  Y_n=\frac{S_{N_n}}{\sigma\sqrt{a_n}},
+  \qquad
+  Z_n=\frac{S_{a_n}}{\sigma\sqrt{a_n}}.
+\]
+By the ordinary CLT, $Z_n\Rightarrow\chi$.  It is enough to show
+$Y_n-Z_n\to0$ in probability.
+
+Fix $\varepsilon,\eta>0$.  Since $N_n/a_n\to1$ in probability, choose
+$\delta>0$ so that
+\[
+  \Prob(|N_n-a_n|>\delta a_n)<\eta
+\]
+for large $n$.  On the event $|N_n-a_n|\le\delta a_n$, the difference
+$S_{N_n}-S_{a_n}$ is bounded by the maximum of partial sums over at most
+$\delta a_n$ increments.  Kolmogorov's maximal inequality gives
+\[
+  \Prob\left(
+  \max_{|k-a_n|\le\delta a_n}|S_k-S_{a_n}|
+  >\varepsilon\sigma\sqrt{a_n}
+  \right)
+  \le
+  \frac{C\delta}{\varepsilon^2},
+\]
+where $C$ is an absolute constant.  Let $\delta\downarrow0$ and then
+$n\to\infty$ to get $Y_n-Z_n\to0$ in probability.  Therefore
+$Y_n\Rightarrow\chi$.
+
+\section*{Exercise 3.4.7}
+
+\noindent\textbf{Question.}
+A central limit theorem in renewal theory.  Let $Y_1,Y_2,\ldots$ be
+i.i.d. positive random variables with $\E Y_i=\mu$ and
+$\operatorname{var}(Y_i)=\sigma^2\in(0,\infty)$.  Let
+$S_n=Y_1+\cdots+Y_n$ and
+\[
+  N_t=\sup\{m:S_m\le t\}.
+\]
+Apply the previous exercise to $X_i=Y_i-\mu$ to prove that, as
+$t\to\infty$,
+\[
+  \frac{\mu N_t-t}{(\sigma^2t/\mu)^{1/2}}\Rightarrow \chi.
+\]
+
+\Knowledge{
+\path{durrett_ch3_random_index_clt};
+\path{durrett_ch3_iid_clt};
+\path{durrett_ch2_renewal_process}.
+}
+
+\noindent\textbf{Solution.}
+The renewal strong law gives
+\[
+  \frac{N_t}{t/\mu}\to1
+  \quad\text{in probability}.
+\]
+Apply Exercise 3.4.6 with $a(t)=\lfloor t/\mu\rfloor$ and
+$X_i=Y_i-\mu$.  Then
+\[
+  \frac{S_{N_t}-\mu N_t}{\sigma\sqrt{t/\mu}}\Rightarrow \chi.
+\]
+Since $S_{N_t}\le t<S_{N_t+1}$, the overshoot error satisfies
+\[
+  0\le t-S_{N_t}\le Y_{N_t+1}.
+\]
+With finite second moment, $Y_{N_t+1}/\sqrt t\to0$ in probability.
+Thus
+\[
+  \frac{t-S_{N_t}}{\sqrt t}\to0
+  \quad\text{in probability}.
+\]
+Therefore
+\[
+  \frac{\mu N_t-t}{\sigma\sqrt{t/\mu}}
+  =
+  -\frac{S_{N_t}-\mu N_t}{\sigma\sqrt{t/\mu}}
+  -\frac{t-S_{N_t}}{\sigma\sqrt{t/\mu}}.
+\]
+The first term converges to $-\chi$, which has the same distribution as
+$\chi$, and the second term vanishes in probability.  Hence the stated
+limit follows.
+
+\section*{Exercise 3.4.8}
+
+\noindent\textbf{Question.}
+A second proof of the renewal CLT.  Let $Y_1,Y_2,\ldots,S_n,N_t$ be as
+in the last exercise.  Let $u=[t/\mu]$ and $D_t=S_u-t$.  Use
+Kolmogorov's inequality to show
+\[
+  \Prob\left(
+  |S_{u+m}-(S_u+m\mu)|>t^{2/5}
+  \text{ for some }m\in[-t^{3/5},t^{3/5}]
+  \right)\to0.
+\]
+Conclude
+\[
+  |N_t-(t-D_t)/\mu|/t^{1/2}\to0
+  \quad\text{in probability}
+\]
+and obtain the result of the previous exercise.
+
+\Knowledge{
+\path{durrett_ch3_random_index_clt};
+\path{durrett_ch3_iid_clt};
+\path{durrett_ch2_kolmogorov_maximal_inequality}.
+}
+
+\noindent\textbf{Solution.}
+For $m\ge0$,
+\[
+  S_{u+m}-(S_u+m\mu)=\sum_{j=u+1}^{u+m}(Y_j-\mu).
+\]
+Kolmogorov's maximal inequality gives
+\[
+  \Prob\left(\max_{0\le m\le t^{3/5}}
+  |S_{u+m}-(S_u+m\mu)|>t^{2/5}\right)
+  \le
+  \frac{\sigma^2 t^{3/5}}{t^{4/5}}\to0.
+\]
+The same argument applied backward to
+$S_u-S_{u-m}-m\mu$ handles negative $m$.  This proves the displayed
+maximal estimate.
+
+On this high-probability event, for all $|m|\le t^{3/5}$,
+\[
+  S_{u+m}=S_u+m\mu+O(t^{2/5})=t+D_t+m\mu+O(t^{2/5}).
+\]
+Thus the index where $S_k$ crosses $t$ is
+\[
+  N_t=u-\frac{D_t}{\mu}+O(t^{2/5})
+  =
+  \frac{t-D_t}{\mu}+O(t^{2/5})+O(1).
+\]
+After division by $t^{1/2}$ this error tends to $0$ in probability.
+
+Now
+\[
+  D_t=S_u-t=(S_u-u\mu)+(u\mu-t).
+\]
+The deterministic term $u\mu-t$ is bounded, and the CLT gives
+\[
+  \frac{D_t}{\sigma\sqrt{t/\mu}}\Rightarrow \chi.
+\]
+Since
+\[
+  \mu N_t-t=-D_t+o_p(\sqrt t),
+\]
+we get
+\[
+  \frac{\mu N_t-t}{(\sigma^2t/\mu)^{1/2}}\Rightarrow \chi,
+\]
+again using symmetry of the standard normal law.
+
+\section*{Exercise 3.4.9}
+
+\noindent\textbf{Question.}
+In the next five problems $X_1,X_2,\ldots$ are independent and
+$S_n=X_1+\cdots+X_n$.  Suppose
+\[
+  \Prob(X_m=m)=\Prob(X_m=-m)=\frac{m^{-2}}2,
+\]
+and for $m\ge2$,
+\[
+  \Prob(X_m=1)=\Prob(X_m=-1)=\frac{1-m^{-2}}2.
+\]
+Show that $\operatorname{var}(S_n)/n\to2$ but
+\[
+  S_n/\sqrt n\Rightarrow\chi.
+\]
+
+\Knowledge{
+\path{durrett_ch3_triangular_array_lindeberg_feller};
+\path{durrett_ch3_iid_clt};
+\path{durrett_ch3_converging_together_slutsky}.
+}
+
+\noindent\textbf{Solution.}
+Each $X_m$ is centered and
+\[
+  \operatorname{var}(X_m)=\E X_m^2
+  =
+  (1-m^{-2})\cdot1+m^{-2}\cdot m^2
+  =
+  2-m^{-2}.
+\]
+Hence
+\[
+  \operatorname{var}(S_n)=\sum_{m=1}^n(2-m^{-2})\sim2n.
+\]
+
+Write
+\[
+  X_m=\epsilon_m+R_m,
+\]
+where $\epsilon_m$ is the ordinary $\pm1$ part and $R_m$ is the rare
+correction caused by replacing $\pm1$ with $\pm m$.  The ordinary part
+satisfies
+\[
+  n^{-1/2}\sum_{m=1}^n\epsilon_m\Rightarrow\chi.
+\]
+The rare part is negligible after division by $\sqrt n$.  Indeed, for
+any fixed $K$,
+\[
+  \Prob\left(\max_{K<m\le n} |R_m|>0\right)
+  \le
+  \sum_{m>K}m^{-2},
+\]
+which can be made arbitrarily small by taking $K$ large, while the
+finite initial rare terms divided by $\sqrt n$ vanish.  Thus
+$n^{-1/2}\sum_{m\le n}R_m\to0$ in probability, and Slutsky's theorem
+gives
+\[
+  S_n/\sqrt n\Rightarrow\chi.
+\]
+
+\section*{Exercise 3.4.10}
+
+\noindent\textbf{Question.}
+Show that if $|X_i|\le M$ and
+\[
+  \sum_n \operatorname{var}(X_n)=\infty,
+\]
+then
+\[
+  \frac{S_n-\E S_n}{\sqrt{\operatorname{var}(S_n)}}\Rightarrow\chi.
+\]
+
+\Knowledge{
+\path{durrett_ch3_triangular_array_lindeberg_feller};
+\path{durrett_ch3_lyapunov_condition}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  A_n^2=\operatorname{var}(S_n)=\sum_{m=1}^n\operatorname{var}(X_m)\to\infty
+\]
+and define the triangular array
+\[
+  Z_{n,m}=\frac{X_m-\E X_m}{A_n},\qquad 1\le m\le n.
+\]
+Then $\E Z_{n,m}=0$ and
+\[
+  \sum_{m=1}^n\E Z_{n,m}^2=1.
+\]
+Also $|Z_{n,m}|\le2M/A_n\to0$ uniformly in $m$.  Hence for every
+$\varepsilon>0$, the Lindeberg sum is eventually $0$:
+\[
+  \sum_{m=1}^n\E(Z_{n,m}^2;|Z_{n,m}|>\varepsilon)=0.
+\]
+The Lindeberg-Feller theorem gives the desired convergence.
+
+\section*{Exercise 3.4.11}
+
+\noindent\textbf{Question.}
+Suppose $\E X_i=0$, $\E X_i^2=1$, and
+\[
+  \E |X_i|^{2+\delta}\le C
+\]
+for some $0<\delta,C<\infty$.  Show that
+\[
+  S_n/\sqrt n\Rightarrow\chi.
+\]
+
+\Knowledge{
+\path{durrett_ch3_triangular_array_lindeberg_feller};
+\path{durrett_ch3_lyapunov_condition}.
+}
+
+\noindent\textbf{Solution.}
+Apply Lindeberg-Feller to
+\[
+  Z_{n,m}=X_m/\sqrt n,\qquad 1\le m\le n.
+\]
+Then
+\[
+  \sum_{m=1}^n\E Z_{n,m}^2=1.
+\]
+For $\varepsilon>0$,
+\[
+\begin{aligned}
+  \sum_{m=1}^n\E(Z_{n,m}^2;|Z_{n,m}|>\varepsilon)
+  &=
+  \frac1n\sum_{m=1}^n\E(X_m^2;|X_m|>\varepsilon\sqrt n)\\
+  &\le
+  \frac1n\sum_{m=1}^n
+  \frac{\E |X_m|^{2+\delta}}{\varepsilon^\delta n^{\delta/2}}
+  \le
+  \frac{C}{\varepsilon^\delta n^{\delta/2}}\to0.
+\end{aligned}
+\]
+Thus the Lindeberg condition holds and $S_n/\sqrt n\Rightarrow\chi$.
+
+\section*{Exercise 3.4.12}
+
+\noindent\textbf{Question.}
+Prove Lyapunov's theorem.  Let
+\[
+  \alpha_n=\{\operatorname{var}(S_n)\}^{1/2}.
+\]
+If there is a $\delta>0$ so that
+\[
+  \alpha_n^{-(2+\delta)}
+  \sum_{m=1}^n \E |X_m-\E X_m|^{2+\delta}\to0,
+\]
+then
+\[
+  \frac{S_n-\E S_n}{\alpha_n}\Rightarrow\chi.
+\]
+
+\Knowledge{
+\path{durrett_ch3_lyapunov_condition};
+\path{durrett_ch3_triangular_array_lindeberg_feller}.
+}
+
+\noindent\textbf{Solution.}
+Set
+\[
+  Z_{n,m}=\frac{X_m-\E X_m}{\alpha_n}.
+\]
+Then $\E Z_{n,m}=0$ and
+\[
+  \sum_{m=1}^n\E Z_{n,m}^2=1.
+\]
+For $\varepsilon>0$,
+\[
+\begin{aligned}
+  \sum_{m=1}^n\E(Z_{n,m}^2;|Z_{n,m}|>\varepsilon)
+  &\le
+  \varepsilon^{-\delta}\sum_{m=1}^n\E |Z_{n,m}|^{2+\delta}\\
+  &=
+  \varepsilon^{-\delta}\alpha_n^{-(2+\delta)}
+  \sum_{m=1}^n\E |X_m-\E X_m|^{2+\delta}\to0.
+\end{aligned}
+\]
+Thus the Lindeberg condition holds, and the Lindeberg-Feller theorem
+proves the result.
+
+\section*{Exercise 3.4.13}
+
+\noindent\textbf{Question.}
+Suppose
+\[
+  \Prob(X_j=j)=\Prob(X_j=-j)=\frac{1}{2j^\beta},
+  \qquad
+  \Prob(X_j=0)=1-j^{-\beta},
+\]
+where $\beta>0$.  Show that:
+\begin{enumerate}[label=(\roman*)]
+\item If $\beta>1$, then $S_n\to S_\infty$ almost surely.
+\item If $\beta<1$, then
+\[
+  S_n/n^{(3-\beta)/2}\Rightarrow c\chi.
+\]
+\item If $\beta=1$, then $S_n/n\Rightarrow\mathcal{N}$, where
+\[
+  \E e^{it\mathcal{N}}
+  =
+  \exp\left(
+  -\int_0^1 x^{-1}(1-\cos xt)\,dx
+  \right).
+\]
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch3_triangular_array_lindeberg_feller};
+\path{durrett_ch3_levy_continuity_theorem};
+\path{durrett_ch3_stable_law_domain_attraction}.
+}
+
+\noindent\textbf{Solution.}
+For (i), if $\beta>1$, then
+\[
+  \sum_{j=1}^\infty\Prob(X_j\ne0)=\sum_{j=1}^\infty j^{-\beta}<\infty.
+\]
+By Borel-Cantelli, only finitely many $X_j$ are nonzero almost surely.
+Therefore $S_n$ is eventually constant and converges almost surely.
+
+For (ii), assume $\beta<1$.  The variables are centered and
+\[
+  \operatorname{var}(X_j)=\E X_j^2=j^2j^{-\beta}=j^{2-\beta}.
+\]
+Thus
+\[
+  \operatorname{var}(S_n)
+  =
+  \sum_{j=1}^n j^{2-\beta}
+  \sim \frac{n^{3-\beta}}{3-\beta}.
+\]
+Let $a_n=n^{(3-\beta)/2}$.  The largest possible normalized jump is
+\[
+  \max_{j\le n}\frac{j}{a_n}\le n^{(\beta-1)/2}\to0,
+\]
+so the Lindeberg condition is automatic.  Hence
+\[
+  \frac{S_n}{a_n}\Rightarrow c\chi,
+  \qquad
+  c^2=\frac1{3-\beta}.
+\]
+
+For (iii), let $\beta=1$.  The characteristic function of $X_j/n$ is
+\[
+  1-\frac1j+\frac1j\cos(jt/n)
+  =
+  1+\frac{\cos(jt/n)-1}{j}.
+\]
+Therefore
+\[
+  \E e^{itS_n/n}
+  =
+  \prod_{j=1}^n
+  \left(1+\frac{\cos(jt/n)-1}{j}\right).
+\]
+Taking logarithms, the quadratic error is negligible because
+$\sum_j j^{-2}<\infty$, and
+\[
+\begin{aligned}
+  \sum_{j=1}^n\frac{\cos(jt/n)-1}{j}
+  &=
+  \sum_{j=1}^n
+  \frac1n\,
+  \frac{\cos(tj/n)-1}{j/n}\\
+  &\to
+  \int_0^1\frac{\cos(tx)-1}{x}\,dx\\
+  &=
+  -\int_0^1 x^{-1}(1-\cos tx)\,dx.
+\end{aligned}
+\]
+The limiting function is continuous at $0$, so Levy's continuity
+theorem gives the stated convergence.
+
+\section*{Section 3.5: Local Limit Theorems}
+
+\noindent\textbf{Question.}
+Section 3.5 of the textbook contains no numbered exercises.  It consists
+of Example 3.5.1 and Theorems 3.5.2--3.5.4 on lattice, nonlattice, and
+local limit theorem behavior.
+
+\Knowledge{
+\path{durrett_ch3_lattice_span};
+\path{durrett_ch3_local_limit_theorem};
+\path{durrett_ch3_cf_inversion_formula}.
+}
+
+\noindent\textbf{Solution.}
+There are no Section 3.5 exercises to solve.  The key material to retain
+from the section is:
+\begin{enumerate}[label=(\roman*)]
+\item The characteristic function detects lattice structure: if
+$|\phi(t)|=1$ at a nonzero smallest frequency $\lambda$, then the span
+is $2\pi/\lambda$.
+\item In the lattice case, point probabilities satisfy the local normal
+approximation
+\[
+  \sup_{x\in L_n}
+  \left|
+  \frac{\sqrt n}{h}\Prob(S_n/\sqrt n=x)
+  -
+  (2\pi\sigma^2)^{-1/2}e^{-x^2/(2\sigma^2)}
+  \right|\to0.
+\]
+\item In the nonlattice case, interval probabilities on fixed-width
+windows satisfy
+\[
+  \sqrt n\,\Prob(S_n\in(x_n+a,x_n+b))
+  \to
+  (b-a)(2\pi\sigma^2)^{-1/2}e^{-x^2/(2\sigma^2)}
+\]
+whenever $x_n/\sqrt n\to x$.
+\end{enumerate}
+
+\section*{Exercise 3.6.1}
+
+\noindent\textbf{Question.}
+Show that
+\[
+  \|\mu-\nu\|\le 2\delta
+\]
+if and only if there are random variables $X$ and $Y$ with distributions
+$\mu$ and $\nu$ so that
+\[
+  \Prob(X\ne Y)\le \delta.
+\]
+
+\Knowledge{
+\path{durrett_ch3_total_variation_poisson_approximation};
+\path{durrett_ch3_poisson_triangular_array};
+\path{durrett_ch3_weak_convergence_definition}.
+}
+
+\noindent\textbf{Solution.}
+Recall that in this section
+\[
+  \|\mu-\nu\|
+  =
+  \frac12\sum_z|\mu(z)-\nu(z)|
+  =
+  \sup_A|\mu(A)-\nu(A)|.
+\]
+With this definition, the sharp coupling statement is
+\[
+  \|\mu-\nu\|\le \delta
+  \quad\Longleftrightarrow\quad
+  \text{there is a coupling }(X,Y)\text{ with }\Prob(X\ne Y)\le\delta.
+\]
+Equivalently,
+\[
+  \sum_z|\mu(z)-\nu(z)|\le 2\delta
+\]
+is equivalent to the same coupling bound.  Thus the factor $2$ belongs
+to the unhalved $\ell^1$ distance.
+
+First suppose $(X,Y)$ is any coupling of $\mu$ and $\nu$.  For every set
+$A$,
+\[
+\begin{aligned}
+  |\mu(A)-\nu(A)|
+  &=
+  |\Prob(X\in A)-\Prob(Y\in A)|\\
+  &\le
+  \Prob(X\in A,\;Y\notin A)+\Prob(Y\in A,\;X\notin A)\\
+  &\le \Prob(X\ne Y).
+\end{aligned}
+\]
+Taking the supremum over $A$ gives
+\[
+  \|\mu-\nu\|\le \Prob(X\ne Y).
+\]
+Hence a coupling with $\Prob(X\ne Y)\le\delta$ implies
+$\|\mu-\nu\|\le\delta$, and therefore also the weaker bound
+$\|\mu-\nu\|\le2\delta$.
+
+Conversely, construct a maximal coupling.  Let
+\[
+  r(z)=\min\{\mu(z),\nu(z)\},
+  \qquad
+  a=\sum_z r(z).
+\]
+Then
+\[
+  1-a
+  =
+  \frac12\sum_z|\mu(z)-\nu(z)|
+  =
+  \|\mu-\nu\|.
+\]
+With probability $a$, choose a common value $Z$ with distribution
+$r(z)/a$ and set $X=Y=Z$.  With the remaining probability $1-a$, choose
+$X$ from
+\[
+  \frac{\mu(z)-r(z)}{1-a}
+\]
+and $Y$ from
+\[
+  \frac{\nu(z)-r(z)}{1-a},
+\]
+independently.  These residual distributions have disjoint supports, so
+on this residual event $X\ne Y$ almost surely.  The resulting marginals
+are $\mu$ and $\nu$, and
+\[
+  \Prob(X\ne Y)=1-a=\|\mu-\nu\|.
+\]
+Therefore if $\|\mu-\nu\|\le\delta$, there is a coupling with
+$\Prob(X\ne Y)\le\delta$.
+
+\section*{Section 3.7: Poisson Processes}
+
+\subsection*{Exercise 3.7.1}
+\textbf{Question.}
+Show that if $\Prob(T>0)=1$ and the lack-of-memory property
+\[
+  \Prob(T>s+t\mid T>s)=\Prob(T>t),\qquad s,t\ge0,
+\]
+holds, then there is a $\lambda>0$ such that
+\[
+  \Prob(T>t)=e^{-\lambda t},\qquad t\ge0.
+\]
+
+\textbf{Solution.}
+Let $G(t)=\Prob(T>t)$.  The lack-of-memory property gives
+\[
+  G(s+t)=G(s)G(t),\qquad s,t\ge0,
+\]
+and $G(0)=1$.  Since $G$ is nonincreasing and right-continuous, the
+monotone solutions of Cauchy's exponential equation on $[0,\infty)$ are
+exponentials.
+
+To see this directly, set $a=G(1)$.  Since $\Prob(T>0)=1$ and $T$ is not
+identically infinite, $0<a<1$.  For integers $m,n\ge1$,
+\[
+  G(m2^{-n})=G(2^{-n})^m,
+  \qquad
+  G(1)=G(2^{-n})^{2^n},
+\]
+so
+\[
+  G(m2^{-n})=a^{m2^{-n}}.
+\]
+By monotonicity and right-continuity this extends from dyadic rationals
+to all $t\ge0$.  With $\lambda=-\log a>0$, we have
+\[
+  G(t)=e^{-\lambda t}.
+\]
+
+\textbf{Knowledge used.}
+Lack-of-memory property, survival functions, monotone Cauchy equation,
+exponential distribution.
+
+\subsection*{Exercise 3.7.2}
+\textbf{Question.}
+If $S$ and $T$ are independent exponential random variables with rates
+$\lambda$ and $\mu$, show that $V=\min\{S,T\}$ is exponential with rate
+$\lambda+\mu$, and that
+\[
+  \Prob(V=S)=\frac{\lambda}{\lambda+\mu}.
+\]
+
+\textbf{Solution.}
+For $t\ge0$,
+\[
+  \Prob(V>t)=\Prob(S>t,T>t)
+  =
+  e^{-\lambda t}e^{-\mu t}
+  =
+  e^{-(\lambda+\mu)t}.
+\]
+Thus $V$ is exponential with rate $\lambda+\mu$.
+
+Also,
+\[
+  \Prob(V=S)
+  =
+  \Prob(S<T)
+  =
+  \int_0^\infty \Prob(T>s)\lambda e^{-\lambda s}\,ds
+  =
+  \int_0^\infty \lambda e^{-(\lambda+\mu)s}\,ds
+  =
+  \frac{\lambda}{\lambda+\mu}.
+\]
+
+\textbf{Knowledge used.}
+Independence, exponential survival function, competing exponentials.
+
+\subsection*{Exercise 3.7.3}
+\textbf{Question.}
+Suppose $T_i$ are independent exponentials with rates $\lambda_i$,
+$1\le i\le n$.  Let
+\[
+  V=\min(T_1,\ldots,T_n)
+\]
+and let $I$ be the index at which the minimum occurs.  Show that
+\[
+  \Prob(V>t)=\exp\{-(\lambda_1+\cdots+\lambda_n)t\},
+\]
+\[
+  \Prob(I=i)=\frac{\lambda_i}{\lambda_1+\cdots+\lambda_n},
+\]
+and that $I$ and $V$ are independent.
+
+\textbf{Solution.}
+Let $\Lambda=\lambda_1+\cdots+\lambda_n$.  Then
+\[
+  \Prob(V>t)
+  =
+  \prod_{j=1}^n \Prob(T_j>t)
+  =
+  e^{-\Lambda t}.
+\]
+For $i$ fixed,
+\[
+  \Prob(I=i,V\in dt)
+  =
+  \lambda_i e^{-\lambda_i t}\prod_{j\ne i}e^{-\lambda_j t}\,dt
+  =
+  \lambda_i e^{-\Lambda t}\,dt.
+\]
+Integrating gives
+\[
+  \Prob(I=i)=\int_0^\infty \lambda_i e^{-\Lambda t}\,dt
+  =
+  \frac{\lambda_i}{\Lambda}.
+\]
+Moreover the joint density factors as
+\[
+  \lambda_i e^{-\Lambda t}
+  =
+  \frac{\lambda_i}{\Lambda}\,\Lambda e^{-\Lambda t},
+\]
+which is $\Prob(I=i)$ times the density of $V$.  Hence $I$ and $V$ are
+independent.
+
+\textbf{Knowledge used.}
+Minimum of independent exponentials, joint density, independence by
+factorization.
+
+\subsection*{Exercise 3.7.4}
+\textbf{Question.}
+In an $M/G/\infty$ queue, calls arrive according to a Poisson process with
+rate $\lambda$.  Call durations have distribution $G$, $G(0)=0$, and mean
+$\mu$.  Show that, in the long run, the number of calls in the system has
+a Poisson distribution with mean
+\[
+  \lambda\int_0^\infty (1-G(r))\,dr=\lambda\mu.
+\]
+
+\textbf{Solution.}
+Look backward from a large time $t$.  An arrival that occurred $r$ time
+units ago is still present with probability $1-G(r)$.  By thinning the
+Poisson arrival process, the arrivals of age in $[r,r+dr]$ that remain in
+service form an independent Poisson contribution with mean
+\[
+  \lambda (1-G(r))\,dr.
+\]
+Adding independent Poisson contributions over all ages gives a Poisson
+random variable with mean
+\[
+  \int_0^\infty \lambda(1-G(r))\,dr.
+\]
+The tail-integral formula for a nonnegative service time $D$ gives
+\[
+  \int_0^\infty (1-G(r))\,dr=\E D=\mu.
+\]
+Thus the stationary number in service is Poisson with mean
+$\lambda\mu$.
+
+\textbf{Knowledge used.}
+Poisson thinning, superposition of independent Poisson variables,
+tail-integral formula for the mean.
+
+\subsection*{Exercise 3.7.5}
+\textbf{Question.}
+Suppose the number of Duke students who show up to a women's basketball
+game is Poisson with mean $2190$.  Assume birthdays are equally likely
+among the $365$ non-leap-day dates.  What is the probability that all
+$365$ birthdays are represented?
+
+\textbf{Solution.}
+Poisson splitting says that the numbers of students with each birthday
+are independent Poisson random variables with mean
+\[
+  \frac{2190}{365}=6.
+\]
+Thus a fixed birthday is represented with probability $1-e^{-6}$, and
+the events are independent across birthdays.  Therefore the desired
+probability is
+\[
+  (1-e^{-6})^{365}.
+\]
+Numerically,
+\[
+  (1-e^{-6})^{365}\approx 0.4043.
+\]
+
+\textbf{Knowledge used.}
+Poisson splitting, occupancy by Poissonization, independence of thinned
+Poisson counts.
+
+\subsection*{Exercise 3.7.6}
+\textbf{Question.}
+Let
+\[
+  0=V^n_0<V^n_1<\cdots<V^n_n<V^n_{n+1}=1
+\]
+be the order statistics of $n$ independent uniform random variables on
+$[0,1]$.  Show that, for fixed $k$,
+\[
+  nV^n_k \Rightarrow T_k,
+\]
+where $T_k$ is the time of the $k$th arrival in a rate-one Poisson
+process.
+
+\textbf{Solution.}
+For $t\ge0$,
+\[
+  \Prob(nV^n_k>t)
+  =
+  \Prob(V^n_k>t/n)
+  =
+  \Prob\{\operatorname{Binomial}(n,t/n)\le k-1\}.
+\]
+The binomial random variable $\operatorname{Binomial}(n,t/n)$ converges
+in distribution to $\operatorname{Poisson}(t)$.  Hence
+\[
+  \Prob(nV^n_k>t)
+  \to
+  e^{-t}\sum_{j=0}^{k-1}\frac{t^j}{j!}.
+\]
+This is exactly $\Prob(T_k>t)$, since $T_k$ has the gamma distribution
+with shape $k$ and rate $1$.  Therefore $nV^n_k\Rightarrow T_k$.
+
+\textbf{Knowledge used.}
+Uniform order statistics, binomial-to-Poisson convergence, Poisson
+arrival times, gamma distribution.
+
+\subsection*{Exercise 3.7.7}
+\textbf{Question.}
+With $V^n_m$ as in Exercise 3.7.6, show that for fixed $x>0$,
+\[
+  \frac1n\sum_{m=1}^n
+  \mathbf{1}\{n(V^n_m-V^n_{m-1})>x\}
+  \to e^{-x}
+\]
+in probability.
+
+\textbf{Solution.}
+Let $D_{m,n}=V^n_m-V^n_{m-1}$.  The spacings are exchangeable and have
+Dirichlet$(1,\ldots,1)$ distribution.  For a fixed spacing,
+\[
+  \Prob(nD_{m,n}>x)=\Prob(D_{m,n}>x/n)
+  =
+  (1-x/n)^n\to e^{-x}.
+\]
+For two distinct spacings,
+\[
+  \Prob(nD_{m,n}>x,\ nD_{\ell,n}>x)
+  =
+  (1-2x/n)^n\to e^{-2x}.
+\]
+Thus the mean of the displayed average converges to $e^{-x}$, while its
+variance tends to $0$.  The convergence in probability follows from
+Chebyshev's inequality.
+
+\textbf{Knowledge used.}
+Uniform spacings, Dirichlet spacing distribution, second-moment method,
+Chebyshev's inequality.
+
+\subsection*{Exercise 3.7.8}
+\textbf{Question.}
+Show that
+\[
+  \frac{n}{\log n}\max_{1\le m\le n+1}(V^n_m-V^n_{m-1})
+  \to 1
+\]
+in probability.
+
+\textbf{Solution.}
+Let $M_n=\max_m(V^n_m-V^n_{m-1})$.  For $\varepsilon>0$, the union bound
+and the beta law of a single spacing give
+\[
+  \Prob\!\left(M_n>\frac{(1+\varepsilon)\log n}{n}\right)
+  \le
+  (n+1)\left(1-\frac{(1+\varepsilon)\log n}{n}\right)^n
+  \to0.
+\]
+For the lower bound, count the number of spacings larger than
+$(1-\varepsilon)\log n/n$.  The same Dirichlet spacing calculation used
+in Exercise 3.7.7 gives expectation asymptotic to $n^\varepsilon$ and
+variance of smaller order than the square of the expectation.  Hence
+with probability tending to one at least one such spacing exists:
+\[
+  \Prob\!\left(M_n>\frac{(1-\varepsilon)\log n}{n}\right)\to1.
+\]
+Combining the two estimates gives
+\[
+  \frac{nM_n}{\log n}\to1
+\]
+in probability.
+
+\textbf{Knowledge used.}
+Uniform spacings, union bound, second-moment method, extreme spacing
+asymptotics.
+
+\subsection*{Exercise 3.7.9}
+\textbf{Question.}
+Show that
+\[
+  \Prob\!\left(
+    n^2\min_{1\le m\le n}(V^n_m-V^n_{m-1})>x
+  \right)\to e^{-x}.
+\]
+
+\textbf{Solution.}
+Let $D_{m,n}=V^n_m-V^n_{m-1}$ and put $a=x/n^2$.  The uniform spacings
+have the Dirichlet$(1,\ldots,1)$ distribution on the simplex.  Therefore
+the probability that $n$ specified spacings all exceed $a$ is the ratio
+of simplex volumes after translating those $n$ coordinates by $a$:
+\[
+  \Prob(D_{1,n}>a,\ldots,D_{n,n}>a)
+  =
+  (1-na)^n.
+\]
+With $a=x/n^2$ this becomes
+\[
+  \left(1-\frac{x}{n}\right)^n\to e^{-x}.
+\]
+Hence
+\[
+  \Prob\!\left(
+    n^2\min_{1\le m\le n}D_{m,n}>x
+  \right)\to e^{-x}.
+\]
+
+\textbf{Knowledge used.}
+Dirichlet distribution of uniform spacings, simplex volume ratios,
+minimum spacing limit.
+
+\section*{Section 3.8: Stable Laws}
+
+\subsection*{Exercise 3.8.1}
+\textbf{Question.}
+Show that when $\alpha<1$, the centering in Theorem 3.8.2 is unnecessary;
+that is, one may take $b_n=0$.
+
+\textbf{Solution.}
+For $\alpha<1$, the large jumps determine the stable limit.  The
+centering term is
+\[
+  n\E\left[\frac{X}{a_n}\mathbf{1}_{\{|X|\le a_n\}}\right]
+  =
+  \frac{n}{a_n}\E[X\mathbf{1}_{\{|X|\le a_n\}}],
+\]
+where $a_n$ is chosen so that $n\Prob(|X|>a_n)$ stays bounded away from
+$0$ and $\infty$.  If the tails are regularly varying with index
+$-\alpha$, then the truncated first moment is of order
+$a_n\Prob(|X|>a_n)$ when $\alpha<1$.  Thus the centering term has a finite
+limit that is already absorbed into the drift parameter of the limiting
+stable law.  Equivalently, the limiting Poisson sum of jumps
+\[
+  \sum_j x_j
+\]
+converges absolutely near $0$ when $\alpha<1$, since
+\[
+  \int_{|x|\le1}|x|\,|x|^{-1-\alpha}\,dx<\infty.
+\]
+Hence no compensating small-jump centering is needed, and we may take
+$b_n=0$.
+
+\textbf{Knowledge used.}
+Stable limit theorem, regular variation, truncated means, Poisson
+large-jump representation.
+
+\subsection*{Exercise 3.8.2}
+\textbf{Question.}
+For $F_n$ defined by
+\[
+  F_n=\sum_{m=1}^n \frac{\operatorname{sgn}(X_{n,m})}{|X_{n,m}|^p},
+\]
+where the $X_{n,m}$ are independent uniform random variables on
+$[-n,n]$, show that:
+\[
+  \text{(i) if }p<1/2,\quad
+  \frac{F_n}{n^{1/2-p}}\Rightarrow c\chi,
+\]
+and
+\[
+  \text{(ii) if }p=1/2,\quad
+  \frac{F_n}{(\log n)^{1/2}}\Rightarrow c\chi,
+\]
+where $\chi$ is standard normal and $c$ is the appropriate normalizing
+constant.
+
+\textbf{Solution.}
+Write $X_{n,m}=nY_m$, where $Y_m$ is uniform on $[-1,1]$, and set
+\[
+  Z_m=\frac{\operatorname{sgn}(Y_m)}{|Y_m|^p}.
+\]
+Then
+\[
+  F_n=n^{-p}\sum_{m=1}^n Z_m.
+\]
+
+If $p<1/2$, then $\E Z_m=0$ and $\E Z_m^2<\infty$.  The ordinary central
+limit theorem gives
+\[
+  \frac{1}{\sqrt n}\sum_{m=1}^n Z_m\Rightarrow c\chi.
+\]
+Multiplying by $n^{-p}$ gives
+\[
+  \frac{F_n}{n^{1/2-p}}\Rightarrow c\chi.
+\]
+
+If $p=1/2$, then $Z_m$ is symmetric and
+\[
+  \Prob(|Z_m|>x)=x^{-2}
+\]
+for large $x$.  This is the borderline infinite-variance normal domain
+of attraction, so
+\[
+  \frac{1}{\sqrt{n\log n}}\sum_{m=1}^n Z_m\Rightarrow c\chi.
+\]
+Since $F_n=n^{-1/2}\sum Z_m$, this becomes
+\[
+  \frac{F_n}{\sqrt{\log n}}\Rightarrow c\chi.
+\]
+
+\textbf{Knowledge used.}
+Central limit theorem, borderline normal attraction, heavy-tail tail
+calculation.
+
+\subsection*{Exercise 3.8.3}
+\textbf{Question.}
+Let $Y$ be a stable law with $\kappa=1$.  Use Theorem 3.8.2 to conclude
+that $Y\ge0$ if $\alpha<1$.
+
+\textbf{Solution.}
+The condition $\kappa=1$ means that all of the limiting tail mass is on
+the positive side.  For $\alpha<1$, Exercise 3.8.1 says no centering is
+needed.  Thus $Y$ is the weak limit of normalized sums of nonnegative
+large jumps.  A weak limit of nonnegative random variables is
+nonnegative, so
+\[
+  \Prob(Y\ge0)=1.
+\]
+
+\textbf{Knowledge used.}
+One-sided stable laws, stable limit theorem, absence of centering for
+$\alpha<1$.
+
+\subsection*{Exercise 3.8.4}
+\textbf{Question.}
+Let $X$ be a symmetric stable random variable with index $\alpha$.
+Show that:
+\[
+  \text{(i) } \E|X|^p<\infty \text{ for }p<\alpha,
+\]
+and
+\[
+  \text{(ii) } \Prob(|X|\ge x)\ge Cx^{-\alpha}
+  \text{ for large }x,
+\]
+so that $\E|X|^\alpha=\infty$.
+
+\textbf{Solution.}
+For a symmetric stable law,
+\[
+  \phi(t)=\E e^{itX}=e^{-c|t|^\alpha}
+\]
+for some $c>0$.  The fractional-moment identity from Section 3.3 gives,
+for $0<p<2$,
+\[
+  \E|X|^p
+  =
+  C_p\int_0^\infty \frac{1-\Re\phi(t)}{t^{p+1}}\,dt.
+\]
+Near $0$,
+\[
+  1-\phi(t)\sim c|t|^\alpha,
+\]
+so the integral behaves like
+\[
+  \int_0^1 t^{\alpha-p-1}\,dt,
+\]
+which is finite exactly when $p<\alpha$.  Away from $0$, the integrand is
+bounded by a constant times $t^{-p-1}$, which is integrable.
+Therefore $\E|X|^p<\infty$ for $p<\alpha$.
+
+The Poisson large-jump representation of a symmetric stable law gives a
+nonzero intensity of jumps larger than $x$ of order $x^{-\alpha}$.
+Keeping one such large jump and controlling the remaining smaller-jump
+sum yields, for large $x$,
+\[
+  \Prob(|X|\ge x)\ge Cx^{-\alpha}.
+\]
+Consequently,
+\[
+  \E|X|^\alpha
+  =
+  \alpha\int_0^\infty x^{\alpha-1}\Prob(|X|>x)\,dx
+  \ge
+  C\int^\infty \frac{dx}{x}
+  =
+  \infty.
+\]
+
+\textbf{Knowledge used.}
+Characteristic functions of symmetric stable laws, fractional moments,
+stable tail lower bounds, tail-integral formula.
+
+\subsection*{Exercise 3.8.5}
+\textbf{Question.}
+Let $Y,Y_1,Y_2,\ldots$ be independent copies of a stable law with index
+$\alpha$.  Theorem 3.8.8 implies that there are constants $\alpha_k$ and
+$\beta_k$ such that
+\[
+  Y_1+\cdots+Y_k\stackrel{d}{=}\alpha_kY+\beta_k.
+\]
+Use the proof, Theorem 3.8.2, and Exercise 3.8.1 to conclude that:
+\[
+  \text{(i) }\alpha_k=k^{1/\alpha},
+  \qquad
+  \text{(ii) if }\alpha<1,\text{ then }\beta_k=0.
+\]
+
+\textbf{Solution.}
+The defining scaling of an $\alpha$-stable law is that adding $k$
+independent copies multiplies the scale by $k^{1/\alpha}$.  Equivalently,
+the normalization in Theorem 3.8.2 satisfies
+\[
+  a_{kn}\sim k^{1/\alpha}a_n.
+\]
+Therefore
+\[
+  \alpha_k=k^{1/\alpha}.
+\]
+
+When $\alpha<1$, Exercise 3.8.1 says that the centering constants may be
+chosen equal to $0$.  Hence no translation is introduced in the stable
+limit, and
+\[
+  \beta_k=0.
+\]
+
+\textbf{Knowledge used.}
+Stability, regular variation of normalizing constants, centering for
+$\alpha<1$.
+
+\subsection*{Exercise 3.8.6}
+\textbf{Question.}
+Let $Y$ be a stable law with index $\alpha<1$ and $\kappa=1$, so that
+$Y\ge0$.  Let
+\[
+  \psi(\lambda)=\E e^{-\lambda Y}.
+\]
+Using Exercise 3.8.5, conclude that
+\[
+  \psi(\lambda)=e^{-c\lambda^\alpha}
+\]
+for some $c>0$.
+
+\textbf{Solution.}
+Exercise 3.8.5 gives, for each integer $n\ge1$,
+\[
+  Y_1+\cdots+Y_n\stackrel{d}{=}n^{1/\alpha}Y.
+\]
+Taking Laplace transforms,
+\[
+  \psi(\lambda)^n=\psi(n^{1/\alpha}\lambda).
+\]
+Let $f(\lambda)=-\log\psi(\lambda)$.  Then
+\[
+  f(n^{1/\alpha}\lambda)=nf(\lambda).
+\]
+By applying this identity to ratios of integers and using continuity of
+$f$, we get
+\[
+  f(r\lambda)=r^\alpha f(\lambda),\qquad r>0.
+\]
+Taking $\lambda=1$ gives
+\[
+  f(\lambda)=c\lambda^\alpha,\qquad c=f(1)>0.
+\]
+Hence
+\[
+  \psi(\lambda)=e^{-c\lambda^\alpha}.
+\]
+
+\textbf{Knowledge used.}
+Laplace transforms, positive stable laws, stability scaling, continuity
+functional equation.
+
+\subsection*{Exercise 3.8.7}
+\textbf{Question.}
+Show that:
+\[
+  \text{(i) if }X\text{ is symmetric stable with index }\alpha
+  \text{ and }Y\ge0\text{ is independent stable with index }\beta<1,
+\]
+then $XY^{1/\alpha}$ is symmetric stable with index $\alpha\beta$.
+
+Also let $W_1,W_2$ be independent standard normal random variables.
+Check that $1/W_2^2$ has density
+\[
+  (2\pi y^3)^{-1/2}e^{-1/(2y)},\qquad y>0,
+\]
+and use this to conclude that $W_1/W_2$ is Cauchy.
+
+\textbf{Solution.}
+If $X$ is symmetric $\alpha$-stable, then for some $c>0$,
+\[
+  \E e^{itX}=e^{-c|t|^\alpha}.
+\]
+Conditioning on $Y$,
+\[
+  \E e^{itXY^{1/\alpha}}
+  =
+  \E\left[e^{-c|t|^\alpha Y}\right].
+\]
+Since $Y$ is positive $\beta$-stable, Exercise 3.8.6 gives
+\[
+  \E e^{-sY}=e^{-c's^\beta}.
+\]
+Therefore
+\[
+  \E e^{itXY^{1/\alpha}}
+  =
+  e^{-c'(c|t|^\alpha)^\beta}
+  =
+  e^{-C|t|^{\alpha\beta}},
+\]
+which is the characteristic function of a symmetric stable law with
+index $\alpha\beta$.
+
+For $Y=1/W_2^2$, the transformation $w=\pm y^{-1/2}$ gives
+\[
+  f_Y(y)
+  =
+  2\frac{1}{\sqrt{2\pi}}e^{-1/(2y)}
+  \frac{1}{2}y^{-3/2}
+  =
+  (2\pi y^3)^{-1/2}e^{-1/(2y)},\qquad y>0.
+\]
+This is the positive stable density with index $1/2$.  Since $W_1$ is
+symmetric stable with index $2$, part (i) implies that
+\[
+  W_1Y^{1/2}=\frac{W_1}{|W_2|}
+\]
+is symmetric stable with index $1$, hence Cauchy.  Multiplying by the
+independent random sign of $W_2$ does not change the symmetric
+distribution, so
+\[
+  \frac{W_1}{W_2}
+\]
+is Cauchy.
+
+\textbf{Knowledge used.}
+Characteristic functions, subordination of stable laws, positive
+one-half stable density, normal ratio representation of the Cauchy law.
+
+\section*{Section 3.9: Infinitely Divisible Distributions}
+
+\subsection*{Exercise 3.9.1}
+\textbf{Question.}
+Show that the gamma distribution is infinitely divisible.
+
+\textbf{Solution.}
+Let $X$ have the gamma distribution with shape $a>0$ and rate
+$\lambda>0$.  Its characteristic function is
+\[
+  \phi_X(t)=\left(\frac{\lambda}{\lambda-it}\right)^a.
+\]
+For each integer $n\ge1$, let $X_{n,1},\ldots,X_{n,n}$ be independent
+gamma random variables with shape $a/n$ and rate $\lambda$.  Then
+\[
+  \prod_{j=1}^n \phi_{X_{n,j}}(t)
+  =
+  \left(\frac{\lambda}{\lambda-it}\right)^{a}.
+\]
+Thus $X$ has the same distribution as
+$X_{n,1}+\cdots+X_{n,n}$ for every $n$, so the gamma distribution is
+infinitely divisible.
+
+\textbf{Knowledge used.}
+Gamma characteristic function, convolution of gamma laws, infinite
+divisibility.
+
+\subsection*{Exercise 3.9.2}
+\textbf{Question.}
+Show that the distribution of a bounded random variable $Z$ is
+infinitely divisible if and only if $Z$ is constant.  Hint: show that
+$\operatorname{var}(Z)=0$.
+
+\textbf{Solution.}
+A constant random variable is trivially infinitely divisible.  Conversely,
+suppose $Z$ is bounded and infinitely divisible.  If the support of $Z$
+has diameter $D<\infty$, then for each $n$ there are independent
+identically distributed random variables $Y_{n,1},\ldots,Y_{n,n}$ such
+that
+\[
+  Z\stackrel{d}{=}Y_{n,1}+\cdots+Y_{n,n}.
+\]
+The support of an $n$-fold convolution has diameter $n$ times the
+diameter of the support of one summand.  Therefore the support diameter
+of $Y_{n,1}$ is at most $D/n$.  Hence
+\[
+  \operatorname{var}(Y_{n,1})\le \frac{D^2}{4n^2}.
+\]
+Since the summands are independent,
+\[
+  \operatorname{var}(Z)
+  =
+  n\,\operatorname{var}(Y_{n,1})
+  \le
+  \frac{D^2}{4n}.
+\]
+Letting $n\to\infty$ gives $\operatorname{var}(Z)=0$, so $Z$ is constant
+almost surely.
+
+\textbf{Knowledge used.}
+Infinite divisibility, support of convolutions, variance additivity,
+bounded support variance bound.
+
+\subsection*{Exercise 3.9.3}
+\textbf{Question.}
+Show that if $\mu$ is infinitely divisible, then its characteristic
+function $\phi$ never vanishes.
+
+\textbf{Solution.}
+Let
+\[
+  \psi(t)=|\phi(t)|^2.
+\]
+This is the characteristic function of $X-X'$, where $X$ and $X'$ are
+independent with law $\mu$.  It is also infinitely divisible.
+
+Assume for contradiction that $\phi(t_0)=0$.  Then $\psi(t_0)=0$.  Since
+$\psi$ is infinitely divisible, for every $n$ there is a characteristic
+function $\psi_n$ such that
+\[
+  \psi(t)=\psi_n(t)^n.
+\]
+Choose a small interval around $0$ on which $\psi(t)>0$.  On this
+interval,
+\[
+  \psi_n(t)=\psi(t)^{1/n}\to1.
+\]
+By the continuity theorem, the laws with characteristic functions
+$\psi_n$ converge weakly to the point mass at $0$.  Hence
+\[
+  \psi_n(t_0)\to1.
+\]
+But $\psi(t_0)=0$ implies $\psi_n(t_0)=0$ for every $n$, a contradiction.
+Therefore $\phi$ has no zeros.
+
+\textbf{Knowledge used.}
+Characteristic functions, symmetrization, infinite divisibility,
+continuity theorem.
+
+\subsection*{Exercise 3.9.4}
+\textbf{Question.}
+Find the Levy measure of the limit distribution in Exercise 3.4.13(iii).
+
+\textbf{Solution.}
+The limit in Exercise 3.4.13(iii) has characteristic function
+\[
+  \phi(t)=
+  \exp\left\{
+    \int_0^1 \frac{\cos(tx)-1}{x}\,dx
+  \right\}.
+\]
+This is a symmetric infinitely divisible law.  In the Levy-Khinchin
+formula the imaginary compensation terms cancel for symmetric measures.
+Thus we want
+\[
+  \int_{\mathbb R}(\cos(tx)-1)\,\nu(dx)
+  =
+  \int_0^1 \frac{\cos(tx)-1}{x}\,dx.
+\]
+The required Levy measure is therefore
+\[
+  \nu(dx)
+  =
+  \frac{1}{2|x|}\mathbf{1}_{\{0<|x|\le1\}}\,dx.
+\]
+Indeed,
+\[
+  \int_{-1}^1(\cos(tx)-1)\frac{1}{2|x|}\,dx
+  =
+  \int_0^1\frac{\cos(tx)-1}{x}\,dx.
+\]
+
+\textbf{Knowledge used.}
+Levy-Khinchin formula, symmetric Levy measures, characteristic exponent
+matching.
+
+\section*{Section 3.10: Multidimensional Distributions}
+
+\subsection*{Exercise 3.10.1}
+\textbf{Question.}
+Show how to recover the one-dimensional marginal distribution functions
+from a $d$-dimensional distribution function $F$.
+
+\textbf{Solution.}
+Let $X=(X_1,\ldots,X_d)$ have distribution function $F$.  The marginal
+distribution function of $X_i$ is
+\[
+  F_i(x)
+  =
+  \Prob(X_i\le x).
+\]
+This is obtained from $F$ by sending all other coordinates to infinity:
+\[
+  F_i(x)
+  =
+  \lim_{x_j\to\infty,\ j\ne i}
+  F(x_1,\ldots,x_{i-1},x,x_{i+1},\ldots,x_d).
+\]
+Indeed, the events
+\[
+  \{X_i\le x,\ X_j\le x_j\text{ for }j\ne i\}
+\]
+increase to $\{X_i\le x\}$ as the other coordinates tend to infinity.
+
+\textbf{Knowledge used.}
+Marginal distributions, continuity from below, multidimensional
+distribution functions.
+
+\subsection*{Exercise 3.10.2}
+\textbf{Question.}
+Let $F_1,\ldots,F_d$ be distribution functions.  Show that for
+$\alpha\in[-1,1]$,
+\[
+  F(x_1,\ldots,x_d)
+  =
+  \left\{
+    1+\alpha\prod_{i=1}^d(1-F_i(x_i))
+  \right\}
+  \prod_{j=1}^d F_j(x_j)
+\]
+is a distribution function with marginals $F_1,\ldots,F_d$.
+
+\textbf{Solution.}
+It is enough to verify the corresponding copula on $[0,1]^d$:
+\[
+  C(u_1,\ldots,u_d)
+  =
+  \prod_{j=1}^d u_j
+  +
+  \alpha\prod_{j=1}^d u_j(1-u_j).
+\]
+If the $u_j$ are continuity points, its mixed derivative is
+\[
+  \frac{\partial^d C}{\partial u_1\cdots\partial u_d}
+  =
+  1+\alpha\prod_{j=1}^d(1-2u_j).
+\]
+Since $\prod_j(1-2u_j)\in[-1,1]$ and $\alpha\in[-1,1]$, this derivative
+is nonnegative.  Hence $C$ is $d$-increasing.  The formula is also
+right-continuous and has the correct boundary behavior.
+
+For the marginals, if all variables except $u_i$ are set equal to $1$,
+then the second product vanishes and
+\[
+  C(1,\ldots,1,u_i,1,\ldots,1)=u_i.
+\]
+Therefore
+\[
+  F(x_1,\ldots,x_d)=C(F_1(x_1),\ldots,F_d(x_d))
+\]
+is a joint distribution function with marginal distribution functions
+$F_1,\ldots,F_d$.
+
+\textbf{Knowledge used.}
+Copulas, Frechet construction, mixed derivatives, marginal recovery.
+
+\subsection*{Exercise 3.10.3}
+\textbf{Question.}
+If a random vector has a continuous density $f$, show that
+\[
+  \frac{\partial^d}{\partial x_1\cdots\partial x_d}
+  F(x_1,\ldots,x_d)
+  =
+  f(x_1,\ldots,x_d).
+\]
+
+\textbf{Solution.}
+If $X$ has continuous density $f$, then
+\[
+  F(x_1,\ldots,x_d)
+  =
+  \int_{-\infty}^{x_1}\cdots\int_{-\infty}^{x_d}
+  f(y_1,\ldots,y_d)\,dy_d\cdots dy_1.
+\]
+Applying the fundamental theorem of calculus successively in
+$x_d,x_{d-1},\ldots,x_1$ gives
+\[
+  \frac{\partial^d F}{\partial x_1\cdots\partial x_d}
+  =
+  f(x_1,\ldots,x_d),
+\]
+at every point of continuity of $f$, hence everywhere under the stated
+continuity assumption.
+
+\textbf{Knowledge used.}
+Joint density, distribution function, iterated integrals, fundamental
+theorem of calculus.
+
+\subsection*{Exercise 3.10.4}
+\textbf{Question.}
+Show that if $X_n\Rightarrow X$ as random vectors in $\mathbb R^d$, then
+each coordinate $X_{n,i}\Rightarrow X_i$.
+
+\textbf{Solution.}
+The coordinate projection
+\[
+  \pi_i(x_1,\ldots,x_d)=x_i
+\]
+is continuous.  By the continuous mapping theorem,
+\[
+  \pi_i(X_n)\Rightarrow \pi_i(X).
+\]
+That is,
+\[
+  X_{n,i}\Rightarrow X_i.
+\]
+
+\textbf{Knowledge used.}
+Weak convergence in $\mathbb R^d$, coordinate projections, continuous
+mapping theorem.
+
+\subsection*{Exercise 3.10.5}
+\textbf{Question.}
+If $\phi$ is a characteristic function on $\mathbb R$, describe the
+distribution with characteristic function
+\[
+  \psi(t_1,\ldots,t_d)=\phi(t_1+\cdots+t_d).
+\]
+
+\textbf{Solution.}
+Let $X$ have characteristic function $\phi$, and define the random vector
+\[
+  Y=(X,\ldots,X)\in\mathbb R^d.
+\]
+Then
+\[
+  \E e^{i(t_1Y_1+\cdots+t_dY_d)}
+  =
+  \E e^{i(t_1+\cdots+t_d)X}
+  =
+  \phi(t_1+\cdots+t_d).
+\]
+Thus $\psi$ is the characteristic function of the distribution
+concentrated on the diagonal
+\[
+  \{(x,\ldots,x):x\in\mathbb R\},
+\]
+with one-dimensional law determined by $\phi$.
+
+\textbf{Knowledge used.}
+Multivariate characteristic functions, diagonal embeddings, uniqueness
+of characteristic functions.
+
+\subsection*{Exercise 3.10.6}
+\textbf{Question.}
+Show that random variables $X_1,\ldots,X_d$ are independent if and only
+if their joint characteristic function factors as
+\[
+  \phi(t_1,\ldots,t_d)
+  =
+  \prod_{j=1}^d \phi_j(t_j),
+\]
+where $\phi_j$ is the characteristic function of $X_j$.
+
+\textbf{Solution.}
+If $X_1,\ldots,X_d$ are independent, then
+\[
+  \phi(t_1,\ldots,t_d)
+  =
+  \E\prod_{j=1}^d e^{it_jX_j}
+  =
+  \prod_{j=1}^d \E e^{it_jX_j}
+  =
+  \prod_{j=1}^d\phi_j(t_j).
+\]
+
+Conversely, suppose the factorization holds.  Let
+$Y_1,\ldots,Y_d$ be independent random variables with
+$Y_j\stackrel{d}{=}X_j$.  The joint characteristic function of
+$(Y_1,\ldots,Y_d)$ is exactly $\prod_j\phi_j(t_j)$, which equals the
+joint characteristic function of $(X_1,\ldots,X_d)$.  By uniqueness of
+characteristic functions,
+\[
+  (X_1,\ldots,X_d)\stackrel{d}{=}(Y_1,\ldots,Y_d),
+\]
+so $X_1,\ldots,X_d$ are independent.
+
+\textbf{Knowledge used.}
+Characteristic functions, independence, product measures, uniqueness
+theorem.
+
+\subsection*{Exercise 3.10.7}
+\textbf{Question.}
+Show that the coordinates of a multivariate normal random vector are
+independent if and only if all off-diagonal covariances are zero.
+
+\textbf{Solution.}
+Let $X$ be multivariate normal with mean vector $\theta$ and covariance
+matrix $\Gamma$.  Its characteristic function is
+\[
+  \phi(t)
+  =
+  \exp\left\{
+    i t\theta^T-\frac12 t\Gamma t^T
+  \right\}.
+\]
+If the coordinates are independent, then their covariances are zero.
+
+Conversely, if all off-diagonal covariances are zero, then $\Gamma$ is
+diagonal.  Therefore
+\[
+  t\Gamma t^T=\sum_{j=1}^d \Gamma_{jj}t_j^2,
+\]
+and
+\[
+  \phi(t)
+  =
+  \prod_{j=1}^d
+  \exp\left\{
+    i\theta_jt_j-\frac12\Gamma_{jj}t_j^2
+  \right\}.
+\]
+This is the product of the marginal characteristic functions.  By
+Exercise 3.10.6, the coordinates are independent.
+
+\textbf{Knowledge used.}
+Multivariate normal characteristic function, covariance matrix,
+independence criterion by characteristic functions.
+
+\subsection*{Exercise 3.10.8}
+\textbf{Question.}
+Show that $X$ is multivariate normal with mean vector $\theta$ and
+covariance matrix $\Gamma$ if and only if every linear combination
+$cX^T$ is normal with mean $c\theta^T$ and variance $c\Gamma c^T$.
+
+\textbf{Solution.}
+If $X$ is multivariate normal with mean $\theta$ and covariance
+$\Gamma$, then for every row vector $c$,
+\[
+  cX^T
+\]
+is normal with mean $c\theta^T$ and variance $c\Gamma c^T$ by the
+definition and characteristic function of the multivariate normal.
+
+Conversely, suppose every linear combination $cX^T$ is normal with mean
+$c\theta^T$ and variance $c\Gamma c^T$.  Then for every
+$t\in\mathbb R^d$,
+\[
+  \E e^{itX^T}
+  =
+  \E e^{i(tX^T)}
+  =
+  \exp\left\{
+    i t\theta^T-\frac12 t\Gamma t^T
+  \right\}.
+\]
+This is the characteristic function of the multivariate normal
+$N(\theta,\Gamma)$.  By uniqueness of characteristic functions,
+$X$ has that multivariate normal distribution.
+
+\textbf{Knowledge used.}
+Cramer-Wold viewpoint, linear combinations, multivariate normal
+characteristic function, uniqueness theorem.
+
+\end{document}

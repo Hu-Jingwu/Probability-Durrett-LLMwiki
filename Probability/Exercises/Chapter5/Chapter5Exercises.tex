@@ -1,0 +1,3059 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!60!black
+}
+
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\Knowledge}[1]{%
+  \par\smallskip\noindent
+  \textbf{Knowledge used.}
+  {\small\color{blue!60!black}\raggedright #1\par}
+  \par\smallskip
+}
+
+\title{Chapter 5 Exercises}
+\author{\textsc{Solutions to Rick Durrett's}\\
+\textit{Probability: Theory and Examples}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\noindent
+These solutions use the local Chapter 5 LLM/Viki knowledge set in
+\path{Probability/LLM_Viki_Dataset/Chapter5_Knowledge}.  The cited
+knowledge IDs refer to entries in
+\path{chapter5_knowledge_pieces.jsonl}.
+
+\section*{Exercise 5.1.1}
+
+\noindent\textbf{Question.}
+Let $\xi_1,\xi_2,\ldots$ be i.i.d. random variables taking values in
+$\{1,2,\ldots,N\}$, each with probability $1/N$.  Show that
+\[
+  X_n=\left|\{\xi_1,\ldots,\xi_n\}\right|
+\]
+is a Markov chain and compute its transition probability.
+
+\Knowledge{
+\path{durrett_ch5_markov_property_countable};
+\path{durrett_ch5_general_transition_probability}.
+}
+
+\noindent\textbf{Solution.}
+The state $X_n$ is the number of distinct values seen among the first
+$n$ observations.  If $X_n=k$, then exactly $k$ of the $N$ possible
+values have already appeared.  The next observation $\xi_{n+1}$ is
+independent of the past, so
+\[
+  \Prob(X_{n+1}=k+1\mid X_0,\ldots,X_n)
+  =\frac{N-k}{N},
+\]
+because there are $N-k$ unseen values.  Similarly,
+\[
+  \Prob(X_{n+1}=k\mid X_0,\ldots,X_n)
+  =\frac{k}{N},
+\]
+because drawing one of the already observed values does not change the
+number of distinct values.  These probabilities depend on the past only
+through $X_n$, so $(X_n)$ is a Markov chain.
+
+If we include the natural initial state $X_0=0$, the state space is
+$\{0,1,\ldots,N\}$ and the transition probability is
+\[
+  p(k,j)=
+  \begin{cases}
+    k/N, & j=k,\\
+    (N-k)/N, & j=k+1,\\
+    0, & \text{otherwise},
+  \end{cases}
+  \qquad 0\le k\le N,
+\]
+with the convention that $p(N,N)=1$.
+
+\section*{Exercise 5.1.2}
+
+\noindent\textbf{Question.}
+Let $\xi_1,\xi_2,\ldots$ be i.i.d. random variables taking values in
+$\{-1,1\}$, each with probability $1/2$.  Let $S_0=0$,
+$S_n=\xi_1+\cdots+\xi_n$, and
+\[
+  X_n=\max\{S_m:0\le m\le n\}.
+\]
+Show that $X_n$ is not a Markov chain.
+
+\Knowledge{
+\path{durrett_ch5_markov_property_countable};
+\path{durrett_ch5_random_walk_chain}.
+}
+
+\noindent\textbf{Solution.}
+The record maximum $X_n$ does not remember the current location $S_n$.
+That missing information affects whether the next step can create a new
+maximum.
+
+Consider the process through time $3$.  On the event
+\[
+  A=\{X_0=0,\ X_1=0,\ X_2=0,\ X_3=1\},
+\]
+we must have the increment sequence $(-1,+1,+1)$, so $S_3=1$ and
+$X_3=1$.  Therefore
+\[
+  \Prob(X_4=2\mid A)=\Prob(\xi_4=1)=\frac12.
+\]
+
+Now consider the event
+\[
+  B=\{X_0=0,\ X_1=1,\ X_2=1,\ X_3=1\}.
+\]
+Then $\xi_1=1$, $\xi_2=-1$, and $\xi_3$ may be either $1$ or $-1$.
+Conditional on $B$, these two possibilities are equally likely.  If
+$\xi_3=1$, then $S_3=1$ and the next maximum reaches $2$ with
+probability $1/2$.  If $\xi_3=-1$, then $S_3=-1$ and one step cannot
+reach level $2$.  Hence
+\[
+  \Prob(X_4=2\mid B)
+  =\frac12\cdot\frac12+\frac12\cdot 0
+  =\frac14.
+\]
+
+Both events have $X_3=1$, but the conditional probabilities of
+$X_4=2$ are different.  Thus the conditional law of the future depends
+on more than the current value of $X_n$, and $(X_n)$ is not a Markov
+chain.
+
+\section*{Exercise 5.1.3}
+
+\noindent\textbf{Question.}
+Let $\xi_0,\xi_1,\ldots$ be i.i.d. random variables taking values in
+$\{H,T\}$, each with probability $1/2$.  Show that
+$X_n=(\xi_n,\xi_{n+1})$ is a Markov chain and compute its transition
+probability $p$.  What is $p^2$?
+
+\Knowledge{
+\path{durrett_ch5_markov_property_countable};
+\path{durrett_ch5_chapman_kolmogorov}.
+}
+
+\noindent\textbf{Solution.}
+The state space is
+\[
+  \mathcal{S}=\{HH,HT,TH,TT\}.
+\]
+If $X_n=(a,b)$, then
+\[
+  X_{n+1}=(\xi_{n+1},\xi_{n+2})=(b,\xi_{n+2}).
+\]
+The variable $\xi_{n+2}$ is independent of the past and is equally
+likely to be $H$ or $T$.  Therefore
+\[
+  p\bigl((a,b),(c,d)\bigr)
+  =
+  \begin{cases}
+    1/2, & c=b,\\
+    0, & c\ne b.
+  \end{cases}
+\]
+Equivalently, from $(a,b)$ the chain moves to $(b,H)$ and $(b,T)$ with
+probability $1/2$ each.
+
+After two steps,
+\[
+  X_{n+2}=(\xi_{n+2},\xi_{n+3}),
+\]
+and $\xi_{n+2}$ and $\xi_{n+3}$ are independent fair coin tosses,
+independent of $X_n$.  Hence
+\[
+  p^2\bigl((a,b),(c,d)\bigr)=\frac14
+  \qquad
+  \text{for all } (a,b),(c,d)\in\mathcal{S}.
+\]
+In the order $(HH,HT,TH,TT)$,
+\[
+  p=
+  \begin{pmatrix}
+  1/2 & 1/2 & 0 & 0\\
+  0 & 0 & 1/2 & 1/2\\
+  1/2 & 1/2 & 0 & 0\\
+  0 & 0 & 1/2 & 1/2
+  \end{pmatrix},
+  \qquad
+  p^2=
+  \begin{pmatrix}
+  1/4 & 1/4 & 1/4 & 1/4\\
+  1/4 & 1/4 & 1/4 & 1/4\\
+  1/4 & 1/4 & 1/4 & 1/4\\
+  1/4 & 1/4 & 1/4 & 1/4
+  \end{pmatrix}.
+\]
+
+\section*{Exercise 5.1.4}
+
+\noindent\textbf{Question.}
+Brother-sister mating.  In this scheme, two animals are mated, and among
+their direct descendants two individuals of opposite sex are selected at
+random.  These animals are mated and the process continues.  Suppose
+each individual can be one of three genotypes $AA$, $Aa$, $aa$, and
+suppose that the type of the offspring is determined by selecting a
+letter from each parent.  With these rules, the pair of genotypes in the
+$n$th generation is a Markov chain with six states:
+\[
+  AA,AA;\quad AA,Aa;\quad AA,aa;\quad Aa,Aa;\quad Aa,aa;\quad aa,aa.
+\]
+Compute its transition probability.
+
+\Knowledge{
+\path{durrett_ch5_markov_property_countable};
+\path{durrett_ch5_general_transition_probability}.
+}
+
+\noindent\textbf{Solution.}
+For a fixed parental pair, let
+\[
+  (p,q,r)
+  =
+  \bigl(\Prob(\text{offspring is }AA),
+        \Prob(\text{offspring is }Aa),
+        \Prob(\text{offspring is }aa)\bigr).
+\]
+The next brother-sister pair consists of two independent offspring,
+recorded as an unordered genotype pair.  Therefore the transition
+probabilities to the six states
+\[
+  AA,AA;\ AA,Aa;\ AA,aa;\ Aa,Aa;\ Aa,aa;\ aa,aa
+\]
+are
+\[
+  p^2,\quad 2pq,\quad 2pr,\quad q^2,\quad 2qr,\quad r^2.
+\]
+
+The Mendelian offspring distributions for the six parental states are
+\[
+\begin{array}{c|c}
+\text{parental state} & (p,q,r)\\ \hline
+AA,AA & (1,0,0)\\
+AA,Aa & (1/2,1/2,0)\\
+AA,aa & (0,1,0)\\
+Aa,Aa & (1/4,1/2,1/4)\\
+Aa,aa & (0,1/2,1/2)\\
+aa,aa & (0,0,1).
+\end{array}
+\]
+Thus, in the state order displayed above, the transition matrix is
+\[
+\begin{pmatrix}
+1 & 0 & 0 & 0 & 0 & 0\\
+1/4 & 1/2 & 0 & 1/4 & 0 & 0\\
+0 & 0 & 0 & 1 & 0 & 0\\
+1/16 & 1/4 & 1/8 & 1/4 & 1/4 & 1/16\\
+0 & 0 & 0 & 1/4 & 1/2 & 1/4\\
+0 & 0 & 0 & 0 & 0 & 1
+\end{pmatrix}.
+\]
+
+\section*{Exercise 5.1.5}
+
+\noindent\textbf{Question.}
+Bernoulli-Laplace model of diffusion.  Suppose two urns, which we call
+left and right, have $m$ balls each.  There are $b$ black balls, with
+$b\le m$, and $2m-b$ white balls.  At each time, we pick one ball from
+each urn and interchange them.  Let the state at time $n$ be the number
+of black balls in the left urn.  Compute the transition probability.
+
+\Knowledge{
+\path{durrett_ch5_markov_property_countable};
+\path{durrett_ch5_ehrenfest_chain};
+\path{durrett_ch5_general_transition_probability}.
+}
+
+\noindent\textbf{Solution.}
+Since $b\le m$, the possible states are $0,1,\ldots,b$.  If the current
+state is $i$, then the left urn contains $i$ black and $m-i$ white
+balls.  The right urn contains $b-i$ black and $m-b+i$ white balls.
+
+The number of black balls in the left urn increases by $1$ exactly when
+we choose a white ball from the left urn and a black ball from the right
+urn.  Hence
+\[
+  p(i,i+1)
+  =
+  \frac{m-i}{m}\cdot\frac{b-i}{m}.
+\]
+It decreases by $1$ exactly when we choose a black ball from the left urn
+and a white ball from the right urn.  Hence
+\[
+  p(i,i-1)
+  =
+  \frac{i}{m}\cdot\frac{m-b+i}{m}.
+\]
+It stays fixed when the two selected balls have the same color:
+\[
+  p(i,i)
+  =
+  \frac{i}{m}\cdot\frac{b-i}{m}
+  +
+  \frac{m-i}{m}\cdot\frac{m-b+i}{m}.
+\]
+All other transition probabilities are zero.  The boundary cases are
+included automatically because the relevant factors vanish when
+$i=0$ or $i=b$.
+
+\section*{Exercise 5.1.6}
+
+\noindent\textbf{Question.}
+Let $\theta,U_1,U_2,\ldots$ be independent and uniform on $(0,1)$.  Let
+$X_i=1$ if $U_i\le\theta$ and $X_i=-1$ if $U_i>\theta$, and let
+$S_n=X_1+\cdots+X_n$.  In words, we first pick $\theta$ according to the
+uniform distribution and then flip a coin with probability $\theta$ of
+heads to generate a random walk.  Compute
+\[
+  \Prob(X_{n+1}=1\mid X_1,\ldots,X_n)
+\]
+and conclude that $S_n$ is a temporally inhomogeneous Markov chain.
+This is due to the fact that ``$S_n$ is a sufficient statistic for
+estimating $\theta$.''
+
+\Knowledge{
+\path{durrett_ch5_markov_property_countable};
+\path{durrett_ch5_random_walk_chain}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  H_n=\#\{1\le i\le n:X_i=1\}.
+\]
+Then $H_n=(n+S_n)/2$.  Conditional on $\theta$, the variables
+$X_1,\ldots,X_n$ are i.i.d. with
+\[
+  \Prob(X_i=1\mid\theta)=\theta.
+\]
+Since the prior distribution of $\theta$ is uniform on $(0,1)$, the
+posterior density of $\theta$ given $X_1,\ldots,X_n$ is proportional to
+\[
+  \theta^{H_n}(1-\theta)^{n-H_n}.
+\]
+Thus the posterior distribution is
+\[
+  \theta\mid X_1,\ldots,X_n
+  \sim \operatorname{Beta}(H_n+1,n-H_n+1).
+\]
+Therefore the predictive probability of a head on the next toss is the
+posterior mean:
+\[
+  \Prob(X_{n+1}=1\mid X_1,\ldots,X_n)
+  =
+  \E(\theta\mid X_1,\ldots,X_n)
+  =
+  \frac{H_n+1}{n+2}.
+\]
+In terms of $S_n$,
+\[
+  \Prob(X_{n+1}=1\mid X_1,\ldots,X_n)
+  =
+  \frac{(n+S_n)/2+1}{n+2}
+  =
+  \frac{n+S_n+2}{2n+4}.
+\]
+
+Consequently,
+\[
+  \Prob(S_{n+1}=s+1\mid S_0,\ldots,S_n=s)
+  =
+  \frac{(n+s)/2+1}{n+2},
+\]
+and
+\[
+  \Prob(S_{n+1}=s-1\mid S_0,\ldots,S_n=s)
+  =
+  1-\frac{(n+s)/2+1}{n+2}
+  =
+  \frac{(n-s)/2+1}{n+2}.
+\]
+These transition probabilities depend only on the current value $s$ and
+the time $n$, not on the earlier path.  Hence $(S_n)$ is a temporally
+inhomogeneous Markov chain.
+
+\section*{Exercise 5.2.1}
+
+\noindent\textbf{Question.}
+Let $A\in\sigma(X_0,\ldots,X_n)$ and
+$B\in\sigma(X_n,X_{n+1},\ldots)$.  Use the Markov property to show that
+for any initial distribution $\mu$,
+\[
+  \Prob_\mu(A\cap B\mid X_n)
+  =
+  \Prob_\mu(A\mid X_n)\Prob_\mu(B\mid X_n).
+\]
+In words, the past and future are conditionally independent given the
+present.  Hint: Write the left-hand side as
+$\E_\mu(\E_\mu(\1_A\1_B\mid \mathcal{F}_n)\mid X_n)$.
+
+\Knowledge{
+\path{durrett_ch5_markov_property_shift};
+\path{durrett_ch5_general_transition_probability}.
+}
+
+\noindent\textbf{Solution.}
+Since $A\in\mathcal{F}_n$, the tower property gives
+\[
+  \Prob_\mu(A\cap B\mid X_n)
+  =
+  \E_\mu\!\left(\E_\mu(\1_A\1_B\mid\mathcal{F}_n)\mid X_n\right)
+  =
+  \E_\mu\!\left(\1_A\E_\mu(\1_B\mid\mathcal{F}_n)\mid X_n\right).
+\]
+The event $B$ is a measurable function of the future path
+$(X_n,X_{n+1},\ldots)$.  By the Markov property, there is a measurable
+function $\varphi$ such that
+\[
+  \E_\mu(\1_B\mid\mathcal{F}_n)=\varphi(X_n).
+\]
+Therefore
+\[
+  \Prob_\mu(A\cap B\mid X_n)
+  =
+  \E_\mu(\1_A\varphi(X_n)\mid X_n)
+  =
+  \varphi(X_n)\E_\mu(\1_A\mid X_n).
+\]
+Also,
+\[
+  \Prob_\mu(B\mid X_n)
+  =
+  \E_\mu(\E_\mu(\1_B\mid\mathcal{F}_n)\mid X_n)
+  =
+  \varphi(X_n).
+\]
+Combining the last two displays gives
+\[
+  \Prob_\mu(A\cap B\mid X_n)
+  =
+  \Prob_\mu(A\mid X_n)\Prob_\mu(B\mid X_n).
+\]
+
+\section*{Exercise 5.2.2}
+
+\noindent\textbf{Question.}
+Let $X_n$ be a Markov chain.  Use Levy's $0$-$1$ law to show that if
+\[
+  \Prob\left(\bigcup_{m=n+1}^\infty \{X_m\in B_m\}\,\middle|\,X_n\right)
+  \ge \delta>0
+  \quad\text{on } \{X_n\in A_n\},
+\]
+then
+\[
+  \Prob(\{X_n\in A_n\ \text{i.o.}\}-\{X_n\in B_n\ \text{i.o.}\})=0.
+\]
+
+\Knowledge{
+\path{durrett_ch5_markov_property_shift};
+\path{durrett_ch5_hitting_return_decomposition}.
+}
+
+\noindent\textbf{Solution.}
+For $N\ge0$, set
+\[
+  D_N=\bigcup_{m=N+1}^\infty \{X_m\in B_m\}.
+\]
+If $n>N$, then
+\[
+  D_N\supseteq \bigcup_{m=n+1}^\infty \{X_m\in B_m\}.
+\]
+Hence, using the Markov property and the hypothesis,
+\[
+  \Prob(D_N\mid\mathcal{F}_n)
+  \ge
+  \Prob\left(\bigcup_{m=n+1}^\infty \{X_m\in B_m\}\,\middle|\,\mathcal{F}_n\right)
+  =
+  \Prob\left(\bigcup_{m=n+1}^\infty \{X_m\in B_m\}\,\middle|\,X_n\right)
+  \ge \delta
+\]
+on $\{X_n\in A_n\}$.
+
+By Levy's $0$-$1$ law,
+\[
+  \Prob(D_N\mid\mathcal{F}_n)\longrightarrow \1_{D_N}
+  \qquad\text{a.s.}
+\]
+If $\{X_n\in A_n\ \text{i.o.}\}$ occurs, then along infinitely many
+$n>N$ the conditional probability above is at least $\delta$.  Therefore
+$\1_{D_N}=1$ on this event.  Since this holds for every $N$,
+\[
+  \{X_n\in A_n\ \text{i.o.}\}
+  \subseteq
+  \bigcap_{N=0}^\infty D_N
+  =
+  \{X_n\in B_n\ \text{i.o.}\}
+\]
+up to a null set.  This proves the desired result.
+
+\section*{Exercise 5.2.3}
+
+\noindent\textbf{Question.}
+A state $a$ is called absorbing if $P_a(X_1=a)=1$.  Let
+\[
+  D=\{X_n=a\ \text{for some }n\ge1\}
+\]
+and let $h(x)=P_x(D)$.  Use the result of the previous exercise to
+conclude that $h(X_n)\to0$ a.s. on $D^c$.  Here a.s. means
+$P_\mu$-a.s. for any initial distribution $\mu$.
+
+\Knowledge{
+\path{durrett_ch5_markov_property_countable};
+\path{durrett_ch5_hitting_return_decomposition};
+\path{durrett_ch5_strong_markov_property}.
+}
+
+\noindent\textbf{Solution.}
+Fix $\varepsilon>0$ and define
+\[
+  A_n=\{x:h(x)\ge\varepsilon\},
+  \qquad
+  B_n=\{a\}.
+\]
+If $X_n=x$ and $h(x)\ge\varepsilon$, then the probability of hitting
+$a$ at some future positive time is at least $\varepsilon$:
+\[
+  \Prob\left(\bigcup_{m=n+1}^\infty\{X_m=a\}\,\middle|\,X_n=x\right)
+  =h(x)\ge\varepsilon.
+\]
+Since $a$ is absorbing, hitting $a$ once implies $X_m=a$ for infinitely
+many $m$.  Exercise 5.2.2 gives
+\[
+  \Prob(\{h(X_n)\ge\varepsilon\ \text{i.o.}\}
+  -\{X_n=a\ \text{i.o.}\})=0.
+\]
+On $D^c$, the chain never hits $a$ at any positive time, so
+$\{X_n=a\ \text{i.o.}\}$ does not occur.  Hence
+\[
+  \Prob(\{h(X_n)\ge\varepsilon\ \text{i.o.}\}\cap D^c)=0.
+\]
+Taking $\varepsilon$ through the positive rationals shows that
+$\limsup_n h(X_n)=0$ on $D^c$.  Since $h\ge0$, this is exactly
+$h(X_n)\to0$ a.s. on $D^c$.
+
+\section*{Exercise 5.2.4}
+
+\noindent\textbf{Question.}
+First entrance decomposition.  Let
+$T_y=\inf\{n\ge1:X_n=y\}$.  Show that
+\[
+  p^n(x,y)
+  =
+  \sum_{m=1}^n P_x(T_y=m)p^{\,n-m}(y,y).
+\]
+
+\Knowledge{
+\path{durrett_ch5_strong_markov_property};
+\path{durrett_ch5_hitting_return_decomposition};
+\path{durrett_ch5_chapman_kolmogorov}.
+}
+
+\noindent\textbf{Solution.}
+On the event $\{X_n=y\}$, the first positive entrance time into $y$ must
+be some $m\in\{1,\ldots,n\}$.  These events are disjoint, so
+\[
+  p^n(x,y)
+  =
+  P_x(X_n=y)
+  =
+  \sum_{m=1}^n P_x(T_y=m,\ X_n=y).
+\]
+By the strong Markov property at $T_y$, conditional on $T_y=m$ the chain
+restarts from $y$ at time $m$.  Thus
+\[
+  P_x(X_n=y\mid T_y=m)=P_y(X_{n-m}=y)=p^{\,n-m}(y,y),
+\]
+and therefore
+\[
+  p^n(x,y)
+  =
+  \sum_{m=1}^n P_x(T_y=m)p^{\,n-m}(y,y).
+\]
+
+\section*{Exercise 5.2.5}
+
+\noindent\textbf{Question.}
+Show that
+\[
+  \sum_{m=0}^n P_x(X_m=x)
+  \ge
+  \sum_{m=k}^{n+k} P_x(X_m=x).
+\]
+
+\Knowledge{
+\path{durrett_ch5_chapman_kolmogorov};
+\path{durrett_ch5_hitting_return_decomposition}.
+}
+
+\noindent\textbf{Solution.}
+For any state $y$, the expected number of visits to $x$ during the first
+$n$ steps starting from $y$ is at most the corresponding quantity
+starting from $x$.  Indeed, let $T_x=\inf\{m\ge0:X_m=x\}$.  If $y=x$,
+there is equality.  If $y\ne x$, then by decomposing at the first visit
+to $x$,
+\[
+  \sum_{r=0}^n P_y(X_r=x)
+  =
+  \sum_{\ell=1}^n P_y(T_x=\ell)
+       \sum_{s=0}^{n-\ell} P_x(X_s=x)
+  \le
+  \sum_{s=0}^n P_x(X_s=x).
+\]
+Now use the Markov property at time $k$:
+\[
+\begin{aligned}
+  \sum_{m=k}^{n+k}P_x(X_m=x)
+  &=
+  \sum_{r=0}^n P_x(X_{k+r}=x)\\
+  &=
+  \sum_y P_x(X_k=y)\sum_{r=0}^n P_y(X_r=x)\\
+  &\le
+  \sum_y P_x(X_k=y)\sum_{r=0}^n P_x(X_r=x)\\
+  &=
+  \sum_{r=0}^n P_x(X_r=x).
+\end{aligned}
+\]
+
+\section*{Exercise 5.2.6}
+
+\noindent\textbf{Question.}
+Let $T_C=\inf\{n\ge1:X_n\in C\}$.  Suppose that $S-C$ is finite and for
+each $x\in S-C$,
+\[
+  P_x(T_C<\infty)>0.
+\]
+Then there are $N<\infty$ and $\epsilon>0$ such that for all
+$y\in S-C$,
+\[
+  P_y(T_C>kN)\le (1-\epsilon)^k.
+\]
+
+\Knowledge{
+\path{durrett_ch5_strong_markov_property};
+\path{durrett_ch5_hitting_return_decomposition}.
+}
+
+\noindent\textbf{Solution.}
+For each $y\in S-C$, the assumption $P_y(T_C<\infty)>0$ implies that
+there is an integer $N_y$ with
+\[
+  P_y(T_C\le N_y)>0.
+\]
+Since $S-C$ is finite, choose
+\[
+  N=\max_{y\in S-C}N_y,
+  \qquad
+  \epsilon=\min_{y\in S-C}P_y(T_C\le N).
+\]
+Then $N<\infty$ and $\epsilon>0$.
+
+For $y\in S-C$,
+\[
+  P_y(T_C>N)\le1-\epsilon.
+\]
+Using the Markov property at times $N,2N,\ldots$, on the event
+$\{T_C>jN\}$ the chain is still in $S-C$, so the conditional probability
+of avoiding $C$ for the next $N$ steps is at most $1-\epsilon$.  Thus
+\[
+  P_y(T_C>(j+1)N\mid\mathcal{F}_{jN})
+  \le 1-\epsilon
+  \qquad\text{on }\{T_C>jN\}.
+\]
+Induction gives
+\[
+  P_y(T_C>kN)\le(1-\epsilon)^k.
+\]
+
+\section*{Exercise 5.2.7}
+
+\noindent\textbf{Question.}
+Exit distributions.  Let $V_C=\inf\{n\ge0:X_n\in C\}$ and let
+\[
+  h(x)=P_x(V_A<V_B).
+\]
+Suppose $A\cap B=\varnothing$, $S-(A\cup B)$ is finite, and
+$P_x(V_{A\cup B}<\infty)>0$ for all $x\in S-(A\cup B)$.
+\begin{enumerate}[label=(\roman*)]
+\item Show that
+\[
+  h(x)=\sum_y p(x,y)h(y)\qquad x\notin A\cup B.
+\]
+\item Show that if $h$ satisfies this equation, then
+$h(X_{n\wedge V_{A\cup B}})$ is a martingale.
+\item Use this and Exercise 5.2.6 to conclude that
+$h(x)=P_x(V_A<V_B)$ is the only solution of this equation that is $1$
+on $A$ and $0$ on $B$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch5_expectation_operator_notation};
+\path{durrett_ch5_hitting_return_decomposition};
+\path{durrett_ch5_strong_markov_property}.
+}
+
+\noindent\textbf{Solution.}
+Let $\tau=V_{A\cup B}$.  If $x\notin A\cup B$, then after one step the
+chain is at $y$ with probability $p(x,y)$, and the future exit
+probability is $h(y)$.  Therefore
+\[
+  h(x)=\sum_y p(x,y)h(y),
+  \qquad x\notin A\cup B.
+\]
+Also $h=1$ on $A$ and $h=0$ on $B$.
+
+Now suppose $h$ is any function satisfying the displayed equation off
+$A\cup B$.  If $n\ge\tau$, then
+$h(X_{(n+1)\wedge\tau})=h(X_{n\wedge\tau})$.  If $n<\tau$, then
+$X_n\notin A\cup B$, so
+\[
+  \E\left(h(X_{(n+1)\wedge\tau})\mid\mathcal{F}_n\right)
+  =
+  \sum_y p(X_n,y)h(y)
+  =
+  h(X_n)
+  =
+  h(X_{n\wedge\tau}).
+\]
+Thus $h(X_{n\wedge\tau})$ is a martingale.
+
+By Exercise 5.2.6, $\tau<\infty$ a.s. and in fact its tail decays
+geometrically.  Since $S-(A\cup B)$ is finite and the boundary values
+are fixed, any solution $h$ is bounded.  Taking expectations in the
+stopped martingale identity gives
+\[
+  h(x)=E_x h(X_{n\wedge\tau}).
+\]
+Letting $n\to\infty$ and using bounded convergence,
+\[
+  h(x)=E_x h(X_\tau)
+  =
+  P_x(X_\tau\in A)
+  =
+  P_x(V_A<V_B).
+\]
+Therefore the exit probability is the unique solution with boundary
+values $1$ on $A$ and $0$ on $B$.
+
+\section*{Exercise 5.2.8}
+
+\noindent\textbf{Question.}
+Let $X_n$ be a Markov chain with $S=\{0,1,\ldots,N\}$ and suppose that
+$X_n$ is a martingale.  Let $V_x=\min\{n\ge0:X_n=x\}$ and suppose
+$P_x(V_0\wedge V_N<\infty)>0$ for all $x$.  Show that
+\[
+  P_x(V_N<V_0)=\frac{x}{N}.
+\]
+
+\Knowledge{
+\path{durrett_ch5_expectation_operator_notation};
+\path{durrett_ch5_hitting_return_decomposition}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  h(x)=P_x(V_N<V_0).
+\]
+By Exercise 5.2.7, $h$ is the unique function that is harmonic on
+$\{1,\ldots,N-1\}$ and satisfies $h(0)=0$, $h(N)=1$.
+
+Since $(X_n)$ is a martingale,
+\[
+  E_x X_1=x.
+\]
+Hence the function $f(x)=x/N$ satisfies
+\[
+  \sum_y p(x,y)f(y)
+  =
+  \frac1N\sum_y p(x,y)y
+  =
+  \frac{x}{N}
+  =
+  f(x),
+  \qquad 1\le x\le N-1.
+\]
+It also has boundary values $f(0)=0$ and $f(N)=1$.  By uniqueness,
+\[
+  h(x)=f(x)=\frac{x}{N}.
+\]
+
+\section*{Exercise 5.2.9}
+
+\noindent\textbf{Question.}
+Wright-Fisher model.  Suppose $S=\{0,1,\ldots,N\}$ and consider
+\[
+  p(i,j)=
+  \binom Nj
+  \left(\frac{i}{N}\right)^j
+  \left(1-\frac{i}{N}\right)^{N-j}.
+\]
+Show that this chain satisfies the hypotheses of Exercise 5.2.8.
+
+\Knowledge{
+\path{durrett_ch5_wright_fisher_chain};
+\path{durrett_ch5_markov_property_countable}.
+}
+
+\noindent\textbf{Solution.}
+Given $X_n=i$, the next state has distribution
+\[
+  X_{n+1}\sim \operatorname{Binomial}\left(N,\frac{i}{N}\right).
+\]
+Therefore
+\[
+  E(X_{n+1}\mid X_n=i)=N\cdot\frac{i}{N}=i.
+\]
+Thus $(X_n)$ is a martingale.
+
+The state space is $\{0,1,\ldots,N\}$.  Also $0$ and $N$ are absorbing:
+if $i=0$, then $X_{n+1}=0$ a.s.; if $i=N$, then $X_{n+1}=N$ a.s.  For
+$1\le i\le N-1$,
+\[
+  p(i,0)=\left(1-\frac{i}{N}\right)^N>0,
+  \qquad
+  p(i,N)=\left(\frac{i}{N}\right)^N>0.
+\]
+Hence from every interior state there is positive probability of hitting
+$0$ or $N$ in one step.  Thus
+$P_i(V_0\wedge V_N<\infty)>0$ for all $i$, and all hypotheses of
+Exercise 5.2.8 are satisfied.
+
+\section*{Exercise 5.2.10}
+
+\noindent\textbf{Question.}
+In brother-sister mating described in Exercise 5.1.4, $AA,AA$ and
+$aa,aa$ are absorbing states.  Show that the number of $A$'s in the pair
+is a martingale and use this to compute the probability of getting
+absorbed in $AA,AA$ starting from each of the states.
+
+\Knowledge{
+\path{durrett_ch5_markov_property_countable};
+\path{durrett_ch5_hitting_return_decomposition};
+\path{durrett_ch5_general_transition_probability}.
+}
+
+\noindent\textbf{Solution.}
+Let $M_n$ be the number of $A$ alleles in the genotype pair at generation
+$n$.  Thus $M_n$ takes values in $\{0,1,2,3,4\}$.  Given a parental pair
+with $K$ total $A$ alleles, one offspring receives one randomly chosen
+allele from each parent.  If the first parent has $k_1$ $A$ alleles and
+the second has $k_2$ $A$ alleles, then $K=k_1+k_2$ and the expected
+number of $A$ alleles in one offspring is
+\[
+  \frac{k_1}{2}+\frac{k_2}{2}=\frac{K}{2}.
+\]
+The next brother-sister pair consists of two offspring, so
+\[
+  E(M_{n+1}\mid\mathcal{F}_n)=2\cdot\frac{M_n}{2}=M_n.
+\]
+Thus $(M_n)$ is a martingale.
+
+The only absorbing states are $AA,AA$ and $aa,aa$.  From each
+nonabsorbing state there is positive probability of eventually reaching
+one of them, and the state space is finite, so the absorption time is
+finite a.s.  If
+\[
+  q=\Prob(\text{absorption in }AA,AA),
+\]
+then at absorption the martingale has value $4$ with probability $q$ and
+$0$ with probability $1-q$.  Optional stopping gives
+\[
+  M_0=E(M_T)=4q,
+  \qquad\text{so}\qquad q=\frac{M_0}{4}.
+\]
+The absorption probabilities in the state order
+\[
+  AA,AA;\quad AA,Aa;\quad AA,aa;\quad Aa,Aa;\quad Aa,aa;\quad aa,aa
+\]
+are therefore
+\[
+  1,\quad \frac34,\quad \frac12,\quad \frac12,\quad \frac14,\quad 0.
+\]
+
+\section*{Exercise 5.2.11}
+
+\noindent\textbf{Question.}
+Exit times.  Let $V_A=\inf\{n\ge0:X_n\in A\}$ and
+$g(x)=E_xV_A$.  Suppose that $S-A$ is finite and for each $x\in S-A$,
+$P_x(V_A<\infty)>0$.
+\begin{enumerate}[label=(\roman*)]
+\item Show that
+\[
+  g(x)=1+\sum_y p(x,y)g(y)\qquad x\notin A.
+\]
+\item Show that if $g$ satisfies this equation, then
+$g(X_{n\wedge V_A})+n\wedge V_A$ is a martingale.
+\item Use this to conclude that $g(x)=E_xV_A$ is the only solution of
+this equation that is $0$ on $A$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch5_expectation_operator_notation};
+\path{durrett_ch5_hitting_return_decomposition};
+\path{durrett_ch5_strong_markov_property}.
+}
+
+\noindent\textbf{Solution.}
+Let $\tau=V_A$.  Exercise 5.2.6 implies that $\tau<\infty$ a.s. and has
+a geometrically decaying tail, so $E_x\tau<\infty$ for all $x$.
+
+If $x\notin A$, then after one step the chain moves to $y$ with
+probability $p(x,y)$.  One unit of time has elapsed, and the remaining
+expected time is $g(y)$.  Thus
+\[
+  g(x)=1+\sum_y p(x,y)g(y),
+  \qquad x\notin A.
+\]
+Also $g(x)=0$ for $x\in A$.
+
+Now suppose $g$ satisfies this equation and is $0$ on $A$.  Let
+\[
+  M_n=g(X_{n\wedge\tau})+n\wedge\tau.
+\]
+If $n\ge\tau$, then $M_{n+1}=M_n$.  If $n<\tau$, then $X_n\notin A$ and
+\[
+\begin{aligned}
+  E(M_{n+1}\mid\mathcal{F}_n)
+  &=
+  E(g(X_{n+1})+n+1\mid\mathcal{F}_n)\\
+  &=
+  \sum_y p(X_n,y)g(y)+n+1\\
+  &=g(X_n)+n=M_n.
+\end{aligned}
+\]
+Therefore $(M_n)$ is a martingale.
+
+Taking expectations gives
+\[
+  g(x)=E_x\bigl[g(X_{n\wedge\tau})+n\wedge\tau\bigr].
+\]
+Letting $n\to\infty$, we have $X_\tau\in A$, so $g(X_\tau)=0$, and
+$n\wedge\tau\to\tau$.  Hence
+\[
+  g(x)=E_x\tau=E_xV_A.
+\]
+Thus the expected hitting time is the unique solution with boundary
+value $0$ on $A$.
+
+\section*{Exercise 5.2.12}
+
+\noindent\textbf{Question.}
+In this problem we imagine that you are bored and start flipping a coin
+to see how many tosses $N(HH)$ you need until you get two heads in a
+row.  Let $\xi_0,\xi_1,\ldots$ be i.i.d. random variables taking values
+in $\{H,T\}$, each with probability $1/2$, and let
+$X_n=(\xi_n,\xi_{n+1})$ be the Markov chain from Exercise 5.1.3.  Use
+the result of the previous exercise to compute
+\[
+  g(x)=\text{the expected time to reach state }(H,H)\text{ starting from }x.
+\]
+The answer we want is
+\[
+  EN(HH)=2+\frac14[g(H,H)+g(H,T)+g(T,H)+g(T,T)].
+\]
+
+\Knowledge{
+\path{durrett_ch5_markov_property_countable};
+\path{durrett_ch5_chapman_kolmogorov};
+\path{durrett_ch5_expectation_operator_notation}.
+}
+
+\noindent\textbf{Solution.}
+Let the target state be $HH$.  Then $g(HH)=0$.  From Exercise 5.1.3,
+the transitions are
+\[
+  (a,b)\longrightarrow (b,H)\text{ or }(b,T),
+  \qquad\text{each with probability }1/2.
+\]
+Write
+\[
+  a=g(HT),\qquad b=g(TH),\qquad c=g(TT).
+\]
+Using Exercise 5.2.11, the equations are
+\[
+  a=1+\frac12 b+\frac12 c,
+\]
+\[
+  b=1+\frac12 g(HH)+\frac12 a
+    =1+\frac12 a,
+\]
+and
+\[
+  c=1+\frac12 b+\frac12 c.
+\]
+The first and third equations imply $a=c$.  Hence
+\[
+  a=1+\frac12 b+\frac12 a,
+  \qquad\text{so}\qquad a=2+b.
+\]
+Together with $b=1+a/2$, this gives
+\[
+  a=6,\qquad b=4,\qquad c=6.
+\]
+Thus
+\[
+  g(HH)=0,\qquad g(HT)=6,\qquad g(TH)=4,\qquad g(TT)=6.
+\]
+The first two tosses create one of the four pair states uniformly, so
+\[
+  EN(HH)
+  =
+  2+\frac14(0+6+4+6)
+  =
+  6.
+\]
+
+\section*{Exercise 5.2.13}
+
+\noindent\textbf{Question.}
+In this problem we consider the number of tosses $N(HHH)$ to get
+$HHH$.  Let $X_n$ be the number of consecutive heads we have after $n$
+tosses.  Then $X_n$ is a Markov chain with transition probability
+\[
+  \begin{array}{c|cccc}
+    &0&1&2&3\\ \hline
+  0&1/2&1/2&0&0\\
+  1&1/2&0&1/2&0\\
+  2&1/2&0&0&1/2\\
+  3&0&0&0&1
+  \end{array}
+\]
+Let $T_3$ be the time to reach state $3$.  Use Problem 5.2.11 to compute
+$E_0T_3$.
+
+\Knowledge{
+\path{durrett_ch5_markov_property_countable};
+\path{durrett_ch5_expectation_operator_notation};
+\path{durrett_ch5_hitting_return_decomposition}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  g_i=E_iT_3,\qquad i=0,1,2,3.
+\]
+Then $g_3=0$.  By Exercise 5.2.11, for $i=0,1,2$,
+\[
+  g_i=1+\sum_j p(i,j)g_j.
+\]
+Using the displayed transition matrix,
+\[
+  g_0=1+\frac12g_0+\frac12g_1,
+\]
+\[
+  g_1=1+\frac12g_0+\frac12g_2,
+\]
+and
+\[
+  g_2=1+\frac12g_0+\frac12g_3
+      =1+\frac12g_0.
+\]
+Substitute the last equation into the equation for $g_1$:
+\[
+  g_1
+  =
+  1+\frac12g_0+\frac12\left(1+\frac12g_0\right)
+  =
+  \frac32+\frac34g_0.
+\]
+The equation for $g_0$ gives $g_0=2+g_1$, so
+\[
+  g_0
+  =
+  2+\frac32+\frac34g_0
+  =
+  \frac72+\frac34g_0.
+\]
+Therefore
+\[
+  \frac14g_0=\frac72,
+  \qquad\text{and hence}\qquad
+  E_0T_3=g_0=14.
+\]
+
+\section*{Exercise 5.3.1}
+
+\noindent\textbf{Question.}
+Suppose $y$ is recurrent and, for $k\ge0$, let
+$R_k=T_y^k$ be the time of the $k$th return to $y$.  For $k\ge1$, let
+$r_k=R_k-R_{k-1}$ be the $k$th interarrival time.  Use the strong Markov
+property to conclude that under $P_y$, the excursion vectors
+\[
+  v_k=(r_k,X_{R_{k-1}},X_{R_{k-1}+1},\ldots,X_{R_k-1}),
+  \qquad k\ge1,
+\]
+are i.i.d.
+
+\Knowledge{
+\path{durrett_ch5_strong_markov_property};
+\path{durrett_ch5_hitting_return_decomposition};
+\path{durrett_ch5_recurrence_visit_criterion}.
+}
+
+\noindent\textbf{Solution.}
+Since $y$ is recurrent, under $P_y$ all return times $R_k$ are finite
+almost surely.  The time $R_{k-1}$ is a stopping time and
+$X_{R_{k-1}}=y$.  By the strong Markov property, conditional on
+$\mathcal{F}_{R_{k-1}}$, the shifted process
+\[
+  (X_{R_{k-1}+m})_{m\ge0}
+\]
+has the same law as a fresh chain started from $y$, and is independent
+of the past before $R_{k-1}$.
+
+Therefore the path segment from $R_{k-1}$ up to, but not including, the
+next return to $y$ has the same distribution for every $k$.  Moreover,
+each such segment is conditionally independent of all earlier segments.
+Thus the excursion vectors $v_1,v_2,\ldots$ are independent and
+identically distributed under $P_y$.
+
+\section*{Exercise 5.3.2}
+
+\noindent\textbf{Question.}
+Use the strong Markov property to show that
+\[
+  \rho_{xz}\ge \rho_{xy}\rho_{yz}.
+\]
+
+\Knowledge{
+\path{durrett_ch5_strong_markov_property};
+\path{durrett_ch5_hitting_return_decomposition}.
+}
+
+\noindent\textbf{Solution.}
+Let $T_y=\inf\{n\ge1:X_n=y\}$ and
+$T_z=\inf\{n\ge1:X_n=z\}$.  If the chain first hits $y$ and then, from
+$y$, eventually hits $z$, then it has hit $z$ starting from $x$.  By the
+strong Markov property at $T_y$,
+\[
+\begin{aligned}
+  \rho_{xz}
+  &=P_x(T_z<\infty)\\
+  &\ge
+  P_x(T_y<\infty,\ T_z\circ\theta_{T_y}<\infty)\\
+  &=
+  E_x\!\left[
+    \1_{\{T_y<\infty\}}
+    P_y(T_z<\infty)
+  \right]\\
+  &=\rho_{xy}\rho_{yz}.
+\end{aligned}
+\]
+
+\section*{Exercise 5.3.3}
+
+\noindent\textbf{Question.}
+Show that in the Ehrenfest chain from Example 5.1.3 all states are
+recurrent.
+
+\Knowledge{
+\path{durrett_ch5_ehrenfest_chain};
+\path{durrett_ch5_finite_closed_recurrent_class};
+\path{durrett_ch5_communication_recurrence_transfer}.
+}
+
+\noindent\textbf{Solution.}
+The Ehrenfest chain has finite state space $\{0,1,\ldots,r\}$ and
+transition probabilities
+\[
+  p(k,k+1)=\frac{r-k}{r},
+  \qquad
+  p(k,k-1)=\frac{k}{r}.
+\]
+From any state $i$ one can reach any state $j$ by moving one step at a
+time upward or downward, and each required step has positive
+probability.  Hence the whole finite state space is irreducible.  It is
+also closed, since the chain never leaves $\{0,\ldots,r\}$.
+
+A finite closed irreducible class consists entirely of recurrent states.
+Therefore every state of the Ehrenfest chain is recurrent.
+
+\section*{Exercise 5.3.4}
+
+\noindent\textbf{Question.}
+To probe the boundary between recurrence and transience for birth and
+death chains, suppose
+\[
+  p_j=\frac12+\epsilon_j,\qquad
+  \epsilon_j\sim Cj^{-\alpha}\quad\text{as }j\to\infty,
+  \qquad
+  q_j=1-p_j.
+\]
+Show that:
+\begin{enumerate}[label=(\roman*)]
+\item if $\alpha>1$, then $0$ is recurrent;
+\item if $\alpha<1$, then $0$ is transient;
+\item if $\alpha=1$, then $0$ is transient if $C>1/4$ and recurrent if
+$C<1/4$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch5_birth_death_scale_function};
+\path{durrett_ch5_birth_death_recurrence_test}.
+}
+
+\noindent\textbf{Solution.}
+For a birth and death chain, the recurrence test is
+\[
+  \sum_{m=0}^\infty \prod_{j=1}^m \frac{q_j}{p_j}=\infty.
+\]
+Here
+\[
+  \frac{q_j}{p_j}
+  =
+  \frac{1/2-\epsilon_j}{1/2+\epsilon_j}
+  =
+  \frac{1-2\epsilon_j}{1+2\epsilon_j}.
+\]
+For small $\epsilon_j$,
+\[
+  \log\frac{q_j}{p_j}
+  =
+  -4\epsilon_j+O(\epsilon_j^2).
+\]
+Thus
+\[
+  \log\prod_{j=1}^m\frac{q_j}{p_j}
+  =
+  -4\sum_{j=1}^m\epsilon_j+O\!\left(\sum_{j=1}^m\epsilon_j^2\right).
+\]
+
+If $\alpha>1$, then $\sum_j \epsilon_j$ converges, and so the products
+$\prod_{j=1}^m(q_j/p_j)$ converge to a positive finite limit.  The
+series of products diverges, so $0$ is recurrent.
+
+If $\alpha<1$ and $C>0$, then
+\[
+  \sum_{j=1}^m\epsilon_j
+  \sim
+  \frac{C}{1-\alpha}m^{1-\alpha}.
+\]
+The products are bounded above by
+\[
+  \exp\{-c m^{1-\alpha}\}
+\]
+for some $c>0$ and large $m$, so the series of products converges.  Thus
+$0$ is transient.  This is the outward-drift case intended by the
+statement; if $C<0$, the drift is eventually toward $0$ and the same
+test gives recurrence.
+
+Finally suppose $\alpha=1$.  Then
+\[
+  \sum_{j=1}^m\epsilon_j\sim C\log m,
+\]
+and since $\sum_j\epsilon_j^2<\infty$,
+\[
+  \prod_{j=1}^m\frac{q_j}{p_j}
+  =
+  m^{-4C+o(1)}.
+\]
+Therefore the product series behaves like a $p$-series with exponent
+$4C$.  It diverges when $4C<1$ and converges when $4C>1$.  Hence $0$ is
+recurrent if $C<1/4$ and transient if $C>1/4$.
+
+\section*{Exercise 5.3.5}
+
+\noindent\textbf{Question.}
+Show that if we replace ``$\varphi(x)\to\infty$'' by
+``$\varphi(x)\to0$'' in Theorem 5.3.8 and assume that
+$\varphi(x)>0$ for $x\in F$, then we can conclude that the chain is
+transient.
+
+\Knowledge{
+\path{durrett_ch5_foster_supermartingale_recurrence};
+\path{durrett_ch5_recurrence_visit_criterion}.
+}
+
+\noindent\textbf{Solution.}
+Assume the chain is irreducible and that
+\[
+  E_x\varphi(X_1)\le\varphi(x)
+  \qquad x\notin F,
+\]
+where $F$ is finite, $\varphi\ge0$, $\varphi(x)\to0$ as $x\to\infty$,
+and $\varphi>0$ on $F$.
+
+Let
+\[
+  c=\min_{z\in F}\varphi(z)>0.
+\]
+Since $\varphi(x)\to0$, choose $x\notin F$ with $\varphi(x)<c$.  Let
+\[
+  \tau=\inf\{n\ge0:X_n\in F\}.
+\]
+Then $\varphi(X_{n\wedge\tau})$ is a nonnegative supermartingale.  If
+the chain were recurrent, irreducibility would imply $P_x(\tau<\infty)=1$.
+By optional stopping and Fatou's lemma,
+\[
+  \varphi(x)
+  \ge
+  E_x\varphi(X_\tau)
+  \ge
+  cP_x(\tau<\infty)
+  =
+  c,
+\]
+contradicting $\varphi(x)<c$.
+
+Thus the irreducible chain cannot be recurrent.  In an irreducible
+chain, all states are either recurrent or transient, so the chain is
+transient.
+
+\section*{Exercise 5.3.6}
+
+\noindent\textbf{Question.}
+Let $X_n$ be a birth and death chain with
+\[
+  p_j-\frac12\sim \frac{C}{j}
+  \quad\text{as }j\to\infty,
+  \qquad q_j=1-p_j.
+\]
+\begin{enumerate}[label=(\roman*)]
+\item Show that if $C<1/4$, then we can pick $\alpha>0$ so that
+$\varphi(x)=x^\alpha$ satisfies the hypotheses of Theorem 5.3.8.
+\item Show that when $C>1/4$, we can take $\alpha<0$ and apply Exercise
+5.3.5.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch5_foster_supermartingale_recurrence};
+\path{durrett_ch5_birth_death_recurrence_test}.
+}
+
+\noindent\textbf{Solution.}
+For large $j$, write $p_j=1/2+C/j+o(1/j)$ and
+$q_j=1/2-C/j+o(1/j)$.  For $\varphi(x)=x^\alpha$, Taylor expansion gives
+\[
+  (j+1)^\alpha-j^\alpha
+  =
+  \alpha j^{\alpha-1}
+  +\frac{\alpha(\alpha-1)}{2}j^{\alpha-2}
+  +o(j^{\alpha-2}),
+\]
+and
+\[
+  (j-1)^\alpha-j^\alpha
+  =
+  -\alpha j^{\alpha-1}
+  +\frac{\alpha(\alpha-1)}{2}j^{\alpha-2}
+  +o(j^{\alpha-2}).
+\]
+Hence
+\[
+\begin{aligned}
+  E_j\varphi(X_1)-\varphi(j)
+  &=
+  p_j\bigl((j+1)^\alpha-j^\alpha\bigr)
+  +q_j\bigl((j-1)^\alpha-j^\alpha\bigr)\\
+  &=
+  \alpha\left(2C+\frac{\alpha-1}{2}\right)j^{\alpha-2}
+  +o(j^{\alpha-2}).
+\end{aligned}
+\]
+
+If $C<1/4$, choose $\alpha>0$ small enough that
+\[
+  2C+\frac{\alpha-1}{2}<0,
+  \qquad\text{equivalently}\qquad
+  \alpha<1-4C.
+\]
+Then $E_j\varphi(X_1)\le\varphi(j)$ for all sufficiently large $j$, and
+$\varphi(j)=j^\alpha\to\infty$.  Taking the exceptional small states as
+the finite set $F$, Theorem 5.3.8 implies recurrence.
+
+If $C>1/4$, then $1-4C<0$.  Choose
+\[
+  1-4C<\alpha<0.
+\]
+Now $\alpha<0$ and
+$2C+(\alpha-1)/2>0$, so their product is negative.  Therefore
+$E_j\varphi(X_1)\le\varphi(j)$ for all sufficiently large $j$, while
+$\varphi(j)=j^\alpha\to0$ and $\varphi>0$ on every finite set.  Exercise
+5.3.5 applies and gives transience.
+
+\section*{Exercise 5.3.7}
+
+\noindent\textbf{Question.}
+A function $f$ is said to be superharmonic if
+\[
+  f(x)\ge \sum_y p(x,y)f(y),
+\]
+or equivalently $f(X_n)$ is a supermartingale.  Suppose $p$ is
+irreducible.  Show that $p$ is recurrent if and only if every
+nonnegative superharmonic function is constant.
+
+\Knowledge{
+\path{durrett_ch5_recurrence_visit_criterion};
+\path{durrett_ch5_communication_recurrence_transfer};
+\path{durrett_ch5_foster_supermartingale_recurrence}.
+}
+
+\noindent\textbf{Solution.}
+First suppose the chain is recurrent and let $f\ge0$ be superharmonic.
+For states $x,y$, irreducibility and recurrence imply
+$P_x(T_y<\infty)=1$.  Since $f(X_n)$ is a nonnegative supermartingale,
+optional stopping at $n\wedge T_y$ and Fatou's lemma give
+\[
+  f(x)
+  \ge
+  E_x f(X_{T_y})
+  =
+  f(y).
+\]
+Interchanging $x$ and $y$ gives $f(y)\ge f(x)$, so $f(x)=f(y)$.  Since
+$x,y$ were arbitrary, $f$ is constant.
+
+Conversely, suppose the irreducible chain is transient.  Fix a state
+$a$ and define
+\[
+  f(x)=P_x(T_a<\infty).
+\]
+Then $f\ge0$ and $f(a)=1$.  For $x\ne a$, first-step decomposition gives
+\[
+  f(x)=\sum_y p(x,y)f(y).
+\]
+At $x=a$,
+\[
+  \sum_y p(a,y)f(y)=P_a(T_a<\infty)=\rho_{aa}<1=f(a),
+\]
+because $a$ is transient.  Thus $f$ is nonnegative and superharmonic.
+It is not constant, since $f(a)=1$ but the displayed strict inequality
+would be impossible for a constant function.  Therefore if every
+nonnegative superharmonic function is constant, the chain must be
+recurrent.
+
+\section*{Exercise 5.3.8}
+
+\noindent\textbf{Question.}
+$M/M/\infty$ queue.  Consider a telephone system with an infinite number
+of lines.  Let $X_n$ be the number of lines in use at time $n$, and
+suppose
+\[
+  X_{n+1}=\sum_{m=1}^{X_n}\xi_{n,m}+Y_{n+1},
+\]
+where the $\xi_{n,m}$ are i.i.d. with
+$P(\xi_{n,m}=1)=p$ and $P(\xi_{n,m}=0)=1-p$, and $Y_n$ is an independent
+i.i.d. sequence of Poisson mean $\lambda$ random variables.  In words,
+for each conversation we flip a coin with probability $p$ of heads to
+see if it continues for another minute.  Meanwhile, a Poisson mean
+$\lambda$ number of conversations start between time $n$ and $n+1$.  Use
+Theorem 5.3.8 with $\varphi(x)=x$ to show that the chain is recurrent
+for any $p<1$.
+
+\Knowledge{
+\path{durrett_ch5_foster_supermartingale_recurrence};
+\path{durrett_ch5_markov_property_countable}.
+}
+
+\noindent\textbf{Solution.}
+Given $X_n=x$, the number of continuing old conversations has
+binomial$(x,p)$ distribution, and the number of new conversations has
+Poisson mean $\lambda$.  Therefore
+\[
+  E_xX_1=px+\lambda.
+\]
+Let $\varphi(x)=x$.  Since $p<1$, choose a finite set
+\[
+  F=\{0,1,\ldots,K\}
+\]
+with $K$ large enough that
+\[
+  px+\lambda\le x
+  \qquad\text{for all }x>K.
+\]
+Equivalently, take $K\ge \lambda/(1-p)$.  Then for $x\notin F$,
+\[
+  E_x\varphi(X_1)=E_xX_1=px+\lambda\le x=\varphi(x).
+\]
+Also $\varphi(x)=x\to\infty$.
+
+If $\lambda>0$, the chain is irreducible on $\{0,1,2,\ldots\}$: from
+any $x$ all current conversations can end with positive probability, and
+the Poisson arrivals can produce any desired number of new
+conversations with positive probability.  Theorem 5.3.8 therefore
+implies the chain is recurrent.  If $\lambda=0$, state $0$ is absorbing
+and every initial state reaches it with probability one when $p<1$, so
+the recurrent class is again evident.
+
+\section*{Exercise 5.4.1}
+
+\noindent\textbf{Question.}
+For a random walk on $\mathbb{R}$, show that there are only four
+possibilities, one of which has probability one:
+\begin{enumerate}[label=(\roman*)]
+\item $S_n=0$ for all $n$.
+\item $S_n\to\infty$.
+\item $S_n\to-\infty$.
+\item $-\infty=\liminf S_n<\limsup S_n=\infty$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch5_random_walk_chain};
+\path{durrett_ch5_random_walk_recurrent_values};
+\path{durrett_ch5_random_walk_recurrence_equivalences}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  M^+=\sup_{n\ge0}S_n,
+  \qquad
+  M^-=\sup_{n\ge0}(-S_n)=-\inf_{n\ge0}S_n.
+\]
+The events $\{M^+=\infty\}$ and $\{M^-=\infty\}$ are tail events for
+the iid increments, so each has probability $0$ or $1$.
+
+If both have probability $1$, then
+\[
+  \limsup_{n\to\infty}S_n=\infty,
+  \qquad
+  \liminf_{n\to\infty}S_n=-\infty,
+\]
+which is case (iv).
+
+If $\Prob(M^+=\infty)=1$ and $\Prob(M^-=\infty)=0$, then the walk is
+unbounded above but bounded below.  The standard ladder-time argument
+then implies $S_n\to\infty$: if the walk returned below a fixed level
+infinitely often while also being unbounded above, then independent
+future excursions from those return times would, with probability one,
+eventually create arbitrarily low new records, contradicting
+$M^-<\infty$.  This is case (ii).  By applying the same argument to
+$-S_n$, the case $\Prob(M^+=\infty)=0$ and $\Prob(M^-=\infty)=1$ gives
+$S_n\to-\infty$, which is case (iii).
+
+It remains to consider the case in which both $M^+$ and $M^-$ are finite
+a.s.  Then the random walk is a.s. bounded.  If the increment law were
+not concentrated at $0$, then for some $\varepsilon>0$ either
+$\Prob(\xi_1>\varepsilon)>0$ or $\Prob(\xi_1<-\varepsilon)>0$.  In the
+first case, arbitrarily long runs of increments larger than
+$\varepsilon$ occur a.s.; in the second case, arbitrarily long runs of
+increments smaller than $-\varepsilon$ occur a.s.  Either kind of run
+contradicts boundedness of the partial sums.  Hence $\xi_1=0$ a.s., and
+$S_n=0$ for all $n$, which is case (i).
+
+\section*{Exercise 5.4.2}
+
+\noindent\textbf{Question.}
+Ladder variables.  Let
+\[
+  \alpha(\omega)=\inf\{n:\omega_1+\cdots+\omega_n>0\},
+\]
+where $\inf\varnothing=\infty$, and set $\alpha(\Delta)=\infty$.  Let
+$\alpha_0=0$ and
+\[
+  \alpha_k(\omega)=\alpha_{k-1}(\omega)+\alpha(\theta_{\alpha_{k-1}}\omega),
+  \qquad k\ge1.
+\]
+At time $\alpha_k$, the random walk is at a record high value.
+\begin{enumerate}[label=(\roman*)]
+\item If $P(\alpha<\infty)<1$, then $P(\sup S_n<\infty)=1$.
+\item If $P(\alpha<\infty)=1$, then $P(\sup S_n=\infty)=1$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch5_strong_markov_property};
+\path{durrett_ch5_random_walk_chain};
+\path{durrett_ch5_hitting_return_decomposition}.
+}
+
+\noindent\textbf{Solution.}
+Let $p=P(\alpha<\infty)$.  By the strong Markov property applied at the
+successive ladder times,
+\[
+  P(\alpha_k<\infty)=p^k.
+\]
+Indeed, each time a new strict record is reached, the future increments
+are independent of the past and have the same law as the original
+increments.
+
+If $p<1$, then $P(\alpha_k<\infty)=p^k\to0$.  Hence with probability
+one, only finitely many strict ascending ladder times occur.  After the
+last one, the walk never rises above the last record value, so
+\[
+  \sup_{n\ge0}S_n<\infty
+  \qquad\text{a.s.}
+\]
+
+If $p=1$, then every $\alpha_k$ is finite a.s.  The ladder height
+increments
+\[
+  S_{\alpha_k}-S_{\alpha_{k-1}},
+  \qquad k\ge1,
+\]
+are iid and strictly positive.  Their partial sums therefore diverge to
+$\infty$ a.s.  Since $S_{\alpha_k}$ is the $k$th strict record value,
+\[
+  \sup_{n\ge0}S_n=\infty
+  \qquad\text{a.s.}
+\]
+
+\section*{Exercise 5.4.3}
+
+\noindent\textbf{Question.}
+Suppose $f$ is superharmonic on $\mathbb{R}^d$, i.e.
+\[
+  f(x)\ge
+  \frac{1}{|B(x,r)|}\int_{B(x,r)} f(y)\,dy.
+\]
+Let $\xi_1,\xi_2,\ldots$ be i.i.d. uniform on $B(0,1)$, and define
+$S_n$ by $S_n=S_{n-1}+\xi_n$ for $n\ge1$ and $S_0=x$.
+\begin{enumerate}[label=(\roman*)]
+\item Show that $X_n=f(S_n)$ is a supermartingale.
+\item Use this to conclude that in $d\le2$, nonnegative superharmonic
+functions must be constant.  The example $f(x)=|x|^{2-d}$ shows this is
+false in $d>2$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch5_chung_fuchs_one_dimension};
+\path{durrett_ch5_two_dimensional_normal_recurrence};
+\path{durrett_ch5_random_walk_recurrent_values};
+\path{durrett_ch5_foster_supermartingale_recurrence}.
+}
+
+\noindent\textbf{Solution.}
+Since $\xi_{n+1}$ is uniform on $B(0,1)$ and independent of
+$\mathcal{F}_n$,
+\[
+\begin{aligned}
+  E(f(S_{n+1})\mid\mathcal{F}_n)
+  &=
+  \frac{1}{|B(0,1)|}\int_{B(0,1)} f(S_n+z)\,dz\\
+  &=
+  \frac{1}{|B(S_n,1)|}\int_{B(S_n,1)} f(y)\,dy\\
+  &\le f(S_n).
+\end{aligned}
+\]
+Thus $f(S_n)$ is a supermartingale whenever the expectations are
+well-defined; for nonnegative $f$, this is understood in the usual
+extended nonnegative sense.
+
+Now assume $d\le2$ and $f\ge0$.  The increment distribution is centered
+and nondegenerate.  In $d=1$, Chung-Fuchs recurrence applies; in $d=2$,
+the central limit theorem gives a nondegenerate normal limit after
+$\sqrt n$ scaling, so the planar recurrence theorem applies.  Hence the
+random walk is recurrent, and because the increment law has positive
+density on a ball, every nonempty open ball is visited infinitely often
+from every starting point.
+
+The nonnegative supermartingale $f(S_n)$ converges a.s.  If two points
+could have different superharmonic values, recurrence would force the
+walk to visit neighborhoods of both points infinitely often, contradicting
+the existence of a single almost sure limit.  Equivalently, this is the
+general-state analogue of the recurrent-chain fact that every
+nonnegative superharmonic function is constant.  Therefore every
+nonnegative superharmonic function on $\mathbb{R}^d$ is constant for
+$d\le2$.
+
+\section*{Exercise 5.4.4}
+
+\noindent\textbf{Question.}
+Suppose $h$ is harmonic on $\mathbb{R}^d$, i.e.
+\[
+  h(x)=
+  \frac{1}{|B(x,r)|}\int_{B(x,r)} h(y)\,dy.
+\]
+Let $\xi_1,\xi_2,\ldots$ be i.i.d. uniform on $B(0,1)$, and define
+$S_n$ by $S_n=S_{n-1}+\xi_n$ for $n\ge1$ and $S_0=x$.
+\begin{enumerate}[label=(\roman*)]
+\item Show that $X_n=h(S_n)$ is a martingale.
+\item Use this to conclude that in any dimension, bounded harmonic
+functions must be constant.  The Hewitt-Savage $0$-$1$ law will be
+useful here.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch5_random_walk_chain};
+\path{durrett_ch5_markov_property_countable};
+\path{durrett_ch5_random_walk_recurrence_equivalences}.
+}
+
+\noindent\textbf{Solution.}
+As in the previous exercise, conditioning on $\mathcal{F}_n$ gives
+\[
+\begin{aligned}
+  E(h(S_{n+1})\mid\mathcal{F}_n)
+  &=
+  \frac{1}{|B(0,1)|}\int_{B(0,1)} h(S_n+z)\,dz\\
+  &=
+  \frac{1}{|B(S_n,1)|}\int_{B(S_n,1)} h(y)\,dy\\
+  &=h(S_n).
+\end{aligned}
+\]
+Thus $h(S_n)$ is a martingale.
+
+Assume now that $h$ is bounded.  Then $h(S_n)$ is a bounded martingale,
+so it converges a.s. to a random variable $L_x$ when $S_0=x$.  If we
+permute finitely many increments, then all sufficiently late partial
+sums are unchanged, since the total sum of those finitely many
+increments is unchanged.  Hence $L_x$ is invariant under finite
+permutations of the iid sequence $(\xi_i)$.  By the Hewitt-Savage
+$0$-$1$ law, $L_x$ is a.s. constant.  Since
+\[
+  h(x)=E_x h(S_n)=E_x L_x,
+\]
+this constant is $h(x)$.
+
+It remains to see that the constant does not depend on $x$.  Fix
+$k\ge1$.  By the Markov property,
+\[
+  L_x=L_{S_k}\quad\text{a.s.}
+\]
+The distribution of $S_k$ has a density that is positive on the ball
+$B(x,k)$, so $h(S_k)=h(x)$ a.s. implies that $h(z)=h(x)$ for Lebesgue
+almost every $z\in B(x,k)$.  Since $k$ is arbitrary, $h$ is a.e. equal
+to the constant $h(x)$ on all of $\mathbb{R}^d$.  Applying the harmonic
+mean-value identity once more yields equality at every point.  Therefore
+every bounded harmonic function on $\mathbb{R}^d$ is constant.
+
+\section*{Exercise 5.5.1}
+
+\noindent\textbf{Question.}
+Find the stationary distribution for the Bernoulli-Laplace model of
+diffusion from Exercise 5.1.5.
+
+\Knowledge{
+\path{durrett_ch5_stationary_measure_definition};
+\path{durrett_ch5_reversibility_detailed_balance};
+\path{durrett_ch5_birth_death_stationary_distribution}.
+}
+
+\noindent\textbf{Solution.}
+The state $i$ is the number of black balls in the left urn.  Since
+$b\le m$, the state space is $\{0,1,\ldots,b\}$.  From Exercise 5.1.5,
+\[
+  p(i,i+1)=\frac{(m-i)(b-i)}{m^2},
+  \qquad
+  p(i,i-1)=\frac{i(m-b+i)}{m^2}.
+\]
+At equilibrium, the left urn should look like a uniformly chosen set of
+$m$ balls from the $2m$ total balls.  Hence the number of black balls in
+the left urn has the hypergeometric distribution
+\[
+  \pi(i)=
+  \frac{\binom{b}{i}\binom{2m-b}{m-i}}{\binom{2m}{m}},
+  \qquad 0\le i\le b.
+\]
+We can verify this by detailed balance.  For $0\le i<b$,
+\[
+  \frac{\pi(i+1)}{\pi(i)}
+  =
+  \frac{b-i}{i+1}\cdot
+  \frac{m-i}{m-b+i+1}.
+\]
+Also
+\[
+  \frac{p(i,i+1)}{p(i+1,i)}
+  =
+  \frac{(m-i)(b-i)}{(i+1)(m-b+i+1)}.
+\]
+Thus
+\[
+  \pi(i)p(i,i+1)=\pi(i+1)p(i+1,i),
+\]
+so $\pi$ satisfies detailed balance and is stationary.
+
+\section*{Exercise 5.5.2}
+
+\noindent\textbf{Question.}
+Let
+\[
+  w_{xy}=P_x(T_y<T_x).
+\]
+Show that
+\[
+  \mu_x(y)=\frac{w_{xy}}{w_{yx}}.
+\]
+
+\Knowledge{
+\path{durrett_ch5_stationary_measure_from_returns};
+\path{durrett_ch5_hitting_return_decomposition};
+\path{durrett_ch5_strong_markov_property}.
+}
+
+\noindent\textbf{Solution.}
+Assume $x$ is recurrent and $y$ is in the same recurrent class.  The
+quantity $\mu_x(y)$ is the expected number of visits to $y$ before the
+first positive return to $x$, starting from $x$.
+
+First, the chain must hit $y$ before returning to $x$, an event with
+probability $w_{xy}$.  Once it reaches $y$, count visits to $y$ before
+hitting $x$.  Starting from $y$, each visit to $y$ starts a new trial:
+with probability
+\[
+  w_{yx}=P_y(T_x<T_y),
+\]
+the chain hits $x$ before returning again to $y$; otherwise it returns
+to $y$ first and the experiment restarts.  Therefore the number of
+visits to $y$ before hitting $x$, counting the initial visit to $y$, has
+geometric mean $1/w_{yx}$.
+
+By the strong Markov property at the first hit of $y$,
+\[
+  \mu_x(y)=w_{xy}\cdot \frac1{w_{yx}}
+  =
+  \frac{w_{xy}}{w_{yx}}.
+\]
+
+\section*{Exercise 5.5.3}
+
+\noindent\textbf{Question.}
+Show that if $p$ is irreducible and recurrent, then
+\[
+  \mu_x(y)\mu_y(z)=\mu_x(z).
+\]
+
+\Knowledge{
+\path{durrett_ch5_stationary_measure_from_returns};
+\path{durrett_ch5_stationary_measure_uniqueness_recurrent}.
+}
+
+\noindent\textbf{Solution.}
+For each recurrent state $a$, the cycle trick defines a stationary
+measure $\mu_a$ with normalization $\mu_a(a)=1$.  Since the chain is
+irreducible and recurrent, the stationary measure is unique up to a
+constant multiple.
+
+Thus $\mu_x$ and $\mu_y$ are multiples of one another.  Since
+$\mu_y(y)=1$, evaluating the proportionality at $y$ gives
+\[
+  \mu_x=\mu_x(y)\mu_y.
+\]
+Evaluating this identity at $z$ yields
+\[
+  \mu_x(z)=\mu_x(y)\mu_y(z),
+\]
+which is the desired formula.
+
+\section*{Exercise 5.5.4}
+
+\noindent\textbf{Question.}
+Suppose $p$ is irreducible and positive recurrent.  Then
+\[
+  E_xT_y<\infty
+  \qquad\text{for all }x,y.
+\]
+
+\Knowledge{
+\path{durrett_ch5_positive_recurrence_equivalences};
+\path{durrett_ch5_positive_recurrence_return_time};
+\path{durrett_ch5_strong_markov_property}.
+}
+
+\noindent\textbf{Solution.}
+Since the chain is irreducible and positive recurrent, every state is
+positive recurrent.  In particular,
+\[
+  E_yT_y<\infty.
+\]
+We show that this forces $E_xT_y<\infty$ for all $x$.
+
+By irreducibility, choose a path from $y$ to $x$ with positive
+probability.  Taking the first such path with minimal length, it avoids
+$y$ until its endpoint $x$.  Hence there are $K<\infty$ and $a>0$ such
+that
+\[
+  P_y(X_K=x,\ T_y>K)\ge a.
+\]
+If $E_xT_y=\infty$, then on the event above the return time to $y$
+would have infinite conditional mean after time $K$.  By the strong
+Markov property,
+\[
+  E_yT_y
+  \ge
+  a\,(K+E_xT_y)
+  =
+  \infty,
+\]
+contradicting positive recurrence of $y$.  Therefore
+$E_xT_y<\infty$.
+
+\section*{Exercise 5.5.5}
+
+\noindent\textbf{Question.}
+Suppose $p$ is irreducible and has a stationary measure $\mu$ with
+\[
+  \sum_x \mu(x)=\infty.
+\]
+Then $p$ is not positive recurrent.
+
+\Knowledge{
+\path{durrett_ch5_stationary_measure_uniqueness_recurrent};
+\path{durrett_ch5_positive_recurrence_equivalences};
+\path{durrett_ch5_positive_recurrence_return_time}.
+}
+
+\noindent\textbf{Solution.}
+Suppose, for contradiction, that $p$ is positive recurrent.  Since the
+chain is irreducible, positive recurrence is equivalent to the existence
+of a stationary distribution $\pi$.
+
+For an irreducible positive recurrent chain, every stationary measure is
+a constant multiple of $\pi$.  Hence there is a constant $c\ge0$ such
+that
+\[
+  \mu(x)=c\pi(x)
+  \qquad\text{for all }x.
+\]
+It follows that
+\[
+  \sum_x\mu(x)=c\sum_x\pi(x)=c<\infty,
+\]
+contradicting the hypothesis that $\mu$ has infinite total mass.
+Therefore $p$ is not positive recurrent.
+
+\section*{Exercise 5.5.6}
+
+\noindent\textbf{Question.}
+Use Theorems 5.5.7 and 5.5.9 to show that for simple random walk:
+\begin{enumerate}[label=(\roman*)]
+\item the expected number of visits to $k$ between successive visits to
+$0$ is $1$ for all $k$;
+\item if we start from $k$, the expected number of visits to $k$ before
+hitting $0$ is $2k$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch5_stationary_measure_from_returns};
+\path{durrett_ch5_stationary_measure_uniqueness_recurrent};
+\path{durrett_ch5_random_walk_chain}.
+}
+
+\noindent\textbf{Solution.}
+For simple symmetric random walk on $\mathbb{Z}$, the counting measure
+\[
+  \nu(j)\equiv1
+\]
+is stationary, because the transition matrix is doubly stochastic.  The
+chain is irreducible and recurrent.  By uniqueness of stationary
+measures up to constants, the cycle measure $\mu_0$ from Theorem 5.5.7
+must be a constant multiple of counting measure.  Since $\mu_0(0)=1$,
+that constant is $1$.  Therefore
+\[
+  \mu_0(k)=1
+  \qquad\text{for every }k\in\mathbb{Z}.
+\]
+This says exactly that the expected number of visits to $k$ between
+successive visits to $0$ is $1$.
+
+Now start from $k>0$ and count visits to $k$ before hitting $0$,
+including the visit at time $0$.  Each time the walk is at $k$, the
+trial ends successfully if the walk hits $0$ before returning to $k$.
+The probability of this success is
+\[
+  P_k(T_0<T_k).
+\]
+To hit $0$ before returning to $k$, the first step must be to $k-1$,
+which has probability $1/2$, and then the gambler's ruin probability of
+hitting $0$ before $k$ starting from $k-1$ is $1/k$.  Hence
+\[
+  P_k(T_0<T_k)=\frac{1}{2k}.
+\]
+The number of visits to $k$ before hitting $0$ is geometric with this
+success probability, so its mean is
+\[
+  \frac{1}{P_k(T_0<T_k)}=2k.
+\]
+By symmetry the analogous value for $k<0$ is $2|k|$.
+
+\section*{Exercise 5.5.7}
+
+\noindent\textbf{Question.}
+Let $\xi_1,\xi_2,\ldots$ be i.i.d. with
+$P(\xi_m=k)=a_{k+1}$ for $k\ge -1$, let
+\[
+  S_n=x+\xi_1+\cdots+\xi_n,
+  \qquad x\ge0,
+\]
+and let
+\[
+  X_n=S_n+\left(\min_{m\le n}S_m\right)^-.
+\]
+Equation (5.1.1) shows that $X_n$ has the same distribution as the
+$M/G/1$ queue starting from $X_0=x$.  Use this representation to
+conclude that if $\mu=\sum_k k a_k<1$, then as $n\to\infty$,
+\[
+  \frac1n
+  \left|\{m\le n:X_{m-1}=0,\ \xi_m=-1\}\right|
+  \longrightarrow
+  1-\mu
+  \qquad\text{a.s.}
+\]
+and hence $\pi(0)=(1-\mu)/a_0$ as proved earlier.
+
+\Knowledge{
+\path{durrett_ch5_mg1_queue_chain};
+\path{durrett_ch5_mg1_stability_stationarity};
+\path{durrett_ch5_stationary_measure_definition}.
+}
+
+\noindent\textbf{Solution.}
+The recursion for the queue is
+\[
+  X_m=(X_{m-1}+\xi_m)^+.
+\]
+Since $\xi_m\ge -1$, reflection occurs exactly on the event
+\[
+  \{X_{m-1}=0,\ \xi_m=-1\}.
+\]
+Let
+\[
+  L_n=\left|\{m\le n:X_{m-1}=0,\ \xi_m=-1\}\right|.
+\]
+Then the reflected-walk identity is
+\[
+  X_n=x+\sum_{m=1}^n\xi_m+L_n.
+\]
+Since $E\xi_1=\mu-1<0$, the strong law of large numbers gives
+\[
+  \frac1n\sum_{m=1}^n\xi_m\longrightarrow \mu-1.
+\]
+The explicit reflection representation also gives $X_n/n\to0$ a.s.:
+the walk $S_n$ has negative linear drift, and subtracting its running
+minimum leaves only a sublinear reflected height.  Dividing the identity
+above by $n$ yields
+\[
+  \frac{L_n}{n}
+  =
+  \frac{X_n}{n}
+  -\frac{x}{n}
+  -\frac1n\sum_{m=1}^n\xi_m
+  \longrightarrow
+  1-\mu
+  \qquad\text{a.s.}
+\]
+
+In stationarity, the event
+$\{X_{m-1}=0,\xi_m=-1\}$ has probability $\pi(0)a_0$, because $\xi_m$ is
+independent of the past and $P(\xi_m=-1)=a_0$.  The long-run frequency
+therefore equals $\pi(0)a_0$.  Comparing with the a.s. limit above gives
+\[
+  \pi(0)a_0=1-\mu,
+  \qquad\text{so}\qquad
+  \pi(0)=\frac{1-\mu}{a_0}.
+\]
+
+\section*{Exercise 5.5.8}
+
+\noindent\textbf{Question.}
+$M/M/\infty$ queue.  In this chain, introduced in Exercise 5.3.8,
+\[
+  X_{n+1}=\sum_{m=1}^{X_n}\xi_{n,m}+Y_{n+1},
+\]
+where the $\xi_{n,m}$ are i.i.d. Bernoulli with mean $p$ and
+$Y_{n+1}$ is an independent Poisson mean $\lambda$ random variable.
+Compute the distribution at time $1$ when $X_0$ is Poisson$(\theta)$
+and use the result to find the stationary distribution.
+
+\Knowledge{
+\path{durrett_ch5_stationary_measure_definition};
+\path{durrett_ch5_foster_supermartingale_recurrence}.
+}
+
+\noindent\textbf{Solution.}
+If $X_0\sim\operatorname{Poisson}(\theta)$, then thinning a Poisson
+random variable shows that the number of old conversations that survive
+one more minute is
+\[
+  \sum_{m=1}^{X_0}\xi_{0,m}
+  \sim
+  \operatorname{Poisson}(p\theta).
+\]
+This random variable is independent of the new arrivals
+$Y_1\sim\operatorname{Poisson}(\lambda)$.  Therefore
+\[
+  X_1\sim\operatorname{Poisson}(p\theta+\lambda).
+\]
+
+For stationarity we need $p\theta+\lambda=\theta$, so
+\[
+  \theta=\frac{\lambda}{1-p}.
+\]
+Thus the stationary distribution is
+\[
+  \pi(j)=
+  e^{-\lambda/(1-p)}
+  \frac{(\lambda/(1-p))^j}{j!},
+  \qquad j=0,1,2,\ldots.
+\]
+
+\section*{Exercise 5.5.9}
+
+\noindent\textbf{Question.}
+Let $X_n\ge0$ be a Markov chain and suppose
+\[
+  E_xX_1\le x-\epsilon
+  \qquad\text{for }x>K,
+\]
+where $\epsilon>0$.  Let
+\[
+  Y_n=X_n+n\epsilon,
+  \qquad
+  \tau=\inf\{n:X_n\le K\}.
+\]
+Then $Y_{n\wedge\tau}$ is a positive supermartingale and the optional
+stopping theorem implies $E_x\tau\le x/\epsilon$.  With assumptions
+about the behavior of the chain starting from points $x\le K$, this
+leads to conditions for positive recurrence.
+
+\Knowledge{
+\path{durrett_ch5_foster_supermartingale_recurrence};
+\path{durrett_ch5_positive_recurrence_equivalences};
+\path{durrett_ch5_hitting_return_decomposition}.
+}
+
+\noindent\textbf{Solution.}
+For $n<\tau$, we have $X_n>K$, so
+\[
+  E(X_{n+1}\mid\mathcal{F}_n)\le X_n-\epsilon.
+\]
+Hence
+\[
+  E(Y_{n+1}\mid\mathcal{F}_n)
+  =
+  E(X_{n+1}\mid\mathcal{F}_n)+(n+1)\epsilon
+  \le
+  X_n+n\epsilon
+  =
+  Y_n.
+\]
+After $\tau$ the stopped process is constant, so
+$Y_{n\wedge\tau}$ is a nonnegative supermartingale.
+
+By optional stopping,
+\[
+  E_xY_{n\wedge\tau}\le Y_0=x.
+\]
+Since $X_{n\wedge\tau}\ge0$,
+\[
+  \epsilon E_x(n\wedge\tau)\le x.
+\]
+Letting $n\to\infty$ and using monotone convergence gives
+\[
+  E_x\tau\le \frac{x}{\epsilon}.
+\]
+
+Let $C=\{x:x\le K\}$.  If $C$ is finite and the chain is irreducible on
+a countable state space, this drift estimate is the key Foster
+condition for positive recurrence.  Indeed, from every outside state the
+expected time to hit $C$ is finite.  Starting from the finite set $C$,
+irreducibility gives a fixed state $a\in C$ that can be reached with
+positive probability in finitely many steps; failed attempts return to
+$C$ in finite mean time by the drift estimate.  A geometric-trials
+argument then gives $E_aT_a<\infty$.  Thus $a$ is positive recurrent,
+and by irreducibility all states are positive recurrent.
+
+\section*{Exercise 5.6.1}
+
+\noindent\textbf{Question.}
+Suppose $S=\{0,1\}$ and
+\[
+  p=
+  \begin{pmatrix}
+    1-\alpha & \alpha\\
+    \beta & 1-\beta
+  \end{pmatrix}.
+\]
+Use induction to show that
+\[
+  P_\mu(X_n=0)
+  =
+  \frac{\beta}{\alpha+\beta}
+  +(1-\alpha-\beta)^n
+  \left\{\mu(0)-\frac{\beta}{\alpha+\beta}\right\}.
+\]
+
+\Knowledge{
+\path{durrett_ch5_stationary_measure_definition};
+\path{durrett_ch5_aperiodic_convergence_theorem}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  q_n=P_\mu(X_n=0).
+\]
+Then
+\[
+  q_{n+1}
+  =
+  q_n(1-\alpha)+(1-q_n)\beta
+  =
+  \beta+(1-\alpha-\beta)q_n.
+\]
+The fixed point of this affine recursion is
+\[
+  q_*=\frac{\beta}{\alpha+\beta},
+\]
+since $q_*=\beta+(1-\alpha-\beta)q_*$.  Therefore
+\[
+  q_{n+1}-q_*=(1-\alpha-\beta)(q_n-q_*).
+\]
+Iterating from $q_0=\mu(0)$ gives
+\[
+  q_n-q_*=(1-\alpha-\beta)^n(\mu(0)-q_*),
+\]
+which is the desired formula.
+
+\section*{Exercise 5.6.2}
+
+\noindent\textbf{Question.}
+Show that if $S$ is finite and $p$ is irreducible and aperiodic, then
+there is an $m$ such that
+\[
+  p^m(x,y)>0
+  \qquad\text{for all }x,y.
+\]
+
+\Knowledge{
+\path{durrett_ch5_period_definition};
+\path{durrett_ch5_aperiodic_convergence_theorem};
+\path{durrett_ch5_finite_closed_recurrent_class}.
+}
+
+\noindent\textbf{Solution.}
+Because the chain is irreducible, for each pair $x,y$ there is a
+$k(x,y)$ such that
+\[
+  p^{k(x,y)}(x,y)>0.
+\]
+Because the chain is aperiodic, Lemma 5.6.5 from the textbook says that
+for each $y$ there is an $M(y)$ such that
+\[
+  p^\ell(y,y)>0
+  \qquad\text{for all }\ell\ge M(y).
+\]
+The state space is finite, so choose
+\[
+  m\ge \max_{x,y}\{k(x,y)+M(y)\}.
+\]
+Then for every $x,y$,
+\[
+  p^m(x,y)
+  \ge
+  p^{k(x,y)}(x,y)\,p^{m-k(x,y)}(y,y)
+  >0.
+\]
+
+\section*{Exercise 5.6.3}
+
+\noindent\textbf{Question.}
+Show that if $S$ is finite, $p$ is irreducible and aperiodic, and $T$
+is the coupling time defined in the proof of Theorem 5.6.6, then
+\[
+  P(T>n)\le Cr^n
+\]
+for some $r<1$ and $C<\infty$.  Thus convergence to equilibrium occurs
+exponentially rapidly in this case.  Hint: first consider the case in
+which $p(x,y)>0$ for all $x,y$ and reduce the general case to this one
+by looking at a power of $p$.
+
+\Knowledge{
+\path{durrett_ch5_aperiodic_convergence_theorem};
+\path{durrett_ch5_coupling_for_finite_chains};
+\path{durrett_ch5_period_definition}.
+}
+
+\noindent\textbf{Solution.}
+First suppose $p(x,y)>0$ for all $x,y$.  Since $S$ is finite, choose a
+state $a$ and set
+\[
+  \eta=\min_{x\in S}p(x,a)>0.
+\]
+For the independent-coordinate coupling used in Theorem 5.6.6, from any
+current pair $(x,y)$ the probability that both coordinates jump to $a$
+in the next step is at least $\eta^2$.  Hence
+\[
+  P(T>n+1\mid T>n)\le 1-\eta^2,
+\]
+and therefore
+\[
+  P(T>n)\le(1-\eta^2)^n.
+\]
+
+In the general finite irreducible aperiodic case, Exercise 5.6.2 gives
+an integer $m$ such that
+\[
+  p^m(x,y)>0
+  \qquad\text{for all }x,y.
+\]
+Apply the previous argument to the $m$-step skeleton chain.  There is
+$\eta>0$ such that, at each block of $m$ steps, the coupled coordinates
+meet with probability at least $\eta^2$.  Thus
+\[
+  P(T>km)\le(1-\eta^2)^k.
+\]
+For arbitrary $n$, take $k=\lfloor n/m\rfloor$ and write this as
+\[
+  P(T>n)\le C r^n
+\]
+for suitable constants $C<\infty$ and $r=(1-\eta^2)^{1/m}<1$.
+
+\section*{Exercise 5.6.4}
+
+\noindent\textbf{Question.}
+For any transition matrix $p$, define
+\[
+  \alpha_n
+  =
+  \sup_{i,j}
+  \frac12\sum_k |p^n(i,k)-p^n(j,k)|.
+\]
+The factor $1/2$ is there because for any $i,j$ we can define random
+variables $X$ and $Y$ such that
+$P(X=k)=p^n(i,k)$, $P(Y=k)=p^n(j,k)$, and
+\[
+  P(X\ne Y)
+  =
+  \frac12\sum_k |p^n(i,k)-p^n(j,k)|.
+\]
+Show that
+\[
+  \alpha_{m+n}\le \alpha_n\alpha_m.
+\]
+
+\Knowledge{
+\path{durrett_ch5_coupling_for_finite_chains};
+\path{durrett_ch5_aperiodic_convergence_theorem}.
+}
+
+\noindent\textbf{Solution.}
+We use the coupling interpretation.  Start two copies of the chain from
+$i$ and $j$.  Couple their positions after $m$ steps as efficiently as
+possible, so that
+\[
+  P(X_m\ne Y_m)
+  \le
+  \alpha_m.
+\]
+If $X_m=Y_m$, then use the same future randomness for the two chains,
+so they remain together.  If $X_m\ne Y_m$, couple the next $n$ steps as
+efficiently as possible; conditional on the two different states at time
+$m$, the chance they fail to couple after another $n$ steps is at most
+$\alpha_n$.
+
+Therefore
+\[
+  P(X_{m+n}\ne Y_{m+n})\le \alpha_m\alpha_n.
+\]
+Taking the best possible coupling interpretation of total variation and
+then the supremum over $i,j$ gives
+\[
+  \alpha_{m+n}\le\alpha_m\alpha_n.
+\]
+
+\section*{Exercise 5.6.5}
+
+\noindent\textbf{Question.}
+Strong law for additive functionals.  Suppose $p$ is irreducible and has
+stationary distribution $\pi$.  Let $f$ satisfy
+\[
+  \sum_y |f(y)|\pi(y)<\infty.
+\]
+Let $T_x^k$ be the time of the $k$th return to $x$.
+\begin{enumerate}[label=(\roman*)]
+\item Show that
+\[
+  V_k^f=f(X(T_x^k))+\cdots+f(X(T_x^{k+1}-1)),
+  \qquad k\ge1,
+\]
+are i.i.d. and have $E|V_k^f|<\infty$.
+\item Let $K_n=\inf\{k:T_x^k\ge n\}$ and show that
+\[
+  \frac1n\sum_{m=1}^{K_n}V_m^f
+  \longrightarrow
+  \frac{EV_1^f}{E_xT_x^1}
+  =
+  \sum_y f(y)\pi(y)
+  \qquad P_\mu\text{-a.s.}
+\]
+\item Show that
+\[
+  \frac{\max_{1\le m\le n}V_m^{|f|}}{n}\to0
+\]
+and conclude that
+\[
+  \frac1n\sum_{m=1}^n f(X_m)
+  \longrightarrow
+  \sum_y f(y)\pi(y)
+  \qquad P_\mu\text{-a.s.}
+\]
+for any initial distribution $\mu$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch5_additive_functional_lln};
+\path{durrett_ch5_stationary_measure_from_returns};
+\path{durrett_ch5_positive_recurrence_return_time};
+\path{durrett_ch5_strong_markov_property}.
+}
+
+\noindent\textbf{Solution.}
+The return times to $x$ split the path into regenerative cycles.  By the
+strong Markov property, the cycle rewards
+\[
+  V_k^f=\sum_{r=T_x^k}^{T_x^{k+1}-1} f(X_r),
+  \qquad k\ge1,
+\]
+are i.i.d.
+
+The cycle occupation measure satisfies
+\[
+  \mu_x(y)
+  =
+  E_x\sum_{r=0}^{T_x^1-1}\1_{\{X_r=y\}}.
+\]
+Since $\pi$ is stationary and the chain is irreducible positive
+recurrent,
+\[
+  \mu_x(y)=\frac{\pi(y)}{\pi(x)},
+  \qquad
+  E_xT_x^1=\frac1{\pi(x)}.
+\]
+Therefore
+\[
+  E|V_1^f|
+  \le
+  \sum_y |f(y)|\mu_x(y)
+  =
+  \frac1{\pi(x)}\sum_y |f(y)|\pi(y)
+  <\infty,
+\]
+and
+\[
+  EV_1^f
+  =
+  \frac1{\pi(x)}\sum_y f(y)\pi(y).
+\]
+
+By the strong law of large numbers applied to the iid cycle lengths and
+cycle rewards,
+\[
+  \frac{T_x^k}{k}\to E_xT_x^1,
+  \qquad
+  \frac1k\sum_{m=1}^k V_m^f\to EV_1^f.
+\]
+Since $K_n/n\to 1/E_xT_x^1$, random indexing gives
+\[
+  \frac1n\sum_{m=1}^{K_n}V_m^f
+  =
+  \frac{K_n}{n}
+  \cdot
+  \frac1{K_n}\sum_{m=1}^{K_n}V_m^f
+  \longrightarrow
+  \frac{EV_1^f}{E_xT_x^1}
+  =
+  \sum_y f(y)\pi(y).
+\]
+
+If $Z_m=V_m^{|f|}$, then the $Z_m$ are iid and integrable.  A standard
+dyadic Borel-Cantelli argument for iid integrable variables gives
+\[
+  \frac{\max_{1\le m\le n}Z_m}{n}\to0
+  \qquad\text{a.s.}
+\]
+The difference between the ordinary partial sum
+$\sum_{m=1}^n f(X_m)$ and the completed-cycle sum is bounded in absolute
+value by the reward in at most one incomplete cycle, plus an initial
+finite entrance segment if the chain does not start at $x$.  Dividing by
+$n$, these errors vanish a.s.  Hence
+\[
+  \frac1n\sum_{m=1}^n f(X_m)
+  \to
+  \sum_y f(y)\pi(y)
+  \qquad P_\mu\text{-a.s.}
+\]
+
+\section*{Exercise 5.6.6}
+
+\noindent\textbf{Question.}
+Central limit theorem for additive functionals.  Suppose in addition to
+the conditions in Exercise 5.6.5 that
+\[
+  \sum_y f(y)\pi(y)=0,
+  \qquad
+  E_x(V_k^{|f|})^2<\infty.
+\]
+\begin{enumerate}[label=(\roman*)]
+\item Use the random-index central limit theorem to conclude that for
+any initial distribution $\mu$,
+\[
+  \frac1{\sqrt n}\sum_{m=1}^{K_n}V_m^f
+  \Rightarrow c\chi
+  \qquad\text{under }P_\mu,
+\]
+where $\chi$ is standard normal.
+\item Show that
+\[
+  \frac{\max_{1\le m\le n}V_m^{|f|}}{\sqrt n}\to0
+  \quad\text{in probability}
+\]
+and conclude that
+\[
+  \frac1{\sqrt n}\sum_{m=1}^n f(X_m)
+  \Rightarrow c\chi
+  \qquad\text{under }P_\mu.
+\]
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch5_additive_functional_lln};
+\path{durrett_ch3_converging_together_slutsky};
+\path{durrett_ch3_lindeberg_feller_clt}.
+}
+
+\noindent\textbf{Solution.}
+From Exercise 5.6.5, the cycle rewards $V_m^f$ are iid.  The assumption
+$\sum_y f(y)\pi(y)=0$ implies
+\[
+  EV_1^f=0.
+\]
+The square-integrability assumption gives
+\[
+  \sigma^2=\operatorname{Var}(V_1^f)<\infty.
+\]
+Also $K_n/n\to 1/E_xT_x^1$ in probability.  The random-index central
+limit theorem therefore gives
+\[
+  \frac1{\sqrt n}\sum_{m=1}^{K_n}V_m^f
+  \Rightarrow
+  N\!\left(0,\frac{\sigma^2}{E_xT_x^1}\right).
+\]
+Thus $c=\sigma/\sqrt{E_xT_x^1}$.
+
+Let $Z_m=V_m^{|f|}$.  Since $EZ_1^2<\infty$,
+\[
+  P\left(\max_{1\le m\le n} Z_m>\varepsilon\sqrt n\right)
+  \le
+  nP(Z_1>\varepsilon\sqrt n).
+\]
+The right side tends to $0$ by the usual tail consequence of
+square-integrability; equivalently, split into dyadic blocks and use
+Borel-Cantelli.  Hence
+\[
+  \frac{\max_{1\le m\le n}V_m^{|f|}}{\sqrt n}\to0
+  \quad\text{in probability}.
+\]
+The difference between the completed-cycle reward and the ordinary
+partial sum is bounded by the reward in one incomplete cycle, plus a
+finite initial segment when the initial distribution is not concentrated
+at $x$.  Dividing by $\sqrt n$, this difference goes to $0$ in
+probability.  Slutsky's theorem gives
+\[
+  \frac1{\sqrt n}\sum_{m=1}^n f(X_m)
+  \Rightarrow c\chi.
+\]
+
+\section*{Exercise 5.6.7}
+
+\noindent\textbf{Question.}
+Ratio limit theorems.  Theorem 5.6.1 does not say much in the null
+recurrent case.  To get a more informative limit theorem, suppose that
+$y$ is recurrent and $m$ is the stationary measure on
+$C_y=\{z:\rho_{yz}>0\}$, unique up to constant multiples.  Let
+\[
+  N_n(z)=|\{m\le n:X_m=z\}|.
+\]
+Break up the path at successive returns to $y$ and show that
+\[
+  \frac{N_n(z)}{N_n(y)}
+  \longrightarrow
+  \frac{m(z)}{m(y)}
+  \qquad P_x\text{-a.s.}
+\]
+for all $x,z\in C_y$.
+
+\Knowledge{
+\path{durrett_ch5_renewal_limit_return_probabilities};
+\path{durrett_ch5_stationary_measure_from_returns};
+\path{durrett_ch5_stationary_measure_uniqueness_recurrent}.
+}
+
+\noindent\textbf{Solution.}
+Normalize the stationary measure so that $m(y)=1$.  With this
+normalization, $m=\mu_y$, the cycle occupation measure generated by
+successive returns to $y$.
+
+Let $R_k$ be the $k$th return time to $y$.  In the $k$th cycle, define
+\[
+  Z_k(z)=\sum_{r=R_k}^{R_{k+1}-1}\1_{\{X_r=z\}}.
+\]
+By the strong Markov property, the $Z_k(z)$ are iid for $k\ge1$, and
+\[
+  EZ_1(z)=\mu_y(z)=m(z).
+\]
+Also each complete cycle contains exactly one visit to $y$, namely at
+its start.
+
+By the strong law of large numbers,
+\[
+  \frac1K\sum_{k=1}^K Z_k(z)\to m(z).
+\]
+Since $N_n(y)\to\infty$ a.s. on the recurrent class and the unfinished
+last cycle contributes only a negligible error when divided by
+$N_n(y)$, we get
+\[
+  \frac{N_n(z)}{N_n(y)}\to m(z).
+\]
+Restoring the original normalization gives
+\[
+  \frac{N_n(z)}{N_n(y)}\to\frac{m(z)}{m(y)}.
+\]
+If the chain starts from $x\in C_y$ rather than from $y$, the finite
+initial segment before the first hit of $y$ is negligible in the same
+ratio.
+
+\section*{Exercise 5.6.8}
+
+\noindent\textbf{Question.}
+We got (5.6.1) from Theorem 5.6.1 by taking expected values.  This does
+not work for the ratio in the previous exercise, so we need another
+approach.  Suppose $z\ne y$.
+\begin{enumerate}[label=(\roman*)]
+\item Let
+\[
+  \bar p_n(x,z)=P_x(X_n=z,T_y>n)
+\]
+and decompose $p^m(x,z)$ according to the value of
+\[
+  J=\sup\{j\in[1,m):X_j=y\}
+\]
+to get
+\[
+  \sum_{m=1}^n p^m(x,z)
+  =
+  \sum_{m=1}^n \bar p_m(x,z)
+  +
+  \sum_{j=1}^{n-1}p^j(x,y)
+  \sum_{k=1}^{n-j}\bar p_k(y,z).
+\]
+\item Show that
+\[
+  \frac{\sum_{m=1}^n p^m(x,z)}
+       {\sum_{m=1}^n p^m(x,y)}
+  \longrightarrow
+  \frac{m(z)}{m(y)}.
+\]
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch5_renewal_limit_return_probabilities};
+\path{durrett_ch5_hitting_return_decomposition};
+\path{durrett_ch5_stationary_measure_from_returns}.
+}
+
+\noindent\textbf{Solution.}
+For part (i), either the path has no visit to $y$ before time $m$, in
+which case its contribution to $P_x(X_m=z)$ is $\bar p_m(x,z)$, or it
+has a last visit to $y$ before time $m$.  If this last visit occurs at
+time $j$, then the segment after time $j$ starts from $y$, ends at $z$
+after $k=m-j$ steps, and avoids $y$ in between.  By the Markov property,
+that contribution is
+\[
+  p^j(x,y)\bar p_k(y,z).
+\]
+Summing over $m\le n$ and writing $k=m-j$ gives the displayed formula.
+
+For part (ii), normalize $m$ so that $m(y)=1$.  Then the cycle formula
+for the stationary measure gives
+\[
+  \sum_{k=1}^\infty \bar p_k(y,z)=\mu_y(z)=m(z),
+\]
+because $z\ne y$.  Hence
+\[
+  B_N(z):=\sum_{k=1}^N \bar p_k(y,z)\longrightarrow m(z).
+\]
+The first term in the decomposition,
+\[
+  \sum_{m=1}^n\bar p_m(x,z),
+\]
+is bounded as $n\to\infty$ by the expected number of visits to $z$
+before hitting $y$.  Meanwhile
+\[
+  \sum_{m=1}^n p^m(x,y)\to\infty
+\]
+because $y$ is recurrent and $x\in C_y$.
+
+Using the decomposition from part (i),
+\[
+  \sum_{m=1}^n p^m(x,z)
+  =
+  O(1)+
+  \sum_{j=1}^{n-1}p^j(x,y)B_{n-j}(z).
+\]
+This is a weighted average of $B_{n-j}(z)$ with nonnegative weights
+$p^j(x,y)$, plus a negligible bounded term.  Since
+$B_N(z)\to m(z)$ and the total weight
+$\sum_{j=1}^{n-1}p^j(x,y)$ diverges, the Toeplitz averaging lemma gives
+\[
+  \frac{\sum_{m=1}^n p^m(x,z)}
+       {\sum_{m=1}^n p^m(x,y)}
+  \longrightarrow
+  m(z).
+\]
+Undoing the normalization $m(y)=1$ yields
+\[
+  \frac{\sum_{m=1}^n p^m(x,z)}
+       {\sum_{m=1}^n p^m(x,y)}
+  \longrightarrow
+  \frac{m(z)}{m(y)}.
+\]
+
+\section*{Exercise 5.8.1}
+
+\noindent\textbf{Question.}
+Show that $\bar X_n$ is recurrent if and only if
+\[
+  \sum_{n=1}^\infty \bar p^n(\alpha,\alpha)=\infty.
+\]
+
+\Knowledge{
+\path{durrett_ch5_harris_recurrence};
+\path{durrett_ch5_recurrence_visit_criterion};
+\path{durrett_ch5_small_set_split_chain}.
+}
+
+\noindent\textbf{Solution.}
+For the split chain $\bar X_n$, the artificial point $\alpha$ is an
+atom.  Let
+\[
+  R=\inf\{n\ge1:\bar X_n=\alpha\}.
+\]
+By definition, the Harris chain is recurrent when
+$P_\alpha(R<\infty)=1$.  Starting from $\alpha$, successive returns to
+$\alpha$ regenerate the process.  Hence, exactly as in the
+countable-state return criterion,
+\[
+  E_\alpha\sum_{n=1}^\infty \1_{\{\bar X_n=\alpha\}}
+  =
+  \sum_{n=1}^\infty \bar p^n(\alpha,\alpha)
+  =
+  \begin{cases}
+    \infty, & P_\alpha(R<\infty)=1,\\
+    \dfrac{P_\alpha(R<\infty)}{1-P_\alpha(R<\infty)},&
+    P_\alpha(R<\infty)<1.
+  \end{cases}
+\]
+Thus $\bar X_n$ is recurrent if and only if the displayed series
+diverges.
+
+\section*{Exercise 5.8.2}
+
+\noindent\textbf{Question.}
+If $X_n$ is a recurrent Harris chain on a countable state space, then
+$S$ can only have one irreducible set of recurrent states but may have a
+nonempty set of transient states.  For a concrete example, consider a
+branching process in which the probability of no children $p_0>0$ and
+set $A=B=\{0\}$.
+
+\Knowledge{
+\path{durrett_ch5_harris_recurrence};
+\path{durrett_ch5_decomposition_theorem};
+\path{durrett_ch5_branching_process_chain}.
+}
+
+\noindent\textbf{Solution.}
+For a recurrent Harris chain, the split-chain atom $\alpha$ is recurrent.
+Theorem 5.8.8 says that every set with positive $\lambda$-measure is
+visited infinitely often from $\alpha$.  In a countable state space,
+states in recurrent classes that are visible from the Harris set must
+therefore communicate through the same recurrent split-chain structure.
+Consequently there can be at most one irreducible recurrent class.
+States outside that class may still be transient, because Harris
+recurrence only forces repeated visits to sets seen by the recurrent
+atom, not recurrence of every starting state.
+
+For the branching-process example, state $0$ is absorbing.  If
+$p_0>0$, then from any state $k\ge1$ there is positive probability
+$p_0^k$ that all individuals have no offspring in the next generation,
+so the chain can hit $0$.  Taking $A=B=\{0\}$ gives the Harris
+minorization, and the split-chain atom is recurrent because once the
+process reaches $0$ it stays there.
+
+The unique recurrent class is $\{0\}$.  The states $k\ge1$ are not in
+that recurrent class; when extinction occurs they are never visited
+again.  Thus the recurrent Harris chain may have transient states.
+
+\section*{Exercise 5.8.3}
+
+\noindent\textbf{Question.}
+Use Exercise 5.8.1 and imitate the proof of Theorem 5.5.10 to show that
+a Harris chain with a stationary distribution must be recurrent.
+
+\Knowledge{
+\path{durrett_ch5_harris_recurrence};
+\path{durrett_ch5_harris_stationary_measure};
+\path{durrett_ch5_stationary_measure_definition}.
+}
+
+\noindent\textbf{Solution.}
+Let $\pi$ be a stationary distribution for the original Harris chain.
+Form the split-chain measure
+\[
+  \bar\pi=\pi\bar p.
+\]
+By Lemma 5.8.10, $\bar\pi$ is stationary for $\bar p$, and
+\[
+  \bar\pi(\alpha)=\epsilon\pi(A)>0
+\]
+for the Harris set $A$.
+
+Stationarity gives $\bar\pi\bar p^n=\bar\pi$ for all $n$, so
+\[
+  \sum_{n=1}^\infty \bar\pi(\alpha)=\infty.
+\]
+Equivalently,
+\[
+  \int \bar\pi(dx)\sum_{n=1}^\infty \bar p^n(x,\alpha)=\infty.
+\]
+If $\alpha$ were transient, then the expected number of visits to
+$\alpha$ starting from any state would be bounded by a finite multiple
+of the probability of ever hitting $\alpha$, because after each hit the
+future returns are governed by a geometric number of trials with success
+probability $P_\alpha(R<\infty)<1$.  The integral above would then be
+finite, a contradiction.  Hence
+\[
+  \sum_{n=1}^\infty \bar p^n(\alpha,\alpha)=\infty.
+\]
+By Exercise 5.8.1, the Harris chain is recurrent.
+
+\section*{Exercise 5.8.4}
+
+\noindent\textbf{Question.}
+Suppose $X_n$ is a recurrent Harris chain.  Show that if $(A',B')$ is
+another pair satisfying the conditions of the definition, then Theorem
+5.8.8 implies
+\[
+  P_\alpha(\bar X_n\in A'\ \text{i.o.})=1,
+\]
+so the recurrence or transience does not depend on the choice of
+$(A,B)$.
+
+\Knowledge{
+\path{durrett_ch5_harris_recurrence};
+\path{durrett_ch5_small_set_split_chain};
+\path{durrett_ch5_harris_stationary_measure}.
+}
+
+\noindent\textbf{Solution.}
+Let $\lambda$ be the irreducibility measure associated with the split
+chain built from $(A,B)$:
+\[
+  \lambda(C)=\sum_{n=1}^\infty 2^{-n}\bar p^n(\alpha,C).
+\]
+Because $(A',B')$ also satisfies the Harris definition, every state in
+$S$ has positive probability of eventually hitting $A'$.  Starting from
+$\alpha$, the split chain first redistributes into $S$ according to the
+measure $\rho$ associated with $(A,B)$, and then follows the original
+chain.  Therefore
+\[
+  P_\alpha(\tau_{A'}<\infty)>0.
+\]
+This implies $\lambda(A')>0$.
+
+Since the chain is recurrent, Theorem 5.8.8 applies to every set of
+positive $\lambda$-measure.  Hence
+\[
+  P_\alpha(\bar X_n\in A'\ \text{i.o.})=1.
+\]
+Thus the atom built from $(A,B)$ visits the other Harris set $A'$
+infinitely often.  Reversing the roles of the two pairs gives the same
+conclusion in the other split chain.  Consequently the recurrence or
+transience classification is intrinsic and does not depend on the
+particular choice of $(A,B)$.
+
+\section*{Exercise 5.8.5}
+
+\noindent\textbf{Question.}
+In the GI/G/1 queue, the waiting time $W_n$ and the random walk
+\[
+  S_n=X_0+\xi_1+\cdots+\xi_n
+\]
+agree until
+\[
+  N=\inf\{n:S_n<0\},
+\]
+and at this time $W_N=0$.  Use this observation as in Example 5.3.7 to
+show that Example 5.8.3 is transient when $E\xi_n>0$, recurrent when
+$E\xi_n\le0$, and has a stationary distribution when $E\xi_n<0$.
+
+\Knowledge{
+\path{durrett_ch5_gig1_queue_storage_model};
+\path{durrett_ch5_harris_recurrence};
+\path{durrett_ch5_foster_supermartingale_recurrence};
+\path{durrett_ch5_harris_stationary_measure}.
+}
+
+\noindent\textbf{Solution.}
+The recursion is
+\[
+  W_{n+1}=(W_n+\xi_{n+1})^+.
+\]
+Until the ordinary random walk
+\[
+  S_n=X_0+\xi_1+\cdots+\xi_n
+\]
+first goes below $0$, the reflection has not acted, so $W_n=S_n$.  At
+the first time $N=\inf\{n:S_n<0\}$, the reflected process is reset to
+$0$.
+
+If $E\xi_1>0$, then $S_n\to\infty$ with positive probability when
+$X_0$ is large enough.  On that event the random walk never drops below
+$0$, so the queue never returns to $0$.  Hence the Harris chain is
+transient.
+
+If $E\xi_1\le0$, the one-dimensional random walk is oscillatory or
+drifts to $-\infty$, and therefore it eventually drops below $0$ a.s.
+from every finite initial workload.  Thus $W_n$ hits $0$ a.s.  With
+$A=B=\{0\}$ as in Example 5.8.3, this gives recurrence of the Harris
+chain.
+
+If $E\xi_1<0$, the drift toward $0$ is strict.  The same supermartingale
+argument used for the M/G/1 queue gives
+\[
+  E_x N<\infty
+\]
+for every $x$.  Thus the return time to the Harris atom has finite mean,
+so the recurrent Harris chain is positive recurrent and has a stationary
+distribution.
+
+\section*{Exercise 5.8.6}
+
+\noindent\textbf{Question.}
+Let
+\[
+  m_n=\min(S_0,S_1,\ldots,S_n),
+\]
+where $S_n$ is the random walk defined previously.
+\begin{enumerate}[label=(\roman*)]
+\item Show that
+\[
+  S_n-m_n\stackrel{d}{=}W_n.
+\]
+\item Let $\xi'_m=\xi_{n+1-m}$ for $1\le m\le n$.  Show that
+\[
+  S_n-m_n=\max(S'_0,S'_1,\ldots,S'_n).
+\]
+\item Conclude that as $n\to\infty$,
+\[
+  W_n\Rightarrow M\equiv\max(S'_0,S'_1,S'_2,\ldots).
+\]
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch5_gig1_queue_storage_model};
+\path{durrett_ch5_random_walk_chain};
+\path{durrett_ch3_weak_convergence_definition}.
+}
+
+\noindent\textbf{Solution.}
+Assume $W_0=S_0=0$.  The reflected recursion has the explicit
+Skorokhod-reflection form
+\[
+  W_n=S_n-\min_{0\le j\le n}S_j
+\]
+as can be checked by induction.  Indeed, if the running minimum does not
+decrease at time $n+1$, then both sides add $\xi_{n+1}$; if the running
+minimum decreases, then the right side becomes $0$, matching the
+positive-part recursion.  Hence
+\[
+  W_n=S_n-m_n.
+\]
+This proves the distributional statement, and in this construction the
+two sides are actually equal.
+
+For part (ii),
+\[
+  S_n-m_n
+  =
+  \max_{0\le j\le n}(S_n-S_j)
+  =
+  \max_{0\le j\le n}(\xi_{j+1}+\cdots+\xi_n).
+\]
+If $\xi'_m=\xi_{n+1-m}$ and
+$S'_k=\xi'_1+\cdots+\xi'_k$, then the sums
+$\xi_{j+1}+\cdots+\xi_n$ are exactly
+$S'_{n-j}$ for $0\le j\le n$.  Therefore
+\[
+  S_n-m_n=\max_{0\le k\le n}S'_k.
+\]
+
+If $E\xi_1<0$, then the reversed increments have the same distribution
+as the original increments and the random walk $S'_k$ drifts to
+$-\infty$.  Hence
+\[
+  M=\max_{k\ge0}S'_k<\infty
+  \qquad\text{a.s.}
+\]
+The finite maxima $\max_{0\le k\le n}S'_k$ increase a.s. to $M$.
+Since $W_n$ has the same distribution as this finite maximum,
+\[
+  W_n\Rightarrow M.
+\]
+
+\section*{Exercise 5.8.7}
+
+\noindent\textbf{Question.}
+In the discrete O.U. process, $X_{n+1}$ is normal with mean
+$\theta X_n$ and variance $1$.  What happens to the recurrence and
+transience if instead $Y_{n+1}$ is normal with mean $0$ and variance
+$\beta^2|Y_n|$?
+
+\Knowledge{
+\path{durrett_ch5_harris_recurrence};
+\path{durrett_ch5_harris_convergence_theorem};
+\path{durrett_ch5_foster_supermartingale_recurrence}.
+}
+
+\noindent\textbf{Solution.}
+If $Y_n=0$, then the conditional variance is $0$, so $0$ is absorbing.
+Starting from $Y_0\ne0$, the transition distribution is continuous and
+puts probability zero on the single point $0$.  Thus $\{0\}$ is a
+separate absorbing recurrent class, while the nonzero states form the
+interesting continuous class.
+
+For $Y_n\ne0$, write $R_n=|Y_n|$ and $L_n=\log R_n$.  If $Z_{n+1}$ is a
+standard normal random variable, then
+\[
+  Y_{n+1}=\beta\sqrt{|Y_n|}\,Z_{n+1},
+\]
+so
+\[
+  L_{n+1}
+  =
+  \log\beta+\frac12L_n+\log|Z_{n+1}|.
+\]
+This is an autoregressive recursion on the log-scale with coefficient
+$1/2$.  Since $E|\log|Z||<\infty$, the recursion is stable and has a
+proper stationary distribution:
+\[
+  L_\infty
+  \stackrel{d}{=}
+  \sum_{j=0}^\infty 2^{-j}
+  \bigl(\log\beta+\log|Z_{j+1}|\bigr).
+\]
+Thus $|Y_n|$ neither escapes to infinity nor collapses to zero from a
+nonzero start; it returns repeatedly to bounded log-scale sets.
+
+Consequently, for every $\beta>0$, the chain restricted to
+$\mathbb{R}\setminus\{0\}$ is recurrent in the Harris sense and in fact
+has a stationary distribution.  The full chain is not irreducible
+because $0$ is absorbing and cannot be reached from nonzero states, but
+its recurrence structure is clear: $\{0\}$ is an absorbing recurrent
+class, and the nonzero Harris class is positive recurrent.
+
+\end{document}

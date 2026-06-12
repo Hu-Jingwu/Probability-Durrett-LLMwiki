@@ -1,0 +1,3356 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!60!black
+}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\1}{\mathbf{1}}
+\newcommand{\Knowledge}[1]{%
+  \par\smallskip\noindent
+  \textbf{Knowledge used.}
+  {\small\color{blue!60!black}\raggedright #1\par}
+  \par\smallskip
+}
+
+\title{Chapter 2 Exercises}
+\author{\textsc{Solutions to Rick Durrett's}\\
+\textit{Probability: Theory and Examples}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\noindent
+These solutions use the local Chapter 2 LLM/Viki knowledge set in
+\path{Probability/LLM_Viki_Dataset/Chapter2_Knowledge}.  The cited
+knowledge IDs refer to entries in
+\path{chapter2_knowledge_pieces.jsonl}.
+
+\section*{Exercise 2.1.1}
+
+\noindent\textbf{Question.}
+Suppose $(X_1,\ldots,X_n)$ has density $f(x_1,\ldots,x_n)$, that is
+\[
+  \Prob((X_1,\ldots,X_n)\in A)=\int_A f(x)\,dx,\qquad A\in\B(\R^n).
+\]
+If $f(x)$ can be written as $g_1(x_1)\cdots g_n(x_n)$, where the
+$g_m\ge 0$ are measurable, then $X_1,\ldots,X_n$ are independent.  Note
+that the $g_m$ are not assumed to be probability densities.
+
+\Knowledge{
+\path{durrett_ch2_joint_law_product_measure};
+\path{durrett_ch2_pi_lambda_independence};
+\path{durrett_ch2_rv_sigma_independence}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  c_i=\int_{\R}g_i(x)\,dx.
+\]
+By Tonelli's theorem,
+\[
+  1=\int_{\R^n}f(x)\,dx
+   =\prod_{i=1}^n \int_{\R}g_i(x_i)\,dx_i
+   =\prod_{i=1}^n c_i.
+\]
+Thus each $c_i$ is finite and positive.  Define $h_i=g_i/c_i$.  Then
+each $h_i$ is a probability density and
+\[
+  f(x_1,\ldots,x_n)=\prod_{i=1}^n h_i(x_i).
+\]
+For rectangles $A_1\times\cdots\times A_n$,
+\[
+\begin{aligned}
+  \Prob(X_1\in A_1,\ldots,X_n\in A_n)
+  &=\int_{A_1\times\cdots\times A_n}\prod_{i=1}^n h_i(x_i)\,dx  \\
+  &=\prod_{i=1}^n \int_{A_i}h_i(x_i)\,dx_i
+   =\prod_{i=1}^n \Prob(X_i\in A_i).
+\end{aligned}
+\]
+The rectangle class is a pi-system generating $\B(\R^n)$, so the
+factorization extends to the generated sigma-fields.  Hence
+$X_1,\ldots,X_n$ are independent.
+
+\section*{Exercise 2.1.2}
+
+\noindent\textbf{Question.}
+Suppose $X_1,\ldots,X_n$ are random variables that take values in
+countable sets $S_1,\ldots,S_n$.  Then in order for
+$X_1,\ldots,X_n$ to be independent, it is sufficient that whenever
+$x_i\in S_i$,
+\[
+  \Prob(X_1=x_1,\ldots,X_n=x_n)=\prod_{i=1}^n \Prob(X_i=x_i).
+\]
+
+\Knowledge{
+\path{durrett_ch2_event_independence};
+\path{durrett_ch2_pi_lambda_independence};
+\path{durrett_ch2_joint_law_product_measure}.
+}
+
+\noindent\textbf{Solution.}
+Let $A_i\subseteq S_i$.  Since the $S_i$ are countable, Tonelli's theorem
+for nonnegative sums gives
+\[
+\begin{aligned}
+  \Prob(X_1\in A_1,\ldots,X_n\in A_n)
+  &=\sum_{x_1\in A_1}\cdots\sum_{x_n\in A_n}
+    \Prob(X_1=x_1,\ldots,X_n=x_n)\\
+  &=\sum_{x_1\in A_1}\cdots\sum_{x_n\in A_n}
+    \prod_{i=1}^n \Prob(X_i=x_i)\\
+  &=\prod_{i=1}^n \sum_{x_i\in A_i}\Prob(X_i=x_i)
+   =\prod_{i=1}^n \Prob(X_i\in A_i).
+\end{aligned}
+\]
+Thus the defining product formula holds for arbitrary subsets of the
+countable state spaces, and $X_1,\ldots,X_n$ are independent.
+
+\section*{Exercise 2.1.3}
+
+\noindent\textbf{Question.}
+Let $\rho(x,y)$ be a metric.
+\begin{enumerate}[label=(\roman*)]
+\item Suppose $h$ is differentiable with $h(0)=0$, $h'(x)>0$ for
+$x>0$, and $h'(x)$ decreasing on $[0,\infty)$.  Then $h(\rho(x,y))$ is a
+metric.
+\item $h(x)=x/(x+1)$ satisfies the hypotheses in (i).
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_construct_independent_variables}.
+}
+
+\noindent\textbf{Solution.}
+Since $h'(x)>0$ for $x>0$ and $h(0)=0$, $h(t)\ge 0$ for $t\ge 0$, and
+$h(t)=0$ if and only if $t=0$.  Therefore
+$d(x,y)=h(\rho(x,y))$ is nonnegative and equals $0$ exactly when $x=y$.
+Symmetry follows immediately from symmetry of $\rho$.
+
+It remains to prove the triangle inequality.  Since $h'$ is decreasing,
+$h$ is concave on $[0,\infty)$.  For $a,b\ge 0$,
+\[
+  h(a+b)-h(a)=\int_a^{a+b}h'(u)\,du
+  \le \int_0^b h'(u)\,du
+  =h(b).
+\]
+Thus $h(a+b)\le h(a)+h(b)$.  Since $\rho(x,z)\le \rho(x,y)+\rho(y,z)$
+and $h$ is increasing,
+\[
+  h(\rho(x,z))
+  \le h(\rho(x,y)+\rho(y,z))
+  \le h(\rho(x,y))+h(\rho(y,z)).
+\]
+So $h\circ\rho$ is a metric.
+
+For $h(x)=x/(x+1)$,
+\[
+  h(0)=0,\qquad h'(x)=\frac{1}{(x+1)^2}>0,\qquad
+  h''(x)=-\frac{2}{(x+1)^3}<0.
+\]
+Hence $h'$ is decreasing and the hypotheses in (i) hold.
+
+\section*{Exercise 2.1.4}
+
+\noindent\textbf{Question.}
+Let $\Omega=(0,1)$, $\F$ be the Borel sets, and $\Prob$ be Lebesgue
+measure.  Let
+\[
+  X_n(\omega)=\sin(2\pi n\omega),\qquad n=1,2,\ldots.
+\]
+Show that $X_n$ are uncorrelated but not independent.
+
+\Knowledge{
+\path{durrett_ch2_expectation_factorization};
+\path{durrett_ch2_rv_sigma_independence};
+\path{durrett_ch2_event_independence}.
+}
+
+\noindent\textbf{Solution.}
+For every $n$,
+\[
+  \E X_n=\int_0^1 \sin(2\pi n\omega)\,d\omega=0.
+\]
+If $m\ne n$, the trigonometric orthogonality identity gives
+\[
+  \E(X_mX_n)
+  =\int_0^1 \sin(2\pi m\omega)\sin(2\pi n\omega)\,d\omega=0.
+\]
+Thus $\E(X_mX_n)=\E X_m\,\E X_n$ for $m\ne n$, so the variables are
+uncorrelated.
+
+They are not independent.  Indeed,
+\[
+  X_2^2=\sin^2(4\pi\omega)
+  =4\sin^2(2\pi\omega)\bigl(1-\sin^2(2\pi\omega)\bigr)
+  =4X_1^2(1-X_1^2).
+\]
+Thus $X_2^2$ is $\sigma(X_1)$-measurable.  If $X_1$ and $X_2$ were
+independent, then $X_2^2$ would be independent of $\sigma(X_1)$ and
+hence independent of itself.  A random variable independent of itself
+must be almost surely constant, but $4X_1^2(1-X_1^2)$ is not almost
+surely constant.  Therefore $X_1$ and $X_2$ are not independent, so the
+sequence is not independent.
+
+\section*{Exercise 2.1.5}
+
+\noindent\textbf{Question.}
+\begin{enumerate}[label=(\roman*)]
+\item Show that if $X$ and $Y$ are independent with distributions $\mu$
+and $\nu$, then
+\[
+  \Prob(X+Y=0)=\sum_y \mu(\{-y\})\nu(\{y\}).
+\]
+\item Conclude that if $X$ has continuous distribution, then
+$\Prob(X=Y)=0$ for independent $X$ and $Y$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_joint_law_product_measure};
+\path{durrett_ch2_expectation_factorization};
+\path{durrett_ch2_convolution_cdf}.
+}
+
+\noindent\textbf{Solution.}
+By independence, the joint law of $(X,Y)$ is $\mu\times\nu$.  The set
+\[
+  \{(x,y):x+y=0\}
+\]
+can have positive product measure only at atoms.  More explicitly, for
+fixed $y$ the vertical section contains the single point $x=-y$, so
+Tonelli gives
+\[
+  \Prob(X+Y=0)
+  =\int \mu(\{-y\})\,\nu(dy).
+\]
+The integrand is nonzero only when $-y$ is an atom of $\mu$.  A
+probability measure has at most countably many atoms, so this integral is
+the countable sum
+\[
+  \Prob(X+Y=0)=\sum_y \mu(\{-y\})\nu(\{y\}).
+\]
+
+For (ii), apply (i) to $X$ and $-Y$.  If $X$ has continuous distribution,
+then $\mu(\{y\})=0$ for every $y$, so
+\[
+  \Prob(X=Y)=\Prob(X-Y=0)=0.
+\]
+
+\section*{Exercise 2.1.6}
+
+\noindent\textbf{Question.}
+Prove directly from the definition that if $X$ and $Y$ are independent
+and $f$ and $g$ are measurable functions, then $f(X)$ and $g(Y)$ are
+independent.
+
+\Knowledge{
+\path{durrett_ch2_functions_of_independent_blocks};
+\path{durrett_ch2_rv_sigma_independence}.
+}
+
+\noindent\textbf{Solution.}
+Let $A,B\in\B(\R)$.  Since $f$ and $g$ are measurable,
+$f^{-1}(A)$ and $g^{-1}(B)$ are Borel sets.  Therefore
+\[
+\begin{aligned}
+  \Prob(f(X)\in A,\ g(Y)\in B)
+  &=\Prob(X\in f^{-1}(A),\ Y\in g^{-1}(B))\\
+  &=\Prob(X\in f^{-1}(A))\Prob(Y\in g^{-1}(B))\\
+  &=\Prob(f(X)\in A)\Prob(g(Y)\in B).
+\end{aligned}
+\]
+This is exactly the definition of independence of $f(X)$ and $g(Y)$.
+
+\section*{Exercise 2.1.7}
+
+\noindent\textbf{Question.}
+Let $K\ge 3$ be a prime and let $X$ and $Y$ be independent random
+variables uniformly distributed on $\{0,1,\ldots,K-1\}$.  For
+$0\le n<K$, let
+\[
+  Z_n=X+nY \pmod K.
+\]
+Show that $Z_0,Z_1,\ldots,Z_{K-1}$ are pairwise independent.  They are
+not independent because if we know the values of two of the variables
+then we know the values of all the variables.
+
+\Knowledge{
+\path{durrett_ch2_event_independence};
+\path{durrett_ch2_functions_of_independent_blocks};
+\path{durrett_ch2_joint_law_product_measure}.
+}
+
+\noindent\textbf{Solution.}
+Fix $r\ne s$ in $\{0,\ldots,K-1\}$.  For any $a,b\in\{0,\ldots,K-1\}$,
+the equations
+\[
+  X+rY\equiv a,\qquad X+sY\equiv b \pmod K
+\]
+have a unique solution modulo $K$.  Indeed, subtracting gives
+\[
+  (s-r)Y\equiv b-a \pmod K.
+\]
+Since $K$ is prime and $s-r\not\equiv 0\pmod K$, $s-r$ is invertible
+modulo $K$, so $Y$ is uniquely determined, and then $X$ is uniquely
+determined.  Since $(X,Y)$ is uniform on $K^2$ pairs,
+\[
+  \Prob(Z_r=a,Z_s=b)=K^{-2}.
+\]
+Also each $Z_r$ is uniform on $\{0,\ldots,K-1\}$, so
+\[
+  \Prob(Z_r=a)\Prob(Z_s=b)=K^{-1}K^{-1}=K^{-2}.
+\]
+Thus $Z_r$ and $Z_s$ are independent.  Since $r\ne s$ were arbitrary,
+the family is pairwise independent.
+
+The whole family is not independent.  Any two distinct $Z_r,Z_s$
+determine $X$ and $Y$, hence determine all $Z_n$.  For example,
+\[
+  \Prob(Z_0=0,\ldots,Z_{K-1}=0)=\Prob(X=0,Y=0)=K^{-2},
+\]
+whereas mutual independence would give $K^{-K}$.  Since $K\ge 3$, these
+numbers are different.
+
+\section*{Exercise 2.1.8}
+
+\noindent\textbf{Question.}
+Find four random variables taking values in $\{-1,1\}$ so that any three
+are independent but all four are not.  Hint: Consider products of
+independent random variables.
+
+\Knowledge{
+\path{durrett_ch2_event_independence};
+\path{durrett_ch2_functions_of_independent_blocks};
+\path{durrett_ch2_expectation_factorization}.
+}
+
+\noindent\textbf{Solution.}
+Let $U,V,W$ be independent random variables with
+\[
+  \Prob(U=1)=\Prob(U=-1)=\frac12,
+\]
+and similarly for $V$ and $W$.  Define
+\[
+  X_1=U,\qquad X_2=V,\qquad X_3=W,\qquad X_4=UVW.
+\]
+Every $X_i$ takes values in $\{-1,1\}$.
+
+The variables $X_1,X_2,X_3$ are independent by construction.  Consider,
+for instance, $X_1,X_2,X_4$.  If $a,b,c\in\{-1,1\}$, then
+\[
+  \{X_1=a,X_2=b,X_4=c\}
+  =\{U=a,V=b,W=abc\},
+\]
+which has probability $1/8$.  Since each of $X_1,X_2,X_4$ is symmetric
+on $\{-1,1\}$, this equals the product of the three marginal
+probabilities.  The same argument applies to every triple.
+
+However,
+\[
+  X_1X_2X_3X_4=U\cdot V\cdot W\cdot UVW=1
+\]
+almost surely.  If all four variables were independent, then each of the
+$16$ sign vectors would have probability $1/16$, including sign vectors
+whose product is $-1$.  This is impossible.  Hence any three are
+independent, but all four are not.
+
+\section*{Exercise 2.1.9}
+
+\noindent\textbf{Question.}
+Let $\Omega=\{1,2,3,4\}$, $\F$ be all subsets of $\Omega$, and
+$\Prob(\{i\})=1/4$.  Give an example of two collections of sets
+$\mathcal A_1$ and $\mathcal A_2$ that are independent but whose
+generated sigma-fields are not.
+
+\Knowledge{
+\path{durrett_ch2_pi_lambda_independence};
+\path{durrett_ch2_event_independence}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  A=\{1,2\},\qquad B=\{1,3\},\qquad C=\{1,4\},
+\]
+and set
+\[
+  \mathcal A_1=\{A,B\},\qquad \mathcal A_2=\{C\}.
+\]
+Then
+\[
+  \Prob(A)=\Prob(B)=\Prob(C)=\frac12,
+\]
+and
+\[
+  \Prob(A\cap C)=\Prob(\{1\})=\frac14
+  =\Prob(A)\Prob(C),
+\]
+while
+\[
+  \Prob(B\cap C)=\Prob(\{1\})=\frac14
+  =\Prob(B)\Prob(C).
+\]
+Thus the two collections are independent.
+
+However, $\sigma(\mathcal A_1)$ contains $\{1\}=A\cap B$, while
+$C\in\sigma(\mathcal A_2)$.  These two events are not independent:
+\[
+  \Prob(\{1\}\cap C)=\frac14
+  \ne \frac18
+  =\Prob(\{1\})\Prob(C).
+\]
+Therefore $\sigma(\mathcal A_1)$ and $\sigma(\mathcal A_2)$ are not
+independent.  This illustrates why the pi-system hypothesis in the
+independence extension theorem is essential.
+
+\section*{Exercise 2.1.10}
+
+\noindent\textbf{Question.}
+Show that if $X$ and $Y$ are independent, integer-valued random
+variables, then
+\[
+  \Prob(X+Y=n)=\sum_m \Prob(X=m)\Prob(Y=n-m).
+\]
+
+\Knowledge{
+\path{durrett_ch2_joint_law_product_measure};
+\path{durrett_ch2_convolution_cdf};
+\path{durrett_ch2_expectation_factorization}.
+}
+
+\noindent\textbf{Solution.}
+The events $\{X=m,Y=n-m\}$, $m\in\mathbb Z$, are disjoint and their
+union is $\{X+Y=n\}$.  Hence
+\[
+\begin{aligned}
+  \Prob(X+Y=n)
+  &=\sum_{m\in\mathbb Z}\Prob(X=m,Y=n-m)\\
+  &=\sum_{m\in\mathbb Z}\Prob(X=m)\Prob(Y=n-m),
+\end{aligned}
+\]
+where the last step uses independence.
+
+\section*{Exercise 2.1.11}
+
+\noindent\textbf{Question.}
+In Example 1.6.13, the Poisson distribution with parameter $\lambda$ is
+given by
+\[
+  \Prob(Z=k)=e^{-\lambda}\frac{\lambda^k}{k!},\qquad k=0,1,2,\ldots.
+\]
+Use the previous exercise to show that if $X=\operatorname{Poisson}
+(\lambda)$ and $Y=\operatorname{Poisson}(\mu)$ are independent, then
+$X+Y=\operatorname{Poisson}(\lambda+\mu)$.
+
+\Knowledge{
+\path{durrett_ch2_convolution_cdf};
+\path{durrett_ch2_joint_law_product_measure};
+\path{durrett_ch2_standard_convolution_examples}.
+}
+
+\noindent\textbf{Solution.}
+For $n=0,1,2,\ldots$, Exercise 2.1.10 gives
+\[
+\begin{aligned}
+  \Prob(X+Y=n)
+  &=\sum_{m=0}^n
+    e^{-\lambda}\frac{\lambda^m}{m!}
+    e^{-\mu}\frac{\mu^{n-m}}{(n-m)!}\\
+  &=e^{-(\lambda+\mu)}
+    \frac{1}{n!}\sum_{m=0}^n \binom{n}{m}\lambda^m\mu^{n-m}\\
+  &=e^{-(\lambda+\mu)}\frac{(\lambda+\mu)^n}{n!}.
+\end{aligned}
+\]
+This is the probability mass function of a
+$\operatorname{Poisson}(\lambda+\mu)$ random variable.
+
+\section*{Exercise 2.1.12}
+
+\noindent\textbf{Question.}
+$X$ is said to have a $\operatorname{Binomial}(n,p)$ distribution if
+\[
+  \Prob(X=m)=\binom{n}{m}p^m(1-p)^{n-m}.
+\]
+\begin{enumerate}[label=(\roman*)]
+\item Show that if $X=\operatorname{Binomial}(n,p)$ and
+$Y=\operatorname{Binomial}(m,p)$ are independent, then
+$X+Y=\operatorname{Binomial}(n+m,p)$.
+\item Look at Example 1.6.12 and use induction to conclude that the sum
+of $n$ independent $\operatorname{Bernoulli}(p)$ random variables is
+$\operatorname{Binomial}(n,p)$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_convolution_cdf};
+\path{durrett_ch2_joint_law_product_measure};
+\path{durrett_ch2_standard_convolution_examples}.
+}
+
+\noindent\textbf{Solution.}
+For $k=0,\ldots,n+m$, Exercise 2.1.10 gives
+\[
+\begin{aligned}
+  \Prob(X+Y=k)
+  &=\sum_j \binom{n}{j}p^j(1-p)^{n-j}
+          \binom{m}{k-j}p^{k-j}(1-p)^{m-k+j}\\
+  &=p^k(1-p)^{n+m-k}
+    \sum_j \binom{n}{j}\binom{m}{k-j}.
+\end{aligned}
+\]
+By Vandermonde's identity,
+\[
+  \sum_j \binom{n}{j}\binom{m}{k-j}=\binom{n+m}{k},
+\]
+so
+\[
+  \Prob(X+Y=k)=\binom{n+m}{k}p^k(1-p)^{n+m-k}.
+\]
+Therefore $X+Y$ is $\operatorname{Binomial}(n+m,p)$.
+
+For (ii), a Bernoulli$(p)$ variable is Binomial$(1,p)$.  The case
+$n=1$ is immediate.  If the sum of $n$ independent Bernoulli$(p)$
+variables is Binomial$(n,p)$, then adding one more independent
+Bernoulli$(p)$ variable and applying part (i) gives a
+Binomial$(n+1,p)$ distribution.  The conclusion follows by induction.
+
+\section*{Exercise 2.1.13}
+
+\noindent\textbf{Question.}
+It should not be surprising that the distribution of $X+Y$ can be
+$F*G$ without the random variables being independent.  Suppose
+$X,Y\in\{0,1,2\}$ and each takes each value with probability $1/3$.
+\begin{enumerate}[label=(\alph*)]
+\item Find the distribution of $X+Y$ assuming $X$ and $Y$ are
+independent.
+\item Find all the joint distributions $(X,Y)$ so that the distribution
+of $X+Y$ is the same as the answer to (a).
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_convolution_cdf};
+\path{durrett_ch2_joint_law_product_measure};
+\path{durrett_ch2_event_independence}.
+}
+
+\noindent\textbf{Solution.}
+If $X$ and $Y$ are independent and uniform on $\{0,1,2\}$, then the
+number of pairs $(x,y)$ with $x+y=k$ is $1,2,3,2,1$ for
+$k=0,1,2,3,4$.  Hence
+\[
+  \Prob(X+Y=k)=
+  \begin{cases}
+    1/9, & k=0,4,\\
+    2/9, & k=1,3,\\
+    3/9, & k=2.
+  \end{cases}
+\]
+
+For (b), write $p_{ij}=\Prob(X=i,Y=j)$ and scale by
+$q_{ij}=9p_{ij}$.  The marginal conditions say each row and each column
+of $q=(q_{ij})_{0\le i,j\le 2}$ sums to $3$.  The required distribution
+of $X+Y$ says the anti-diagonal sums are $1,2,3,2,1$.
+
+Solving these linear constraints gives the one-parameter family
+\[
+  q=
+  \begin{pmatrix}
+  1 & t & 2-t\\
+  2-t & 1 & t\\
+  t & 2-t & 1
+  \end{pmatrix},
+  \qquad 0\le t\le 2.
+\]
+Therefore all such joint distributions are
+\[
+  \Prob(X=i,Y=j)=\frac{1}{9}
+  \begin{pmatrix}
+  1 & t & 2-t\\
+  2-t & 1 & t\\
+  t & 2-t & 1
+  \end{pmatrix}_{ij},
+  \qquad 0\le t\le 2.
+\]
+The independent case corresponds to $t=1$, but every $t\in[0,2]$ gives
+the same distribution for $X+Y$.
+
+\section*{Exercise 2.1.14}
+
+\noindent\textbf{Question.}
+Let $X,Y\ge 0$ be independent with distribution functions $F$ and $G$.
+Find the distribution function of $XY$.
+
+\Knowledge{
+\path{durrett_ch2_joint_law_product_measure};
+\path{durrett_ch2_expectation_factorization};
+\path{durrett_ch2_convolution_cdf}.
+}
+
+\noindent\textbf{Solution.}
+Let $H(t)=\Prob(XY\le t)$.  Since $X,Y\ge 0$, $H(t)=0$ for $t<0$.  For
+$t\ge 0$, condition on the value of $Y$ and use independence:
+\[
+  H(t)=\int_{[0,\infty)} \Prob(Xy\le t)\,G(dy).
+\]
+If $y=0$, then $Xy=0\le t$, so the inner probability is $1$.  If
+$y>0$, it is $\Prob(X\le t/y)=F(t/y)$.  Thus
+\[
+  H(t)=G(0)+\int_{(0,\infty)} F(t/y)\,G(dy),
+  \qquad t\ge 0.
+\]
+Equivalently, with the convention $F(\infty)=1$, this can be written as
+\[
+  H(t)=\int_{[0,\infty)} F(t/y)\,G(dy),\qquad t\ge 0.
+\]
+
+\section*{Exercise 2.1.15}
+
+\noindent\textbf{Question.}
+If we want an infinite sequence of coin tossings, we do not have to use
+Kolmogorov's theorem.  Let $\Omega$ be the unit interval $(0,1)$ equipped
+with the Borel sets $\F$ and Lebesgue measure $\Prob$.  Let
+\[
+  Y_n(\omega)=
+  \begin{cases}
+  1, & \lfloor 2^n\omega\rfloor \text{ is odd},\\
+  0, & \lfloor 2^n\omega\rfloor \text{ is even}.
+  \end{cases}
+\]
+Show that $Y_1,Y_2,\ldots$ are independent with
+$\Prob(Y_k=0)=\Prob(Y_k=1)=1/2$.
+
+\Knowledge{
+\path{durrett_ch2_construct_independent_variables};
+\path{durrett_ch2_event_independence};
+\path{durrett_ch2_pi_lambda_independence}.
+}
+
+\noindent\textbf{Solution.}
+Except on the countable set of dyadic rationals, every $\omega\in(0,1)$
+has a unique binary expansion
+\[
+  \omega=.b_1b_2b_3\cdots,\qquad b_i\in\{0,1\}.
+\]
+The parity of $\lfloor 2^n\omega\rfloor$ is exactly the $n$th binary
+digit $b_n$.  The exceptional dyadic rationals have Lebesgue measure
+zero, so they do not affect the probabilities below.
+
+Fix $n$ and a binary vector $(\varepsilon_1,\ldots,\varepsilon_n)$.  The
+set
+\[
+  \{\omega:Y_1=\varepsilon_1,\ldots,Y_n=\varepsilon_n\}
+\]
+is, up to endpoints, one dyadic interval of length $2^{-n}$: it is the
+set of numbers whose first $n$ binary digits are the prescribed vector.
+Therefore
+\[
+  \Prob(Y_1=\varepsilon_1,\ldots,Y_n=\varepsilon_n)=2^{-n}
+  =\prod_{k=1}^n \frac12.
+\]
+Taking $n=1$ gives $\Prob(Y_k=0)=\Prob(Y_k=1)=1/2$ for each $k$, and the
+finite-dimensional product formula proves that $Y_1,Y_2,\ldots$ are
+independent.
+
+\section*{Exercise 2.2.1}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be uncorrelated with $\E X_i=\mu_i$ and
+$\operatorname{var}(X_i)/i\to 0$ as $i\to\infty$.  Let
+$S_n=X_1+\cdots+X_n$ and $\nu_n=\E S_n/n$.  Then, as $n\to\infty$,
+\[
+  S_n/n-\nu_n\to 0
+\]
+in $L^2$ and in probability.
+
+\Knowledge{
+\path{durrett_ch2_weak_law_l2};
+\path{durrett_ch2_iid_finite_variance_wlln};
+\path{durrett_ch2_poissonization_and_wlln_examples}.
+}
+
+\noindent\textbf{Solution.}
+Since the variables are uncorrelated,
+\[
+  \operatorname{var}(S_n)=\sum_{i=1}^n \operatorname{var}(X_i).
+\]
+Thus
+\[
+  \E(S_n/n-\nu_n)^2
+  =\operatorname{var}(S_n/n)
+  =\frac{1}{n^2}\sum_{i=1}^n \operatorname{var}(X_i).
+\]
+Write $a_i=\operatorname{var}(X_i)/i$.  Then $a_i\to 0$ and
+\[
+  \frac{1}{n^2}\sum_{i=1}^n \operatorname{var}(X_i)
+  =\frac{1}{n^2}\sum_{i=1}^n i a_i.
+\]
+Given $\varepsilon>0$, choose $N$ so that $a_i\le\varepsilon$ for
+$i\ge N$.  Then
+\[
+  \frac{1}{n^2}\sum_{i=1}^n i a_i
+  \le \frac{1}{n^2}\sum_{i=1}^{N-1} i a_i
+      +\varepsilon\frac{1}{n^2}\sum_{i=N}^n i.
+\]
+The first term tends to $0$, and the second is at most
+$\varepsilon/2+o(1)$.  Since $\varepsilon$ is arbitrary,
+\[
+  \E(S_n/n-\nu_n)^2\to 0.
+\]
+This proves convergence in $L^2$.  Convergence in probability follows
+from Chebyshev's inequality.
+
+\section*{Exercise 2.2.2}
+
+\noindent\textbf{Question.}
+The $L^2$ weak law generalizes immediately to certain dependent
+sequences.  Suppose $\E X_n=0$ and
+\[
+  \E X_nX_m\le r(n-m),\qquad m\le n,
+\]
+with $r(k)\to 0$ as $k\to\infty$.  Show that
+\[
+  (X_1+\cdots+X_n)/n\to 0
+\]
+in probability.
+
+\Knowledge{
+\path{durrett_ch2_weak_law_l2};
+\path{durrett_ch2_poissonization_and_wlln_examples}.
+}
+
+\noindent\textbf{Solution.}
+Let $S_n=X_1+\cdots+X_n$.  Since $\E X_i=0$,
+\[
+  \E(S_n/n)^2=\frac{1}{n^2}\E S_n^2.
+\]
+Using the assumed covariance bound,
+\[
+\begin{aligned}
+  \E S_n^2
+  &=\sum_{i=1}^n \E X_i^2
+    +2\sum_{1\le m<i\le n}\E X_iX_m \\
+  &\le n r(0)+2\sum_{k=1}^{n-1}(n-k)r(k).
+\end{aligned}
+\]
+Fix $\varepsilon>0$.  Choose $K$ so that $r(k)\le \varepsilon$ for
+$k\ge K$.  Then
+\[
+  \frac{1}{n^2}\E S_n^2
+  \le \frac{r(0)}{n}
+      +\frac{2}{n^2}\sum_{k=1}^{K-1}(n-k)r(k)
+      +\frac{2\varepsilon}{n^2}\sum_{k=K}^{n-1}(n-k).
+\]
+The first two terms tend to $0$, while the last term is at most
+$\varepsilon+o(1)$.  Since $\E(S_n/n)^2\ge 0$ and $\varepsilon$ is
+arbitrary, $\E(S_n/n)^2\to 0$.  Chebyshev's inequality gives
+$S_n/n\to 0$ in probability.
+
+\section*{Exercise 2.2.3}
+
+\noindent\textbf{Question.}
+Monte Carlo integration.
+\begin{enumerate}[label=(\roman*)]
+\item Let $f$ be a measurable function on $[0,1]$ with
+$\int_0^1 |f(x)|\,dx<\infty$.  Let $U_1,U_2,\ldots$ be independent and
+uniformly distributed on $[0,1]$, and let
+\[
+  I_n=n^{-1}(f(U_1)+\cdots+f(U_n)).
+\]
+Show that $I_n\to I\equiv\int_0^1 f\,dx$ in probability.
+\item Suppose $\int_0^1 |f(x)|^2\,dx<\infty$.  Use Chebyshev's
+inequality to estimate $\Prob(|I_n-I|>a/n^{1/2})$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_iid_finite_mean_wlln};
+\path{durrett_ch2_iid_finite_variance_wlln};
+\path{durrett_ch2_weak_law_l2}.
+}
+
+\noindent\textbf{Solution.}
+Let $Y_i=f(U_i)$.  The $Y_i$ are i.i.d. and
+\[
+  \E |Y_1|=\int_0^1 |f(x)|\,dx<\infty,\qquad
+  \E Y_1=\int_0^1 f(x)\,dx=I.
+\]
+By the finite-mean weak law of large numbers,
+\[
+  I_n=\frac{1}{n}\sum_{i=1}^n Y_i\to I
+\]
+in probability.
+
+For (ii), assume $f\in L^2[0,1]$.  Then
+\[
+  \sigma^2=\operatorname{var}(f(U_1))
+  =\int_0^1 f(x)^2\,dx-I^2<\infty.
+\]
+Since $\operatorname{var}(I_n)=\sigma^2/n$, Chebyshev's inequality gives
+\[
+  \Prob\left(|I_n-I|>\frac{a}{\sqrt n}\right)
+  \le
+  \frac{\sigma^2/n}{a^2/n}
+  =\frac{\sigma^2}{a^2}.
+\]
+In particular, for a fixed error threshold $a>0$ one also has
+$\Prob(|I_n-I|>a)\le \sigma^2/(na^2)$.
+
+\section*{Exercise 2.2.4}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be i.i.d. with
+\[
+  \Prob(X_i=(-1)^k k)=\frac{C}{k^2\log k},\qquad k\ge 2,
+\]
+where $C$ is chosen to make the sum of the probabilities equal to $1$.
+Show that $\E|X_i|=\infty$, but there is a finite constant $\mu$ so that
+$S_n/n\to\mu$ in probability.
+
+\Knowledge{
+\path{durrett_ch2_truncation_method};
+\path{durrett_ch2_iid_finite_mean_wlln};
+\path{durrett_ch2_infinite_mean_behavior}.
+}
+
+\noindent\textbf{Solution.}
+First,
+\[
+  \E|X_1|
+  =C\sum_{k=2}^\infty \frac{k}{k^2\log k}
+  =C\sum_{k=2}^\infty \frac{1}{k\log k}
+  =\infty.
+\]
+However,
+\[
+  \Prob(|X_1|>x)
+  =C\sum_{k>x}\frac{1}{k^2\log k}
+  \le \frac{C'}{x\log x}
+\]
+for large $x$, so $x\Prob(|X_1|>x)\to 0$.
+
+By the truncation weak law, with
+\[
+  \mu_n=\E[X_1\mathbf 1_{\{|X_1|\le n\}}],
+\]
+we have
+\[
+  S_n/n-\mu_n\to 0
+\]
+in probability.  It remains only to identify the limit of $\mu_n$.
+Since
+\[
+  \mu_n
+  =C\sum_{2\le k\le n}\frac{(-1)^k}{k\log k},
+\]
+and the terms $1/(k\log k)$ decrease to $0$, the alternating series
+test implies that $\mu_n$ converges to a finite constant
+\[
+  \mu=C\sum_{k=2}^\infty \frac{(-1)^k}{k\log k}.
+\]
+Therefore $S_n/n\to\mu$ in probability.
+
+\section*{Exercise 2.2.5}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be i.i.d. with
+\[
+  \Prob(X_i>x)=\frac{e}{x\log x},\qquad x\ge e.
+\]
+Show that $\E|X_i|=\infty$, but there is a sequence of constants
+$\mu_n\to\infty$ so that
+\[
+  S_n/n-\mu_n\to 0
+\]
+in probability.
+
+\Knowledge{
+\path{durrett_ch2_truncation_method};
+\path{durrett_ch2_infinite_mean_behavior};
+\path{durrett_ch2_iid_finite_mean_wlln}.
+}
+
+\noindent\textbf{Solution.}
+Since $X_i$ has a positive heavy tail,
+\[
+  \E X_1
+  \ge \int_e^\infty \Prob(X_1>x)\,dx
+  =\int_e^\infty \frac{e}{x\log x}\,dx
+  =\infty.
+\]
+On the other hand,
+\[
+  x\Prob(|X_1|>x)=x\Prob(X_1>x)=\frac{e}{\log x}\to 0.
+\]
+The truncation weak law therefore applies.  Define
+\[
+  \mu_n=\E[X_1\mathbf 1_{\{|X_1|\le n\}}].
+\]
+Then
+\[
+  S_n/n-\mu_n\to 0
+\]
+in probability.  Finally, $\mu_n\to\infty$ by monotone convergence,
+because $\E X_1=\infty$.
+
+\section*{Exercise 2.2.6}
+
+\noindent\textbf{Question.}
+\begin{enumerate}[label=(\roman*)]
+\item Show that if $X\ge 0$ is integer valued, then
+\[
+  \E X=\sum_{n\ge 1}\Prob(X\ge n).
+\]
+\item Find a similar expression for $\E X^2$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch1_tail_sum_nonnegative};
+\path{durrett_ch2_truncation_method}.
+}
+
+\noindent\textbf{Solution.}
+If $X=k$, then
+\[
+  k=\sum_{n=1}^\infty \mathbf 1_{\{n\le k\}}.
+\]
+Thus, for integer-valued $X\ge 0$,
+\[
+  X=\sum_{n=1}^\infty \mathbf 1_{\{X\ge n\}}.
+\]
+Taking expectations and using Tonelli's theorem gives
+\[
+  \E X=\sum_{n=1}^\infty \Prob(X\ge n).
+\]
+
+Similarly,
+\[
+  k^2=\sum_{n=1}^k (2n-1),
+\]
+so
+\[
+  X^2=\sum_{n=1}^\infty (2n-1)\mathbf 1_{\{X\ge n\}}.
+\]
+Therefore
+\[
+  \E X^2=\sum_{n=1}^\infty (2n-1)\Prob(X\ge n).
+\]
+
+\section*{Exercise 2.2.7}
+
+\noindent\textbf{Question.}
+Generalize Lemma 2.2.13 to conclude that if
+\[
+  H(x)=\int_{(-\infty,x]}h(y)\,dy,\qquad h(y)\ge 0,
+\]
+then
+\[
+  \E H(X)=\int_{-\infty}^\infty h(y)\Prob(X\ge y)\,dy.
+\]
+An important special case is $H(x)=\exp(\theta x)$ with $\theta>0$.
+
+\Knowledge{
+\path{durrett_ch1_fubini_tonelli};
+\path{durrett_ch1_tail_sum_nonnegative};
+\path{durrett_ch2_truncation_method}.
+}
+
+\noindent\textbf{Solution.}
+Since $h\ge 0$,
+\[
+  H(X)=\int_{-\infty}^{\infty}h(y)\mathbf 1_{\{y\le X\}}\,dy.
+\]
+By Tonelli's theorem,
+\[
+\begin{aligned}
+  \E H(X)
+  &=\E\int_{-\infty}^{\infty}
+    h(y)\mathbf 1_{\{y\le X\}}\,dy\\
+  &=\int_{-\infty}^{\infty}
+    h(y)\Prob(y\le X)\,dy\\
+  &=\int_{-\infty}^{\infty}h(y)\Prob(X\ge y)\,dy.
+\end{aligned}
+\]
+For $H(x)=e^{\theta x}$ with $\theta>0$, take
+$h(y)=\theta e^{\theta y}$.  Then
+\[
+  \E e^{\theta X}
+  =\int_{-\infty}^{\infty}\theta e^{\theta y}\Prob(X\ge y)\,dy,
+\]
+with both sides allowed to be $+\infty$.
+
+\section*{Exercise 2.2.8}
+
+\noindent\textbf{Question.}
+An unfair ``fair game.''  Let
+\[
+  p_k=\frac{1}{2^k k(k+1)},\qquad k=1,2,\ldots,
+\]
+and $p_0=1-\sum_{k\ge 1}p_k$.  Since
+\[
+  \sum_{k=1}^\infty 2^k p_k
+  =\left(1-\frac12\right)+\left(\frac12-\frac13\right)+\cdots=1,
+\]
+if $X_1,X_2,\ldots$ are i.i.d. with
+\[
+  \Prob(X_n=-1)=p_0,\qquad
+  \Prob(X_n=2^k-1)=p_k,\quad k\ge 1,
+\]
+then $\E X_n=0$.  Let $S_n=X_1+\cdots+X_n$.  Use Theorem 2.2.11 with
+$b_n=2^{m(n)}$, where
+\[
+  m(n)=\min\{m:2^{-m}m^{-3/2}\le n^{-1}\},
+\]
+to conclude that
+\[
+  S_n/(n/\log_2 n)\to -1
+\]
+in probability.
+
+\Knowledge{
+\path{durrett_ch2_triangular_array_wlln};
+\path{durrett_ch2_truncation_method};
+\path{durrett_ch2_infinite_mean_behavior}.
+}
+
+\noindent\textbf{Solution.}
+Let $b_n=2^{m(n)}$ and truncate $X_k$ at level $b_n$:
+\[
+  \bar X_{n,k}=X_k\mathbf 1_{\{|X_k|\le b_n\}}.
+\]
+We verify the two hypotheses of Theorem 2.2.11.
+
+First,
+\[
+  n\Prob(|X_1|>b_n)
+  =n\sum_{j\ge m(n)+1}\frac{1}{2^j j(j+1)}
+  \le C n\,2^{-m(n)}m(n)^{-2}.
+\]
+By the definition of $m(n)$,
+$n2^{-m(n)}m(n)^{-3/2}\le 1$, so the last expression is at most
+$C m(n)^{-1/2}\to 0$.
+
+Second,
+\[
+\begin{aligned}
+  \E \bar X_{n,1}^2
+  &\le 1+\sum_{j=1}^{m(n)}
+      \frac{(2^j-1)^2}{2^j j(j+1)}
+   \le C\sum_{j=1}^{m(n)} \frac{2^j}{j(j+1)}
+   \le C\frac{2^{m(n)}}{m(n)^2}.
+\end{aligned}
+\]
+Hence
+\[
+  b_n^{-2}\sum_{k=1}^n \E \bar X_{n,k}^2
+  \le C n\,2^{-m(n)}m(n)^{-2}
+  \le C m(n)^{-1/2}\to 0.
+\]
+
+The centering in Theorem 2.2.11 is
+\[
+  a_n=n\E\bar X_{n,1}.
+\]
+Since $\E X_1=0$,
+\[
+\begin{aligned}
+  \E\bar X_{n,1}
+  &=-\sum_{j>m(n)}(2^j-1)p_j\\
+  &=-\sum_{j>m(n)}
+      \frac{1-2^{-j}}{j(j+1)}
+   \sim -\frac{1}{m(n)}.
+\end{aligned}
+\]
+Also the defining minimality of $m(n)$ implies
+$m(n)/\log_2 n\to 1$ and
+\[
+  \frac{b_n}{n/\log_2 n}
+  =\frac{2^{m(n)}\log_2 n}{n}\to 0.
+\]
+Therefore Theorem 2.2.11 gives
+\[
+  \frac{S_n-a_n}{n/\log_2 n}\to 0
+\]
+in probability, while
+\[
+  \frac{a_n}{n/\log_2 n}
+  \sim -\frac{\log_2 n}{m(n)}\to -1.
+\]
+Combining the two limits proves
+\[
+  \frac{S_n}{n/\log_2 n}\to -1
+\]
+in probability.
+
+\section*{Exercise 2.2.9}
+
+\noindent\textbf{Question.}
+Weak law for positive variables.  Suppose $X_1,X_2,\ldots$ are i.i.d.,
+$\Prob(0\le X_i<\infty)=1$, and $\Prob(X_i>x)>0$ for all $x$.  Let
+\[
+  \mu(s)=\int_0^s x\,dF(x),
+  \qquad
+  \nu(s)=\frac{\mu(s)}{s(1-F(s))}.
+\]
+It is known that there exist constants $a_n$ so that
+$S_n/a_n\to 1$ in probability if and only if $\nu(s)\to\infty$ as
+$s\to\infty$.  Pick $b_n\ge 1$ so that $n\mu(b_n)=b_n$ for large $n$,
+and use Theorem 2.2.11 to prove that the condition is sufficient.
+
+\Knowledge{
+\path{durrett_ch2_triangular_array_wlln};
+\path{durrett_ch2_truncation_method};
+\path{durrett_ch2_infinite_mean_behavior}.
+}
+
+\noindent\textbf{Solution.}
+Assume $\nu(s)\to\infty$.  Choose $b_n$ so that
+\[
+  n\mu(b_n)=b_n.
+\]
+Since $\Prob(X_i>x)>0$ for all $x$, we have $b_n\to\infty$.
+
+Apply Theorem 2.2.11 to the triangular array
+$X_{n,k}=X_k$ with truncation level $b_n$.  The centering is
+\[
+  a_n=\sum_{k=1}^n \E[X_k\mathbf 1_{\{X_k\le b_n\}}]
+  =n\mu(b_n)=b_n.
+\]
+For condition (i),
+\[
+  \sum_{k=1}^n \Prob(X_{n,k}>b_n)
+  =n(1-F(b_n))
+  =\frac{b_n(1-F(b_n))}{\mu(b_n)}
+  =\frac{1}{\nu(b_n)}\to 0.
+\]
+
+For condition (ii), it is enough to show
+\[
+  \frac{\E[X_1^2\mathbf 1_{\{X_1\le b_n\}}]}{b_n\mu(b_n)}\to 0.
+\]
+Using the tail-integral identity,
+\[
+  \E[X_1^2\mathbf 1_{\{X_1\le b\}}]
+  \le 2\int_0^b x\Prob(X_1>x)\,dx.
+\]
+Since $\nu(s)\to\infty$, for every $\varepsilon>0$ there is $M$ such
+that
+\[
+  x\Prob(X_1>x)\le \varepsilon\mu(x)\le \varepsilon\mu(b),
+  \qquad M\le x\le b.
+\]
+Thus
+\[
+  2\int_0^b x\Prob(X_1>x)\,dx
+  \le C_M+2\varepsilon b\mu(b),
+\]
+where $C_M=2\int_0^M x\Prob(X_1>x)\,dx$ is fixed.  Dividing by
+$b\mu(b)$ and letting $b\to\infty$ gives a limsup at most
+$2\varepsilon$.  Since $\varepsilon$ is arbitrary, condition (ii) holds.
+
+Theorem 2.2.11 now yields
+\[
+  \frac{S_n-b_n}{b_n}\to 0
+\]
+in probability.  Hence $S_n/b_n\to 1$ in probability, proving the
+sufficiency of $\nu(s)\to\infty$.
+
+\section*{Exercise 2.3.1}
+
+\noindent\textbf{Question.}
+Prove that
+\[
+  \Prob(\limsup A_n)\ge \limsup \Prob(A_n),
+  \qquad
+  \Prob(\liminf A_n)\le \liminf \Prob(A_n).
+\]
+
+\Knowledge{
+\path{durrett_ch2_limsup_events};
+\path{durrett_ch1_measure_continuity}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  B_m=\bigcup_{n\ge m}A_n.
+\]
+Then $B_m\downarrow \limsup A_n$, so continuity from above gives
+\[
+  \Prob(\limsup A_n)=\lim_{m\to\infty}\Prob(B_m).
+\]
+For each $m$, $B_m$ contains every $A_n$ with $n\ge m$, so
+\[
+  \Prob(B_m)\ge \sup_{n\ge m}\Prob(A_n).
+\]
+Letting $m\to\infty$ gives
+\[
+  \Prob(\limsup A_n)\ge \lim_{m\to\infty}\sup_{n\ge m}\Prob(A_n)
+  =\limsup_{n\to\infty}\Prob(A_n).
+\]
+
+Similarly, let
+\[
+  C_m=\bigcap_{n\ge m}A_n.
+\]
+Then $C_m\uparrow\liminf A_n$, so
+\[
+  \Prob(\liminf A_n)=\lim_{m\to\infty}\Prob(C_m).
+\]
+Since $C_m\subseteq A_n$ for every $n\ge m$,
+\[
+  \Prob(C_m)\le \inf_{n\ge m}\Prob(A_n).
+\]
+Letting $m\to\infty$ gives
+\[
+  \Prob(\liminf A_n)\le \liminf_{n\to\infty}\Prob(A_n).
+\]
+
+\section*{Exercise 2.3.2}
+
+\noindent\textbf{Question.}
+Prove directly from the definition that if $f$ is continuous and
+$X_n\to X$ in probability, then $f(X_n)\to f(X)$ in probability.
+
+\Knowledge{
+\path{durrett_ch2_poissonization_and_wlln_examples};
+\path{durrett_ch1_composition_measurable};
+\path{durrett_ch1_bounded_convergence}.
+}
+
+\noindent\textbf{Solution.}
+Fix $\varepsilon>0$ and $\eta>0$.  Since $X$ is finite almost surely,
+choose $M$ so large that
+\[
+  \Prob(|X|>M)<\eta.
+\]
+The function $f$ is uniformly continuous on the compact interval
+$[-M-1,M+1]$.  Hence there is $0<\delta<1$ such that if
+$x,y\in[-M-1,M+1]$ and $|x-y|<\delta$, then
+$|f(x)-f(y)|<\varepsilon$.
+
+On the event $\{|X|\le M,\ |X_n-X|<\delta\}$, we have
+$X_n\in[-M-1,M+1]$, so $|f(X_n)-f(X)|<\varepsilon$.  Therefore
+\[
+  \Prob(|f(X_n)-f(X)|\ge\varepsilon)
+  \le \Prob(|X|>M)+\Prob(|X_n-X|\ge\delta).
+\]
+Taking $\limsup$ and using $X_n\to X$ in probability,
+\[
+  \limsup_{n\to\infty}\Prob(|f(X_n)-f(X)|\ge\varepsilon)\le \eta.
+\]
+Since $\eta>0$ is arbitrary, the left-hand side is $0$.  Thus
+$f(X_n)\to f(X)$ in probability.
+
+\section*{Exercise 2.3.3}
+
+\noindent\textbf{Question.}
+Let $\ell_n$ be the length of the head run at time $n$.  Show that
+\[
+  \limsup_{n\to\infty}\frac{\ell_n}{\log_2 n}=1,
+  \qquad
+  \liminf_{n\to\infty}\ell_n=0
+\]
+almost surely.
+
+\Knowledge{
+\path{durrett_ch2_borel_cantelli_first};
+\path{durrett_ch2_borel_cantelli_second};
+\path{durrett_ch2_bc_independent_trials}.
+}
+
+\noindent\textbf{Solution.}
+Assume the tosses are i.i.d. with
+$\Prob(\text{head})=\Prob(\text{tail})=1/2$.  For the upper bound, fix
+$\varepsilon>0$.  Since
+\[
+  \Prob(\ell_n\ge (1+\varepsilon)\log_2 n)
+  \le 2^{-(1+\varepsilon)\log_2 n}=n^{-(1+\varepsilon)},
+\]
+the series of these probabilities is finite.  By the first
+Borel-Cantelli lemma,
+\[
+  \ell_n<(1+\varepsilon)\log_2 n
+\]
+eventually almost surely.  Hence
+\[
+  \limsup_{n\to\infty}\frac{\ell_n}{\log_2 n}\le 1
+  \qquad\text{a.s.}
+\]
+
+For the lower bound, fix $\varepsilon\in(0,1)$ and look at the dyadic
+block of times $\{2^k+1,\ldots,2^{k+1}\}$.  Split this block into
+disjoint subblocks of length
+\[
+  r_k=\lfloor(1-\varepsilon)k\rfloor.
+\]
+The probability that a given subblock consists entirely of heads is
+$2^{-r_k}\ge 2^{-(1-\varepsilon)k-1}$.  There are at least
+$c2^k/k$ disjoint subblocks, so the probability that none of them is all
+heads is bounded by
+\[
+  \left(1-2^{-r_k}\right)^{c2^k/k}
+  \le \exp\{-c'2^{\varepsilon k}/k\}.
+\]
+This is summable in $k$.  By Borel-Cantelli, eventually every dyadic
+block contains a run of heads of length at least $r_k$.  Therefore
+\[
+  \limsup_{n\to\infty}\frac{\ell_n}{\log_2 n}\ge 1-\varepsilon
+  \qquad\text{a.s.}
+\]
+Letting $\varepsilon\downarrow0$ gives the lower bound $1$.
+
+Finally, $\ell_n=0$ whenever the $n$th toss is a tail.  The tail events
+are independent and have probabilities summing to infinity, so by the
+second Borel-Cantelli lemma tails occur infinitely often.  Hence
+\[
+  \liminf_{n\to\infty}\ell_n=0
+  \qquad\text{a.s.}
+\]
+
+\section*{Exercise 2.3.4}
+
+\noindent\textbf{Question.}
+Fatou's lemma.  Suppose $X_n\ge 0$ and $X_n\to X$ in probability.  Show
+that
+\[
+  \liminf_{n\to\infty}\E X_n\ge \E X.
+\]
+
+\Knowledge{
+\path{durrett_ch1_fatou_integral};
+\path{durrett_ch2_subsequence_bc_upgrade};
+\path{durrett_ch2_limsup_events}.
+}
+
+\noindent\textbf{Solution.}
+Let $a=\liminf_n \E X_n$.  If $a=\infty$, there is nothing to prove.
+Otherwise choose a subsequence $n_k$ such that
+\[
+  \E X_{n_k}\to a.
+\]
+Since $X_n\to X$ in probability, the subsequence principle gives a
+further subsequence $X_{n_{k_j}}$ such that
+\[
+  X_{n_{k_j}}\to X\qquad\text{a.s.}
+\]
+By the ordinary Fatou lemma for almost sure convergence and nonnegative
+random variables,
+\[
+  \E X
+  \le \liminf_{j\to\infty}\E X_{n_{k_j}}
+  =a.
+\]
+Thus $\E X\le\liminf_n\E X_n$.
+
+\section*{Exercise 2.3.5}
+
+\noindent\textbf{Question.}
+Dominated convergence.  Suppose $X_n\to X$ in probability and either
+\begin{enumerate}[label=(\alph*)]
+\item $|X_n|\le Y$ with $\E Y<\infty$, or
+\item there is a continuous function $g$ with $g(x)>0$ for large $x$ and
+$|x|/g(x)\to0$ as $|x|\to\infty$ so that $\E g(X_n)\le C<\infty$ for
+all $n$.
+\end{enumerate}
+Show that $\E X_n\to \E X$.
+
+\Knowledge{
+\path{durrett_ch1_dominated_convergence};
+\path{durrett_ch1_bounded_convergence};
+\path{durrett_ch2_subsequence_bc_upgrade}.
+}
+
+\noindent\textbf{Solution.}
+For (a), every subsequence of $X_n$ has a further subsequence
+$X_{n_{k_j}}$ that converges to $X$ almost surely.  Since
+$|X_{n_{k_j}}|\le Y$ and $Y$ is integrable, dominated convergence gives
+\[
+  \E X_{n_{k_j}}\to \E X.
+\]
+Thus every subsequence of the numerical sequence $\E X_n$ has a further
+subsequence converging to $\E X$, so $\E X_n\to\E X$.
+
+For (b), add a constant to $g$ if necessary so that $g\ge 1$ everywhere;
+this only changes the constant $C$.  Since $g$ is continuous and
+$X_n\to X$ in probability, Exercise 2.3.2 gives
+$g(X_n)\to g(X)$ in probability.  By Exercise 2.3.4,
+\[
+  \E g(X)\le \liminf_n \E g(X_n)\le C.
+\]
+We now prove uniform integrability of $X_n$.  Given $\varepsilon>0$,
+choose $K$ so large that
+\[
+  |x|\le \varepsilon g(x),\qquad |x|>K.
+\]
+Then, for all $n$,
+\[
+  \E\bigl(|X_n|\mathbf 1_{\{|X_n|>K\}}\bigr)
+  \le \varepsilon \E g(X_n)
+  \le \varepsilon C,
+\]
+and the same argument gives
+\[
+  \E\bigl(|X|\mathbf 1_{\{|X|>K\}}\bigr)
+  \le \varepsilon C.
+\]
+Let $\phi_K(x)=(-K)\vee(x\wedge K)$.  This function is bounded and
+continuous, so $\E\phi_K(X_n)\to\E\phi_K(X)$.  Therefore
+\[
+  \limsup_{n\to\infty}|\E X_n-\E X|
+  \le 2\varepsilon C.
+\]
+Since $\varepsilon$ is arbitrary, $\E X_n\to\E X$.
+
+\section*{Exercise 2.3.6}
+
+\noindent\textbf{Question.}
+Metric for convergence in probability.  Show
+\begin{enumerate}[label=(\alph*)]
+\item that
+\[
+  d(X,Y)=\E\left(\frac{|X-Y|}{1+|X-Y|}\right)
+\]
+defines a metric on the set of random variables, i.e.
+$d(X,Y)=0$ if and only if $X=Y$ a.s., $d(X,Y)=d(Y,X)$, and
+$d(X,Z)\le d(X,Y)+d(Y,Z)$;
+\item that $d(X_n,X)\to0$ if and only if $X_n\to X$ in probability.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_poissonization_and_wlln_examples};
+\path{durrett_ch1_markov_chebyshev};
+\path{durrett_ch1_bounded_convergence}.
+}
+
+\noindent\textbf{Solution.}
+Let $\varphi(t)=t/(1+t)$ for $t\ge0$.  Then $\varphi(t)\ge0$ and
+$\varphi(t)=0$ if and only if $t=0$.  Hence $d(X,Y)=0$ if and only if
+$|X-Y|=0$ a.s., i.e. $X=Y$ a.s.  Symmetry is immediate.
+
+For the triangle inequality, note that $\varphi$ is increasing and
+subadditive:
+\[
+  \varphi(a+b)\le \varphi(a)+\varphi(b),\qquad a,b\ge0.
+\]
+This follows, for example, from the metric transform proved in Exercise
+2.1.3.  Since
+$|X-Z|\le |X-Y|+|Y-Z|$,
+\[
+  \varphi(|X-Z|)
+  \le \varphi(|X-Y|)+\varphi(|Y-Z|).
+\]
+Taking expectations gives $d(X,Z)\le d(X,Y)+d(Y,Z)$.
+
+Now suppose $X_n\to X$ in probability.  Then
+$\varphi(|X_n-X|)\to0$ in probability and
+$0\le \varphi(|X_n-X|)\le1$.  For any $\eta>0$,
+\[
+  \E\varphi(|X_n-X|)
+  \le \eta+\Prob(\varphi(|X_n-X|)>\eta),
+\]
+and the right side has limsup at most $\eta$.  Letting $\eta\downarrow0$
+shows $d(X_n,X)\to0$.
+
+Conversely, if $d(X_n,X)\to0$, then for every $\varepsilon>0$,
+\[
+  \Prob(|X_n-X|>\varepsilon)
+  =\Prob\left(\varphi(|X_n-X|)
+       >\frac{\varepsilon}{1+\varepsilon}\right)
+  \le \frac{1+\varepsilon}{\varepsilon}d(X_n,X),
+\]
+which tends to $0$.  Thus $X_n\to X$ in probability.
+
+\section*{Exercise 2.3.7}
+
+\noindent\textbf{Question.}
+Show that random variables are a complete space under the metric defined
+in the previous exercise, i.e. if $d(X_m,X_n)\to0$ whenever
+$m,n\to\infty$, then there is a random variable $X_\infty$ so that
+$X_n\to X_\infty$ in probability.
+
+\Knowledge{
+\path{durrett_ch2_borel_cantelli_first};
+\path{durrett_ch2_limsup_events};
+\path{durrett_ch2_subsequence_bc_upgrade}.
+}
+
+\noindent\textbf{Solution.}
+By Exercise 2.3.6, $d$-Cauchy is the same as Cauchy in probability.
+Choose a subsequence $n_k$ so that
+\[
+  \Prob(|X_{n_{k+1}}-X_{n_k}|>2^{-k})\le 2^{-k}.
+\]
+By Borel-Cantelli, with probability one,
+\[
+  |X_{n_{k+1}}-X_{n_k}|\le 2^{-k}
+\]
+for all sufficiently large $k$.  Hence $X_{n_k}$ is almost surely a
+Cauchy sequence in $\R$ and therefore converges almost surely to some
+finite random variable $X_\infty$.
+
+It remains to show that the whole sequence converges to $X_\infty$ in
+probability.  Fix $\varepsilon>0$ and $\eta>0$.  Since $X_n$ is Cauchy
+in probability, choose $K$ so large that for all $m,n\ge n_K$,
+\[
+  \Prob(|X_m-X_n|>\varepsilon/2)<\eta.
+\]
+Also choose $K$ larger if necessary so that
+\[
+  \Prob(|X_{n_K}-X_\infty|>\varepsilon/2)<\eta.
+\]
+Then for all $n\ge n_K$,
+\[
+  \Prob(|X_n-X_\infty|>\varepsilon)
+  \le \Prob(|X_n-X_{n_K}|>\varepsilon/2)
+      +\Prob(|X_{n_K}-X_\infty|>\varepsilon/2)
+  <2\eta.
+\]
+Since $\eta$ is arbitrary, $X_n\to X_\infty$ in probability.
+
+\section*{Exercise 2.3.8}
+
+\noindent\textbf{Question.}
+Let $A_n$ be a sequence of independent events with $\Prob(A_n)<1$ for
+all $n$.  Show that
+\[
+  \Prob\left(\bigcup_n A_n\right)=1
+\]
+implies $\sum_n\Prob(A_n)=\infty$ and hence
+\[
+  \Prob(A_n\ \text{i.o.})=1.
+\]
+
+\Knowledge{
+\path{durrett_ch2_borel_cantelli_second};
+\path{durrett_ch2_bc_independent_trials};
+\path{durrett_ch2_event_independence}.
+}
+
+\noindent\textbf{Solution.}
+Suppose, toward a contradiction, that
+\[
+  \sum_{n=1}^\infty \Prob(A_n)<\infty.
+\]
+Since $\Prob(A_n)<1$ for every $n$ and $\Prob(A_n)\to0$, the infinite
+product
+\[
+  \prod_{n=1}^\infty (1-\Prob(A_n))
+\]
+is strictly positive.  Indeed, after finitely many terms we have
+$\Prob(A_n)\le1/2$, and then
+\[
+  \log(1-\Prob(A_n))\ge -2\Prob(A_n),
+\]
+so the tail product is positive.
+
+By independence,
+\[
+  \Prob\left(\bigcap_{n=1}^\infty A_n^c\right)
+  =\prod_{n=1}^\infty (1-\Prob(A_n))>0.
+\]
+This contradicts $\Prob(\cup_n A_n)=1$.  Hence
+$\sum_n\Prob(A_n)=\infty$.  The second Borel-Cantelli lemma then gives
+\[
+  \Prob(A_n\ \text{i.o.})=1.
+\]
+
+\section*{Exercise 2.3.9}
+
+\noindent\textbf{Question.}
+\begin{enumerate}[label=(\roman*)]
+\item If $\Prob(A_n)\to0$ and
+\[
+  \sum_{n=1}^\infty \Prob(A_n^c\cap A_{n+1})<\infty,
+\]
+then $\Prob(A_n\ \text{i.o.})=0$.
+\item Find an example of a sequence $A_n$ to which the result in (i) can
+be applied but the Borel-Cantelli lemma cannot.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_borel_cantelli_first};
+\path{durrett_ch2_limsup_events};
+\path{durrett_ch2_bc_tail_bounds}.
+}
+
+\noindent\textbf{Solution.}
+Let $B_n=A_n^c\cap A_{n+1}$.  If $A_n$ occurs infinitely often, then
+either $A_n$ occurs eventually always, or there are infinitely many
+transitions from $A_n^c$ to $A_{n+1}$.  Thus
+\[
+  \limsup A_n
+  \subseteq \liminf A_n\ \cup\ \limsup B_n.
+\]
+By Exercise 2.3.1,
+\[
+  \Prob(\liminf A_n)\le \liminf_n \Prob(A_n)=0.
+\]
+Also, since $\sum_n\Prob(B_n)<\infty$, the first Borel-Cantelli lemma
+gives
+\[
+  \Prob(\limsup B_n)=0.
+\]
+Therefore $\Prob(A_n\ \text{i.o.})=0$.
+
+For (ii), take $\Omega=(0,1)$ with Lebesgue measure and
+\[
+  A_n=(0,1/n).
+\]
+Then $\Prob(A_n)=1/n$, so $\sum_n\Prob(A_n)=\infty$ and the ordinary
+Borel-Cantelli lemma cannot be applied.  However $A_{n+1}\subseteq A_n$,
+so
+\[
+  A_n^c\cap A_{n+1}=\varnothing
+\]
+for every $n$, and $\Prob(A_n)\to0$.  Part (i) applies and gives
+$\Prob(A_n\ \text{i.o.})=0$.
+
+\section*{Exercise 2.3.10}
+
+\noindent\textbf{Question.}
+Kochen-Stone lemma.  Suppose $\sum \Prob(A_k)=\infty$.  Use Exercises
+1.6.6 and 2.3.1 to show that if
+\[
+  \limsup_{n\to\infty}
+  \frac{\left(\sum_{k=1}^n \Prob(A_k)\right)^2}
+       {\sum_{1\le j,k\le n}\Prob(A_j\cap A_k)}
+  =\alpha>0,
+\]
+then
+\[
+  \Prob(A_n\ \text{i.o.})\ge \alpha.
+\]
+The case $\alpha=1$ contains Theorem 2.3.7.
+
+\Knowledge{
+\path{durrett_ch2_limsup_events};
+\path{durrett_ch2_borel_cantelli_second};
+\path{durrett_ch2_indicator_independence};
+\path{durrett_ch1_markov_chebyshev}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  S_n=\sum_{k=1}^n \mathbf 1_{A_k},
+  \qquad
+  m_n=\E S_n=\sum_{k=1}^n\Prob(A_k).
+\]
+Then $m_n\to\infty$ and
+\[
+  \E S_n^2=\sum_{1\le j,k\le n}\Prob(A_j\cap A_k).
+\]
+Exercise 1.6.6, applied to the nonnegative random variable $S_n$, gives
+the second-moment lower bound
+\[
+  \Prob(S_n>0)\ge \frac{(\E S_n)^2}{\E S_n^2}
+  =\frac{m_n^2}{\sum_{1\le j,k\le n}\Prob(A_j\cap A_k)}.
+\]
+Thus
+\[
+  \Prob\left(\bigcup_{k=1}^n A_k\right)
+  \ge
+  \frac{m_n^2}{\sum_{1\le j,k\le n}\Prob(A_j\cap A_k)}.
+\]
+
+We need the same estimate for tails.  Fix $r\ge1$ and define
+\[
+  S_{r,n}=\sum_{k=r}^n\mathbf 1_{A_k},\qquad
+  m_{r,n}=\sum_{k=r}^n\Prob(A_k).
+\]
+The same second-moment argument gives
+\[
+  \Prob\left(\bigcup_{k=r}^n A_k\right)
+  \ge
+  \frac{m_{r,n}^2}
+       {\sum_{r\le j,k\le n}\Prob(A_j\cap A_k)}.
+\]
+Along a subsequence for which the original ratio tends to $\alpha$, the
+finite number of omitted initial terms and cross terms are lower order:
+the numerator changes by $o(m_n^2)$, and the denominator changes by at
+most $O(m_n)$ plus a constant.  Hence
+\[
+  \limsup_{n\to\infty}
+  \frac{m_{r,n}^2}
+       {\sum_{r\le j,k\le n}\Prob(A_j\cap A_k)}
+  \ge \alpha.
+\]
+Therefore
+\[
+  \Prob\left(\bigcup_{k=r}^\infty A_k\right)\ge \alpha
+  \qquad\text{for every }r.
+\]
+Finally,
+\[
+  \limsup A_n=\bigcap_{r=1}^\infty \bigcup_{k=r}^\infty A_k,
+\]
+and the sets $\cup_{k=r}^\infty A_k$ decrease as $r$ increases.  By
+continuity from above,
+\[
+  \Prob(A_n\ \text{i.o.})
+  =\lim_{r\to\infty}\Prob\left(\bigcup_{k=r}^\infty A_k\right)
+  \ge \alpha.
+\]
+
+\section*{Exercise 2.3.11}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be independent with
+$\Prob(X_n=1)=p_n$ and $\Prob(X_n=0)=1-p_n$.  Show that
+\begin{enumerate}[label=(\roman*)]
+\item $X_n\to0$ in probability if and only if $p_n\to0$;
+\item $X_n\to0$ almost surely if and only if $\sum_n p_n<\infty$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_borel_cantelli_first};
+\path{durrett_ch2_borel_cantelli_second};
+\path{durrett_ch2_limsup_events}.
+}
+
+\noindent\textbf{Solution.}
+For $0<\varepsilon<1$,
+\[
+  \Prob(|X_n|>\varepsilon)=\Prob(X_n=1)=p_n.
+\]
+Thus $X_n\to0$ in probability if and only if $p_n\to0$.
+
+For almost sure convergence, observe that $X_n\to0$ a.s. if and only if
+the events $\{X_n=1\}$ occur only finitely often.  If
+$\sum_n p_n<\infty$, the first Borel-Cantelli lemma gives
+\[
+  \Prob(X_n=1\ \text{i.o.})=0.
+\]
+Conversely, if $\sum_n p_n=\infty$, then the events $\{X_n=1\}$ are
+independent, so the second Borel-Cantelli lemma gives
+\[
+  \Prob(X_n=1\ \text{i.o.})=1.
+\]
+Hence $X_n\not\to0$ a.s. in that case.
+
+\section*{Exercise 2.3.12}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be a sequence of random variables on
+$(\Omega,\F,\Prob)$, where $\Omega$ is a countable set and $\F$ consists
+of all subsets of $\Omega$.  Show that $X_n\to X$ in probability implies
+$X_n\to X$ almost surely.
+
+\Knowledge{
+\path{durrett_ch2_limsup_events};
+\path{durrett_ch2_bc_tail_bounds}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  \Omega_+=\{\omega\in\Omega:\Prob(\{\omega\})>0\}.
+\]
+Since $\Omega$ is countable, $\Prob(\Omega_+)=1$.  Fix
+$\omega\in\Omega_+$.  We claim that $X_n(\omega)\to X(\omega)$.
+
+If not, then for some $\varepsilon>0$ there is a subsequence $n_k$ such
+that
+\[
+  |X_{n_k}(\omega)-X(\omega)|>\varepsilon
+  \qquad\text{for all }k.
+\]
+Hence
+\[
+  \Prob(|X_{n_k}-X|>\varepsilon)\ge \Prob(\{\omega\})>0
+\]
+for all $k$, contradicting convergence in probability.  Therefore
+$X_n(\omega)\to X(\omega)$ for every $\omega\in\Omega_+$, and so
+$X_n\to X$ almost surely.
+
+\section*{Exercise 2.3.13}
+
+\noindent\textbf{Question.}
+If $X_n$ is any sequence of random variables, there are constants
+$c_n\to\infty$ so that
+\[
+  X_n/c_n\to0
+\]
+almost surely.
+
+\Knowledge{
+\path{durrett_ch2_borel_cantelli_first};
+\path{durrett_ch2_bc_tail_bounds}.
+}
+
+\noindent\textbf{Solution.}
+For each $n$, choose $c_n\ge n$ so large that
+\[
+  \Prob(|X_n|>c_n/j)\le 2^{-n},
+  \qquad j=1,\ldots,n.
+\]
+This is possible because $\Prob(|X_n|>t)\to0$ as $t\to\infty$ for each
+fixed $n$.  Clearly $c_n\to\infty$.
+
+Fix $\varepsilon>0$ and choose an integer $j$ with $1/j<\varepsilon$.
+For all $n\ge j$,
+\[
+  \Prob(|X_n|>\varepsilon c_n)
+  \le \Prob(|X_n|>c_n/j)\le 2^{-n}.
+\]
+Thus
+\[
+  \sum_{n=1}^\infty \Prob(|X_n|>\varepsilon c_n)<\infty.
+\]
+By Borel-Cantelli, $|X_n|>\varepsilon c_n$ only finitely often almost
+surely.  Applying this to $\varepsilon=1/m$, $m=1,2,\ldots$, gives
+$X_n/c_n\to0$ almost surely.
+
+\section*{Exercise 2.3.14}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be independent.  Show that
+\[
+  \sup_n X_n<\infty\quad\text{a.s.}
+\]
+if and only if
+\[
+  \sum_n \Prob(X_n>A)<\infty
+\]
+for some $A$.
+
+\Knowledge{
+\path{durrett_ch2_borel_cantelli_first};
+\path{durrett_ch2_borel_cantelli_second};
+\path{durrett_ch2_bc_tail_bounds}.
+}
+
+\noindent\textbf{Solution.}
+If $\sum_n\Prob(X_n>A)<\infty$, then by the first Borel-Cantelli lemma,
+$X_n>A$ only finitely often a.s.  Thus all sufficiently large $n$ have
+$X_n\le A$.  The maximum of the remaining finitely many finite random
+variables is finite a.s., so $\sup_n X_n<\infty$ a.s.
+
+Conversely, suppose $\sup_n X_n<\infty$ a.s.  If
+\[
+  \sum_n\Prob(X_n>A)=\infty
+\]
+for every integer $A$, then, by independence and the second
+Borel-Cantelli lemma,
+\[
+  \Prob(X_n>A\ \text{i.o.})=1
+  \qquad\text{for every integer }A.
+\]
+Intersecting over $A=1,2,\ldots$ gives $\sup_n X_n=\infty$ a.s., a
+contradiction.  Hence for some integer $A$ the series is finite.
+
+\section*{Exercise 2.3.15}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be i.i.d. with
+\[
+  \Prob(X_i>x)=e^{-x},
+\]
+and let $M_n=\max_{1\le m\le n}X_m$.  Show that
+\begin{enumerate}[label=(\roman*)]
+\item $\limsup_{n\to\infty}X_n/\log n=1$ a.s.;
+\item $M_n/\log n\to1$ a.s.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_borel_cantelli_first};
+\path{durrett_ch2_borel_cantelli_second};
+\path{durrett_ch2_bc_independent_trials}.
+}
+
+\noindent\textbf{Solution.}
+Fix $\varepsilon>0$.  Since
+\[
+  \Prob(X_n>(1+\varepsilon)\log n)=n^{-(1+\varepsilon)},
+\]
+the first Borel-Cantelli lemma implies
+\[
+  X_n\le (1+\varepsilon)\log n
+\]
+eventually a.s.  Hence
+\[
+  \limsup_{n\to\infty}\frac{X_n}{\log n}\le 1+\varepsilon
+  \qquad\text{a.s.}
+\]
+Letting $\varepsilon\downarrow0$ gives the upper bound.
+
+For the lower bound,
+\[
+  \Prob(X_n>(1-\varepsilon)\log n)=n^{-(1-\varepsilon)},
+\]
+and the series over $n$ diverges.  The events are independent, so by the
+second Borel-Cantelli lemma they occur infinitely often.  Hence
+\[
+  \limsup_{n\to\infty}\frac{X_n}{\log n}\ge 1-\varepsilon
+  \qquad\text{a.s.}
+\]
+Letting $\varepsilon\downarrow0$ proves (i).
+
+For (ii), the upper bound in (i) implies that eventually
+$X_n\le(1+\varepsilon)\log n$, and hence
+\[
+  M_n\le C(\omega)\vee(1+\varepsilon)\log n,
+\]
+so $\limsup M_n/\log n\le1+\varepsilon$ a.s.
+For the lower bound,
+\[
+  \Prob(M_n\le(1-\varepsilon)\log n)
+  =\left(1-n^{-(1-\varepsilon)}\right)^n
+  \le \exp(-n^\varepsilon).
+\]
+The last bound is summable, so by Borel-Cantelli
+$M_n>(1-\varepsilon)\log n$ eventually a.s.  Letting
+$\varepsilon\downarrow0$ gives $M_n/\log n\to1$ a.s.
+
+\section*{Exercise 2.3.16}
+
+\noindent\textbf{Question.}
+Let $X_1,X_2,\ldots$ be i.i.d. with distribution $F$, let
+$\lambda_n\uparrow\infty$, and let
+\[
+  A_n=\left\{\max_{1\le m\le n}X_m>\lambda_n\right\}.
+\]
+Show that $\Prob(A_n\ \text{i.o.})=0$ or $1$ according as
+\[
+  \sum_{n\ge1}(1-F(\lambda_n))<\infty
+  \quad\text{or}\quad
+  =\infty.
+\]
+
+\Knowledge{
+\path{durrett_ch2_borel_cantelli_first};
+\path{durrett_ch2_borel_cantelli_second};
+\path{durrett_ch2_bc_tail_bounds}.
+}
+
+\noindent\textbf{Solution.}
+Let $B_n=\{X_n>\lambda_n\}$.  Then
+\[
+  \Prob(B_n)=1-F(\lambda_n).
+\]
+If $\sum_n\Prob(B_n)<\infty$, then $B_n$ occurs only finitely often
+a.s.  If $A_n$ occurs infinitely often, then infinitely often some
+$m\le n$ has $X_m>\lambda_n$.  Since $\lambda_n\to\infty$, a fixed
+$X_m$ can only be responsible for finitely many such $n$.  Therefore
+$A_n$ i.o. would force $B_m$ i.o., which has probability $0$.  Hence
+$\Prob(A_n\ \text{i.o.})=0$.
+
+If $\sum_n\Prob(B_n)=\infty$, then the independent events $B_n$ occur
+infinitely often by the second Borel-Cantelli lemma.  Since
+$B_n\subseteq A_n$, it follows that $A_n$ occurs infinitely often with
+probability $1$.
+
+\section*{Exercise 2.3.17}
+
+\noindent\textbf{Question.}
+Let $Y_1,Y_2,\ldots$ be i.i.d.  Find necessary and sufficient conditions
+for
+\begin{enumerate}[label=(\roman*)]
+\item $Y_n/n\to0$ almost surely;
+\item $(\max_{m\le n}Y_m)/n\to0$ almost surely;
+\item $(\max_{m\le n}Y_m)/n\to0$ in probability;
+\item $Y_n/n\to0$ in probability.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_borel_cantelli_first};
+\path{durrett_ch2_borel_cantelli_second};
+\path{durrett_ch2_max_negligible_condition}.
+}
+
+\noindent\textbf{Solution.}
+For (i), $Y_n/n\to0$ a.s. if and only if for every $\varepsilon>0$,
+\[
+  \Prob(|Y_n|>\varepsilon n\ \text{i.o.})=0.
+\]
+By Borel-Cantelli and independence, this is equivalent to
+\[
+  \sum_{n=1}^\infty \Prob(|Y_1|>\varepsilon n)<\infty
+  \qquad\text{for every }\varepsilon>0.
+\]
+By the tail-sum criterion, this is equivalent to
+\[
+  \E |Y_1|<\infty.
+\]
+
+For (ii), since $\max_{m\le n}Y_m\ge Y_1$ and $Y_1/n\to0$, only the
+upper tail matters.  The condition is
+\[
+  \sum_{n=1}^\infty \Prob(Y_1>\varepsilon n)<\infty
+  \qquad\text{for every }\varepsilon>0,
+\]
+which is equivalent to
+\[
+  \E(Y_1^+)<\infty.
+\]
+
+For (iii),
+\[
+  \Prob\left(\max_{m\le n}Y_m>\varepsilon n\right)
+  =1-\left(1-\Prob(Y_1>\varepsilon n)\right)^n.
+\]
+This tends to $0$ if and only if
+\[
+  n\Prob(Y_1>\varepsilon n)\to0
+  \qquad\text{for every }\varepsilon>0,
+\]
+equivalently
+\[
+  x\Prob(Y_1>x)\to0\qquad (x\to\infty).
+\]
+
+For (iv), for every $\varepsilon>0$,
+\[
+  \Prob(|Y_n|>\varepsilon n)=\Prob(|Y_1|>\varepsilon n)\to0,
+\]
+provided $Y_1$ is finite a.s.  Thus no moment condition is needed beyond
+finiteness of the random variable.
+
+\section*{Exercise 2.3.18}
+
+\noindent\textbf{Question.}
+Let $0\le X_1\le X_2\le\cdots$ be random variables with
+\[
+  \E X_n\sim a n^\alpha,\qquad a,\alpha>0,
+\]
+and
+\[
+  \operatorname{var}(X_n)\le Bn^\beta,\qquad \beta<2\alpha.
+\]
+Show that
+\[
+  X_n/n^\alpha\to a
+\]
+almost surely.
+
+\Knowledge{
+\path{durrett_ch2_subsequence_bc_upgrade};
+\path{durrett_ch1_markov_chebyshev};
+\path{durrett_ch2_slln_normalized_sums}.
+}
+
+\noindent\textbf{Solution.}
+Choose $r>0$ so large that
+\[
+  r(2\alpha-\beta)>1,
+\]
+and let $n_k=\lfloor k^r\rfloor$.  By Chebyshev's inequality,
+\[
+\begin{aligned}
+  \Prob\left(\left|\frac{X_{n_k}-\E X_{n_k}}{n_k^\alpha}\right|
+  >\varepsilon\right)
+  &\le \frac{\operatorname{var}(X_{n_k})}
+           {\varepsilon^2 n_k^{2\alpha}}\\
+  &\le C k^{-r(2\alpha-\beta)}.
+\end{aligned}
+\]
+The last series is summable.  By Borel-Cantelli,
+\[
+  \frac{X_{n_k}-\E X_{n_k}}{n_k^\alpha}\to0
+  \qquad\text{a.s.}
+\]
+Since $\E X_n/n^\alpha\to a$,
+\[
+  X_{n_k}/n_k^\alpha\to a
+  \qquad\text{a.s.}
+\]
+
+Now let $n_k\le n<n_{k+1}$.  By monotonicity,
+\[
+  \frac{X_{n_k}}{n_{k+1}^\alpha}
+  \le \frac{X_n}{n^\alpha}
+  \le \frac{X_{n_{k+1}}}{n_k^\alpha}.
+\]
+Because $n_{k+1}/n_k\to1$, both outside terms converge to $a$ a.s.
+Therefore $X_n/n^\alpha\to a$ a.s.
+
+\section*{Exercise 2.3.19}
+
+\noindent\textbf{Question.}
+Let $X_n$ be independent Poisson random variables with
+\[
+  \E X_n=\lambda_n,
+\]
+and let $S_n=X_1+\cdots+X_n$.  Show that if
+$\sum_n\lambda_n=\infty$, then
+\[
+  S_n/\E S_n\to1
+\]
+almost surely.
+
+\Knowledge{
+\path{durrett_ch2_kolmogorov_convergence_criterion};
+\path{durrett_ch2_slln_normalized_sums};
+\path{durrett_ch2_weak_law_l2}.
+}
+
+\noindent\textbf{Solution.}
+Let
+\[
+  m_n=\E S_n=\sum_{k=1}^n\lambda_k.
+\]
+Then $m_n\to\infty$.  Since the $X_k$ are independent Poisson random
+variables,
+\[
+  \operatorname{var}(S_n)=\sum_{k=1}^n\operatorname{var}(X_k)
+  =\sum_{k=1}^n\lambda_k=m_n.
+\]
+It is enough to prove
+\[
+  \frac{S_n-m_n}{m_n}\to0\qquad\text{a.s.}
+\]
+For all sufficiently large $n$, $m_n>0$.  Put
+\[
+  Z_n=\frac{X_n-\lambda_n}{m_n}.
+\]
+Then the $Z_n$ are independent, mean zero, and
+\[
+  \sum_n \operatorname{var}(Z_n)
+  =\sum_n\frac{\lambda_n}{m_n^2}<\infty.
+\]
+The last series is finite because $\lambda_n=m_n-m_{n-1}$ and, once
+$m_{n-1}>0$,
+\[
+  \frac{m_n-m_{n-1}}{m_n^2}
+  \le \int_{m_{n-1}}^{m_n}\frac{dx}{x^2}.
+\]
+Thus $\sum_n Z_n$ converges almost surely by the Kolmogorov convergence
+criterion.  Kronecker's lemma with $a_n=m_n$ then gives
+\[
+  \frac{1}{m_n}\sum_{k=1}^n (X_k-\lambda_k)\to0
+  \qquad\text{a.s.}
+\]
+This is exactly $S_n/m_n\to1$ a.s.
+
+\section*{Exercise 2.3.20}
+
+\noindent\textbf{Question.}
+Show that if $X_n$ is the outcome of the $n$th play of the St.
+Petersburg game, then
+\[
+  \limsup_{n\to\infty}\frac{X_n}{n\log_2 n}=\infty
+  \qquad\text{a.s.}
+\]
+and hence the same result holds for $S_n=X_1+\cdots+X_n$.  This shows
+that the convergence $S_n/(n\log_2 n)\to1$ in probability proved in
+Section 2.2 does not occur a.s.
+
+\Knowledge{
+\path{durrett_ch2_borel_cantelli_second};
+\path{durrett_ch2_infinite_mean_behavior};
+\path{durrett_ch2_unfair_fair_game_truncation_scale}.
+}
+
+\noindent\textbf{Solution.}
+In the St. Petersburg game,
+\[
+  \Prob(X_n=2^j)=2^{-j},\qquad j\ge1.
+\]
+There is a constant $c>0$ such that for all large $x$,
+\[
+  \Prob(X_n\ge x)\ge \frac{c}{x}.
+\]
+Fix $M>0$ and define
+\[
+  A_n^{(M)}=\{X_n\ge M n\log_2 n\}.
+\]
+Then
+\[
+  \Prob(A_n^{(M)})\ge \frac{c_M}{n\log_2 n}
+\]
+for large $n$, and the series over $n$ diverges.  The events
+$A_n^{(M)}$ are independent, so by the second Borel-Cantelli lemma they
+occur infinitely often a.s.  Hence
+\[
+  \limsup_{n\to\infty}\frac{X_n}{n\log_2 n}\ge M
+  \qquad\text{a.s.}
+\]
+Intersecting over integer $M\ge1$ gives the limsup equal to infinity.
+Since $S_n\ge X_n$, the same conclusion holds for
+$S_n/(n\log_2 n)$.
+
+\section*{Exercise 2.4.1}
+
+\noindent\textbf{Question.}
+Lazy janitor.  Suppose the $i$th light bulb burns for an amount of time
+$X_i$ and then remains burned out for time $Y_i$ before being replaced.
+Suppose the $X_i,Y_i$ are positive and independent with the $X$'s having
+distribution $F$ and the $Y$'s having distribution $G$, both of which
+have finite mean.  Let $R_t$ be the amount of time in $[0,t]$ that we
+have a working light bulb.  Show that
+\[
+  R_t/t\to \frac{\E X_i}{\E X_i+\E Y_i}
+  \qquad\text{a.s.}
+\]
+
+\Knowledge{
+\path{durrett_ch2_iid_finite_mean_slln};
+\path{durrett_ch2_renewal_process};
+\path{durrett_ch2_slln_normalized_sums}.
+}
+
+\noindent\textbf{Solution.}
+Let $Z_i=X_i+Y_i$ be the length of the $i$th complete cycle and
+$T_n=Z_1+\cdots+Z_n$.  Let
+\[
+  N(t)=\max\{n:T_n\le t\}.
+\]
+By the strong law,
+\[
+  \frac{T_n}{n}\to \E Z_1=\E X_1+\E Y_1,
+  \qquad
+  \frac{X_1+\cdots+X_n}{n}\to \E X_1
+  \qquad\text{a.s.}
+\]
+Thus $N(t)\to\infty$ and
+\[
+  \frac{N(t)}{t}\to \frac{1}{\E X_1+\E Y_1}
+  \qquad\text{a.s.}
+\]
+The working time up to $t$ differs from
+$X_1+\cdots+X_{N(t)}$ by at most the working part of one incomplete
+cycle.  Hence
+\[
+  \sum_{i=1}^{N(t)}X_i
+  \le R_t
+  \le \sum_{i=1}^{N(t)+1}X_i.
+\]
+Dividing by $t$ and using the two strong-law limits gives
+\[
+  \frac{R_t}{t}
+  \to
+  \E X_1\cdot \frac{1}{\E X_1+\E Y_1}
+  =
+  \frac{\E X_1}{\E X_1+\E Y_1}
+  \qquad\text{a.s.}
+\]
+
+\section*{Exercise 2.4.2}
+
+\noindent\textbf{Question.}
+Let $X_0=(1,0)$ and define $X_n\in\R^2$ inductively by declaring that
+$X_{n+1}$ is chosen at random from the ball of radius $|X_n|$ centered
+at the origin, i.e. $X_{n+1}/|X_n|$ is uniformly distributed on the ball
+of radius $1$ and independent of $X_1,\ldots,X_n$.  Prove that
+\[
+  n^{-1}\log |X_n|\to c
+\]
+almost surely and compute $c$.
+
+\Knowledge{
+\path{durrett_ch2_iid_finite_mean_slln};
+\path{durrett_ch2_functions_of_independent_blocks};
+\path{durrett_ch2_slln_normalized_sums}.
+}
+
+\noindent\textbf{Solution.}
+Write
+\[
+  X_{n+1}=|X_n|U_{n+1},
+\]
+where $U_1,U_2,\ldots$ are i.i.d. uniform random vectors in the unit disk.
+Then
+\[
+  |X_n|=\prod_{k=1}^n |U_k|,
+  \qquad
+  \log|X_n|=\sum_{k=1}^n \log|U_k|.
+\]
+If $R=|U_1|$, then $R$ has density $2r$ on $0\le r\le1$.  Hence
+\[
+  \E|\log R|
+  =\int_0^1 2r|\log r|\,dr<\infty,
+\]
+and the strong law applies:
+\[
+  \frac{1}{n}\log|X_n|
+  \to \E\log R
+  =\int_0^1 2r\log r\,dr
+  =-\frac12.
+\]
+Thus $c=-1/2$.
+
+\section*{Exercise 2.4.3}
+
+\noindent\textbf{Question.}
+Investment problem.  At the beginning of each year you can buy bonds
+for 1 unit that are worth $a$ at the end of the year or stocks that are
+worth a random amount $V\ge0$.  If you always invest a fixed proportion
+$p$ of your wealth in bonds, then your wealth at the end of year
+$n+1$ is
+\[
+  W_{n+1}=(ap+(1-p)V_n)W_n.
+\]
+Suppose $V_1,V_2,\ldots$ are i.i.d. with $\E V_n^2<\infty$ and
+$\E(V_n^{-2})<\infty$.
+\begin{enumerate}[label=(\roman*)]
+\item Show that $n^{-1}\log W_n\to c(p)$ a.s.
+\item Show that $c(p)$ is concave.
+\item By investigating $c'(0)$ and $c'(1)$, give conditions on $V$ that
+guarantee that the optimal choice of $p$ is in $(0,1)$.
+\item Suppose $\Prob(V=1)=\Prob(V=4)=1/2$.  Find the optimal $p$ as a
+function of $a$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_iid_finite_mean_slln};
+\path{durrett_ch1_jensen_integral};
+\path{durrett_ch2_slln_normalized_sums}.
+}
+
+\noindent\textbf{Solution.}
+Assume $0\le p\le1$ and $a>0$.  Iterating the wealth recursion,
+\[
+  \log W_n
+  =\log W_0+\sum_{k=0}^{n-1}\log(ap+(1-p)V_k).
+\]
+The assumptions $\E V^2<\infty$ and $\E V^{-2}<\infty$ imply that the
+positive and negative parts of $\log(ap+(1-p)V)$ are integrable for
+$0\le p\le1$.  Therefore the strong law gives
+\[
+  \frac{1}{n}\log W_n\to
+  c(p):=\E\log(ap+(1-p)V)
+  \qquad\text{a.s.}
+\]
+
+For each fixed $v>0$, the function
+\[
+  p\mapsto \log(ap+(1-p)v)
+\]
+is concave because it is the logarithm of an affine positive function.
+Taking expectations preserves concavity, so $c(p)$ is concave.
+
+Differentiating under the expectation,
+\[
+  c'(p)=\E\left[\frac{a-V}{ap+(1-p)V}\right].
+\]
+Thus
+\[
+  c'(0)=a\,\E(1/V)-1,
+  \qquad
+  c'(1)=1-\frac{\E V}{a}.
+\]
+Since $c$ is concave, an interior maximizer is guaranteed when
+\[
+  c'(0)>0
+  \quad\text{and}\quad
+  c'(1)<0,
+\]
+that is,
+\[
+  a\,\E(1/V)>1
+  \quad\text{and}\quad
+  \E V>a.
+\]
+
+Now suppose $\Prob(V=1)=\Prob(V=4)=1/2$.  Then
+\[
+  c(p)=\frac12\log(1+(a-1)p)
+       +\frac12\log(4+(a-4)p).
+\]
+The endpoint derivative conditions are
+\[
+  c'(0)=\frac{5a}{8}-1,\qquad
+  c'(1)=1-\frac{5}{2a}.
+\]
+Hence the optimum is $p=0$ if $a\le8/5$, and $p=1$ if
+$a\ge5/2$.  For $8/5<a<5/2$, solve $c'(p)=0$:
+\[
+  (a-1)(4+(a-4)p)+(a-4)(1+(a-1)p)=0.
+\]
+Thus
+\[
+  p^*(a)=\frac{8-5a}{2(a-1)(a-4)},
+  \qquad 8/5<a<5/2.
+\]
+So
+\[
+  p^*(a)=
+  \begin{cases}
+  0, & a\le 8/5,\\[3pt]
+  \dfrac{8-5a}{2(a-1)(a-4)}, & 8/5<a<5/2,\\[8pt]
+  1, & a\ge 5/2.
+  \end{cases}
+\]
+
+\section*{Exercise 2.5.1}
+
+\noindent\textbf{Question.}
+Suppose $X_i$ are i.i.d., $\E X_i=0$, and $\operatorname{var}(X_i)=C<\infty$.
+Use Kolmogorov's maximal inequality with $n=m^\alpha$, where
+$\alpha(2p-1)>1$, to show that if $S_n=\sum_{i=1}^n X_i$ and $p>1/2$,
+then
+\[
+  \frac{S_n}{n^p}\to0\qquad\text{a.s.}
+\]
+
+\Knowledge{
+\path{durrett_ch2_kolmogorov_maximal_inequality};
+\path{durrett_ch2_borel_cantelli};
+\path{durrett_ch2_subsequence_upgrade}.
+}
+
+\noindent\textbf{Solution.}
+Let $n_m=\lfloor m^\alpha\rfloor$, with $\alpha(2p-1)>1$.  By
+Kolmogorov's maximal inequality,
+\[
+  \Prob\left(\max_{k\le n_m}|S_k|>\varepsilon n_m^p\right)
+  \le {C n_m\over \varepsilon^2 n_m^{2p}}
+  ={C\over\varepsilon^2}n_m^{1-2p}.
+\]
+Since $n_m^{1-2p}\le c m^{-\alpha(2p-1)}$ and
+$\alpha(2p-1)>1$, these probabilities are summable.  Borel--Cantelli
+therefore gives
+\[
+  \max_{k\le n_m}{|S_k|\over n_m^p}\to0 \qquad\text{a.s.}
+\]
+If $n_m<k\le n_{m+1}$, then
+\[
+  {|S_k|\over k^p}\le
+  \left({n_{m+1}\over n_m}\right)^p
+  \max_{j\le n_{m+1}}{|S_j|\over n_{m+1}^p}.
+\]
+Because $n_{m+1}/n_m\to1$, the right side tends to $0$ a.s.  Hence
+$S_n/n^p\to0$ a.s.
+
+\section*{Exercise 2.5.2}
+
+\noindent\textbf{Question.}
+Let $p>0$.  Prove the converse of Theorem 2.5.12: if
+$S_n/n^{1/p}\to0$ a.s. for i.i.d. $X_i$, then
+$\E|X_1|^p<\infty$.
+
+\Knowledge{
+\path{durrett_ch2_borel_cantelli};
+\path{durrett_ch2_tail_sum_moment_test};
+\path{durrett_ch2_slln_normalized_sums}.
+}
+
+\noindent\textbf{Solution.}
+Since
+\[
+  {X_n\over n^{1/p}}
+  ={S_n\over n^{1/p}}
+   -\left({n-1\over n}\right)^{1/p}
+    {S_{n-1}\over (n-1)^{1/p}},
+\]
+we have $X_n/n^{1/p}\to0$ a.s.  Hence for every $\varepsilon>0$,
+\[
+  \Prob(|X_n|>\varepsilon n^{1/p}\ \text{i.o.})=0.
+\]
+The events are independent, so the second Borel--Cantelli lemma implies
+\[
+  \sum_{n=1}^\infty
+  \Prob(|X_1|^p>\varepsilon^p n)<\infty.
+\]
+By the tail-sum criterion this is equivalent to
+$\E|X_1|^p<\infty$.
+
+\section*{Exercise 2.5.3}
+
+\noindent\textbf{Question.}
+Let $X_i$ be independent standard normal random variables.  Show that,
+for every fixed $t$,
+\[
+  \sum_{n=1}^\infty {X_n\sin(n\pi t)\over n}
+\]
+converges a.s.
+
+\Knowledge{
+\path{durrett_ch2_two_series_theorem};
+\path{durrett_ch2_independent_series_variance_test}.
+}
+
+\noindent\textbf{Solution.}
+For fixed $t$, set
+\[
+  Y_n={X_n\sin(n\pi t)\over n}.
+\]
+Then the $Y_n$ are independent, $\E Y_n=0$, and
+\[
+  \sum_{n=1}^\infty \operatorname{var}(Y_n)
+  =\sum_{n=1}^\infty {\sin^2(n\pi t)\over n^2}
+  \le \sum_{n=1}^\infty {1\over n^2}<\infty.
+\]
+The independent-series variance test therefore gives
+$\sum_n Y_n$ converges a.s.
+
+\section*{Exercise 2.5.4}
+
+\noindent\textbf{Question.}
+Let $X_n$ be independent with $\E X_n=0$ and
+$\operatorname{var}(X_n)=\sigma_n^2$.
+\begin{enumerate}[label=(\roman*)]
+\item If $\sum_n \sigma_n^2/n^2<\infty$, show that
+$\sum_n X_n/n$ converges a.s., and hence
+$n^{-1}\sum_{m=1}^n X_m\to0$ a.s.
+\item If $\sum_n \sigma_n^2/n^2=\infty$ and $\sigma_n^2\le n^2$,
+construct independent $X_n$ with $\E X_n=0$ and
+$\operatorname{var}(X_n)\le\sigma_n^2$ such that $X_n/n$, and hence
+$n^{-1}\sum_{m=1}^nX_m$, does not converge to $0$ a.s.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_two_series_theorem};
+\path{durrett_ch2_kronecker_lemma};
+\path{durrett_ch2_borel_cantelli}.
+}
+
+\noindent\textbf{Solution.}
+(i) The variables $X_n/n$ are independent, have mean $0$, and
+\[
+  \sum_n \operatorname{var}(X_n/n)
+  =\sum_n {\sigma_n^2\over n^2}<\infty.
+\]
+Thus $\sum_n X_n/n$ converges a.s.  Kronecker's lemma gives
+\[
+  {1\over n}\sum_{m=1}^n X_m\to0\qquad\text{a.s.}
+\]
+
+(ii) Let
+\[
+  \Prob(X_n=n)=\Prob(X_n=-n)={\sigma_n^2\over 2n^2},
+  \qquad
+  \Prob(X_n=0)=1-{\sigma_n^2\over n^2}.
+\]
+Then $\E X_n=0$ and $\operatorname{var}(X_n)=\sigma_n^2$.  Also
+\[
+  \sum_n \Prob(|X_n/n|=1)=\sum_n {\sigma_n^2\over n^2}=\infty.
+\]
+By Borel--Cantelli, $|X_n/n|=1$ infinitely often a.s.; hence
+$X_n/n\not\to0$.  If the averages $S_n/n$ converged to $0$, then
+\[
+  {X_n\over n}={S_n\over n}-{n-1\over n}{S_{n-1}\over n-1}
+\]
+would also converge to $0$, a contradiction.
+
+\section*{Exercise 2.5.5}
+
+\noindent\textbf{Question.}
+Let $X_n\ge0$ be independent.  Show that the following are equivalent:
+\begin{enumerate}[label=(\roman*)]
+\item $\sum_n X_n<\infty$ a.s.
+\item $\sum_n\{\Prob(X_n>1)+\E[X_n\1_{\{X_n\le1\}}]\}<\infty$.
+\item $\sum_n \E[X_n/(1+X_n)]<\infty$.
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_three_series_theorem};
+\path{durrett_ch2_borel_cantelli};
+\path{durrett_ch2_truncation_method}.
+}
+
+\noindent\textbf{Solution.}
+For $x\ge0$,
+\[
+  {1\over2}\bigl(x\1_{\{x\le1\}}+\1_{\{x>1\}}\bigr)
+  \le {x\over1+x}
+  \le x\1_{\{x\le1\}}+\1_{\{x>1\}}.
+\]
+Thus (ii) and (iii) are equivalent.
+
+If (ii) holds, then $\sum_n\Prob(X_n>1)<\infty$, so only finitely many
+large jumps occur a.s.  Also
+\[
+  \E\sum_n X_n\1_{\{X_n\le1\}}
+  =\sum_n\E[X_n\1_{\{X_n\le1\}}]<\infty,
+\]
+so the truncated sum is finite a.s.  Hence (i) holds.
+
+Conversely assume (i), and put $Y_n=X_n/(1+X_n)$.  Then
+$0\le Y_n\le1$ and $\sum_nY_n<\infty$ a.s.  If
+$\sum_n\E Y_n=\infty$, then, using $1-e^{-y}\ge(1-e^{-1})y$ on
+$0\le y\le1$,
+\[
+  \E e^{-\sum_n Y_n}
+  =\prod_n \E e^{-Y_n}
+  \le \prod_n \exp\{-(1-e^{-1})\E Y_n\}=0,
+\]
+which would force $\sum_nY_n=\infty$ a.s., a contradiction.  Therefore
+$\sum_n\E Y_n<\infty$, which is (iii).
+
+\section*{Exercise 2.5.6}
+
+\noindent\textbf{Question.}
+Let $\psi(x)=x^2$ for $|x|\le1$ and $\psi(x)=|x|$ for $|x|\ge1$.
+Show that if $X_n$ are independent, $\E X_n=0$, and
+$\sum_n\E\psi(X_n)<\infty$, then $\sum_nX_n$ converges a.s.
+
+\Knowledge{
+\path{durrett_ch2_three_series_theorem};
+\path{durrett_ch2_truncation_method}.
+}
+
+\noindent\textbf{Solution.}
+Use the three-series theorem with truncation at $1$.  First,
+\[
+  \sum_n\Prob(|X_n|>1)
+  \le \sum_n\E[|X_n|\1_{\{|X_n|>1\}}]
+  \le \sum_n\E\psi(X_n)<\infty.
+\]
+For $Y_n=X_n\1_{\{|X_n|\le1\}}$,
+\[
+  \sum_n\operatorname{var}(Y_n)
+  \le \sum_n\E Y_n^2
+  =\sum_n\E[X_n^2\1_{\{|X_n|\le1\}}]<\infty.
+\]
+Finally, since $\E X_n=0$,
+\[
+  |\E Y_n|
+  =|\E[X_n\1_{\{|X_n|>1\}}]|
+  \le \E[|X_n|\1_{\{|X_n|>1\}}],
+\]
+and the right side is summable.  All three conditions hold, so
+$\sum_nX_n$ converges a.s.
+
+\section*{Exercise 2.5.7}
+
+\noindent\textbf{Question.}
+Let $X_n$ be independent.  Suppose
+\[
+  \sum_n \E |X_n|^{p(n)}<\infty,
+  \qquad 0<p(n)\le2,
+\]
+and $\E X_n=0$ when $p(n)>1$.  Show that $\sum_nX_n$ converges a.s.
+
+\Knowledge{
+\path{durrett_ch2_three_series_theorem};
+\path{durrett_ch2_truncation_method}.
+}
+
+\noindent\textbf{Solution.}
+For all $n$,
+\[
+  \Prob(|X_n|>1)\le \E|X_n|^{p(n)},
+\]
+so large jumps occur only finitely often a.s.  If $p(n)\le1$, then on
+$\{|X_n|\le1\}$ we have $|X_n|\le |X_n|^{p(n)}$, so the corresponding
+small-jump parts are absolutely summable in expectation, hence a.s.
+
+For the indices with $p(n)>1$, apply the three-series theorem.  On
+$|x|\le1$, $x^2\le |x|^{p(n)}$ because $p(n)\le2$, and on $|x|>1$,
+$|x|\le |x|^{p(n)}$.  Hence
+\[
+  \sum_{p(n)>1}\operatorname{var}(X_n\1_{\{|X_n|\le1\}})<\infty
+\]
+and, using $\E X_n=0$,
+\[
+  \sum_{p(n)>1}
+  |\E[X_n\1_{\{|X_n|\le1\}}]|
+  \le \sum_{p(n)>1}\E[|X_n|\1_{\{|X_n|>1\}}]<\infty.
+\]
+Thus the full series converges a.s.
+
+\section*{Exercise 2.5.8}
+
+\noindent\textbf{Question.}
+Let $X_n$ be i.i.d. and not identically $0$.  For the power series
+$\sum_{n\ge1}X_n(\omega)z^n$, show that its radius of convergence is
+$1$ a.s. if $\E\log^+|X_1|<\infty$, and is $0$ a.s. if
+$\E\log^+|X_1|=\infty$.
+
+\Knowledge{
+\path{durrett_ch2_borel_cantelli};
+\path{durrett_ch2_tail_sum_moment_test};
+\path{durrett_ch2_power_series_radius}.
+}
+
+\noindent\textbf{Solution.}
+The radius is
+\[
+  r(\omega)=\frac{1}{\limsup_n |X_n(\omega)|^{1/n}}.
+\]
+If $\E\log^+|X_1|<\infty$, then for every $\varepsilon>0$,
+\[
+  \sum_n \Prob(\log^+|X_n|>\varepsilon n)<\infty.
+\]
+Thus eventually $|X_n|^{1/n}\le e^\varepsilon$, and the limsup is at
+most $1$.  Since $X_1$ is not identically $0$, there is $\delta>0$ with
+$\Prob(|X_1|>\delta)>0$; by Borel--Cantelli this occurs infinitely
+often, so the limsup is at least $1$.  Hence $r=1$.
+
+If $\E\log^+|X_1|=\infty$, then for every $M>1$,
+\[
+  \sum_n\Prob(\log^+|X_n|>n\log M)=\infty.
+\]
+By Borel--Cantelli, $|X_n|>M^n$ infinitely often, so
+$\limsup_n |X_n|^{1/n}\ge M$.  Since $M$ is arbitrary, the limsup is
+infinite and $r=0$.
+
+\section*{Exercise 2.5.9}
+
+\noindent\textbf{Question.}
+Let $X_n$ be independent and
+$S_{m,n}=X_{m+1}+\cdots+X_n$.  Prove
+\[
+  \Prob\left(\max_{m<j\le n}|S_{m,j}|>2a\right)
+  \min_{m<k\le n}\Prob(|S_{k,n}|\le a)
+  \le \Prob(|S_{m,n}|>a).
+\]
+
+\Knowledge{
+\path{durrett_ch2_levy_maximal_inequality};
+\path{durrett_ch2_independent_increments}.
+}
+
+\noindent\textbf{Solution.}
+Let $A_j$ be the event that $j$ is the first index in $(m,n]$ for which
+$|S_{m,j}|>2a$.  The events $A_j$ are disjoint and
+$A_j$ depends only on $X_{m+1},\ldots,X_j$, while $S_{j,n}$ depends only
+on later variables.  If $A_j$ and $|S_{j,n}|\le a$ occur, then
+\[
+  |S_{m,n}|=|S_{m,j}+S_{j,n}|>a.
+\]
+Therefore
+\[
+  \Prob(A_j)\Prob(|S_{j,n}|\le a)
+  =\Prob(A_j\cap\{|S_{j,n}|\le a\})
+  \le \Prob(A_j\cap\{|S_{m,n}|>a\}).
+\]
+Summing over $j$ and taking the minimum over $k$ proves the claim.
+
+\section*{Exercise 2.5.10}
+
+\noindent\textbf{Question.}
+Use the preceding inequality to prove Levy's theorem: if
+$S_n=\sum_{i=1}^nX_i$ with independent $X_i$ and $\lim_nS_n$ exists in
+probability, then $\lim_nS_n$ exists a.s.
+
+\Knowledge{
+\path{durrett_ch2_levy_maximal_inequality};
+\path{durrett_ch2_cauchy_in_probability};
+\path{durrett_ch2_borel_cantelli}.
+}
+
+\noindent\textbf{Solution.}
+Since $S_n$ converges in probability, it is Cauchy in probability:
+for every $a>0$,
+\[
+  \sup_{k,n\ge m}\Prob(|S_n-S_k|>a)\to0.
+\]
+Applying Exercise 2.5.9 to the block $(m,n]$, for large $m$ the
+minimum factor is at least $1/2$, hence
+\[
+  \Prob\left(\max_{m<j\le n}|S_j-S_m|>2a\right)
+  \le 2\Prob(|S_n-S_m|>a).
+\]
+Thus the partial sums are Cauchy in probability uniformly over each
+tail maximum.  Choose $m_r\uparrow\infty$ so that
+\[
+  \Prob\left(\max_{m_r<j\le m_{r+1}}
+  |S_j-S_{m_r}|>2^{-r}\right)<2^{-r}.
+\]
+Borel--Cantelli implies that, a.s., only finitely many of these block
+oscillations exceed $2^{-r}$.  Since $S_{m_r}$ is Cauchy a.s. along the
+chosen subsequence, the full sequence $S_n$ is Cauchy a.s. and therefore
+converges a.s.
+
+\section*{Exercise 2.5.11}
+
+\noindent\textbf{Question.}
+Let $X_i$ be i.i.d. and $S_n=\sum_{i=1}^nX_i$.  Use the inequality in
+Exercise 2.5.9 to show that if $S_n/n\to0$ in probability, then
+\[
+  {1\over n}\max_{1\le m\le n}S_m\to0
+  \qquad\text{in probability.}
+\]
+
+\Knowledge{
+\path{durrett_ch2_levy_maximal_inequality};
+\path{durrett_ch2_convergence_in_probability}.
+}
+
+\noindent\textbf{Solution.}
+It is enough to prove the stronger statement with $\max |S_m|$.  Put
+$m=0$ in Exercise 2.5.9.  For fixed $\varepsilon>0$,
+\[
+  \Prob\left(\max_{1\le j\le n}|S_j|>2\varepsilon n\right)
+  \min_{1\le k\le n}\Prob(|S_n-S_k|\le \varepsilon n)
+  \le \Prob(|S_n|>\varepsilon n).
+\]
+Since $S_n/n\to0$ in probability, the right side tends to $0$.  Also
+$S_n-S_k$ has the same law as $S_{n-k}$, and
+\[
+  \min_{0\le \ell\le n}\Prob(|S_\ell|\le \varepsilon n)\to1;
+\]
+for large $\ell$ this follows from $|S_\ell|/\ell\to0$ in probability,
+and for finitely many small $\ell$ it is immediate because
+$\varepsilon n\to\infty$.  Hence
+\[
+  n^{-1}\max_{1\le j\le n}|S_j|\to0
+  \quad\text{in probability},
+\]
+which implies the desired one-sided result.
+
+\section*{Exercise 2.5.12}
+
+\noindent\textbf{Question.}
+Let $X_i$ be i.i.d., $S_n=\sum_{i=1}^nX_i$, and let $a(n)\uparrow\infty$
+with $a(2^n)/a(2^{n-1})$ bounded.
+\begin{enumerate}[label=(\roman*)]
+\item Use Exercise 2.5.9 to show that if $S_n/a(n)\to0$ in probability
+and $S_{2^n}/a(2^n)\to0$ a.s., then $S_n/a(n)\to0$ a.s.
+\item If $\E X_1=0$ and $\E X_1^2<\infty$, conclude that for every
+$\varepsilon>0$,
+\[
+  {S_n\over n^{1/2}(\log_2 n)^{1/2+\varepsilon}}\to0
+  \qquad\text{a.s.}
+\]
+\end{enumerate}
+
+\Knowledge{
+\path{durrett_ch2_levy_maximal_inequality};
+\path{durrett_ch2_chebyshev};
+\path{durrett_ch2_borel_cantelli}.
+}
+
+\noindent\textbf{Solution.}
+(i) Write $b_k=a(2^k)$.  On the dyadic block
+$2^{k-1}<j\le2^k$, Exercise 2.5.9 gives, for fixed $\eta>0$,
+\[
+  \Prob\left(\max_{2^{k-1}<j\le2^k}|S_j-S_{2^{k-1}}|>2\eta b_k\right)
+  \le
+  { \Prob(|S_{2^k}-S_{2^{k-1}}|>\eta b_k)\over q_k},
+\]
+where
+\[
+  q_k=\min_{2^{k-1}<j\le2^k}
+  \Prob(|S_{2^k}-S_j|\le \eta b_k).
+\]
+The assumption $S_n/a(n)\to0$ in probability and the boundedness of
+$a(2^k)/a(2^{k-1})$ imply $q_k\to1$.  The dyadic convergence
+$S_{2^k}/b_k\to0$ a.s. makes the endpoint increments negligible; the
+standard Borel--Cantelli blocking argument from Levy's theorem then
+gives
+\[
+  \max_{2^{k-1}<j\le2^k}{|S_j-S_{2^{k-1}}|\over b_k}\to0
+  \qquad\text{a.s.}
+\]
+Since $a(j)$ is increasing and $b_k/a(j)$ is bounded on the block, and
+since $S_{2^{k-1}}/a(2^{k-1})\to0$ a.s., it follows that
+$S_n/a(n)\to0$ a.s.
+
+(ii) Let
+\[
+  a(n)=n^{1/2}(\log_2 n)^{1/2+\varepsilon},\qquad n\ge2.
+\]
+Then $a(2^k)=2^{k/2}k^{1/2+\varepsilon}$ and
+\[
+  \sum_{k=1}^\infty
+  \Prob(|S_{2^k}|>\delta a(2^k))
+  \le
+  \sum_{k=1}^\infty
+  {\operatorname{var}(S_{2^k})\over \delta^2 a(2^k)^2}
+  =
+  { \operatorname{var}(X_1)\over\delta^2}
+  \sum_{k=1}^\infty {1\over k^{1+2\varepsilon}}<\infty.
+\]
+Borel--Cantelli yields $S_{2^k}/a(2^k)\to0$ a.s.  Chebyshev also gives
+$S_n/a(n)\to0$ in probability.  Part (i) completes the proof.
+
+\section*{Exercise 2.6.1}
+
+\noindent\textbf{Question.}
+For a renewal process with interarrival times $\xi_i$, renewal count
+$N_t$, and renewal function $U(t)=\E N_t$, prove
+\[
+  {t\over \E(\xi_1\wedge t)}
+  \le U(t)\le
+  {2t\over \E(\xi_1\wedge t)}.
+\]
+
+\Knowledge{
+\path{durrett_ch2_renewal_function};
+\path{durrett_ch2_wald_identity_truncated}.
+}
+
+\noindent\textbf{Solution.}
+Let $\eta_i=\xi_i\wedge t$.  Since $T_{N_t}>t$, while each
+$\eta_i\le t$,
+\[
+  t\le \sum_{i=1}^{N_t}\eta_i\le 2t.
+\]
+Indeed, the partial sum before the last term is at most $t$, and the
+last truncated term is at most $t$.  Wald's identity for the bounded
+increments $\eta_i$ gives
+\[
+  \E\sum_{i=1}^{N_t}\eta_i=\E(\xi_1\wedge t)\,\E N_t.
+\]
+Dividing by $\E(\xi_1\wedge t)$ proves the two inequalities.
+
+\section*{Exercise 2.6.2}
+
+\noindent\textbf{Question.}
+Deduce the elementary renewal theorem from the strong law by showing
+\[
+  \limsup_{t\to\infty}\E (N_t/t)^2<\infty.
+\]
+
+\Knowledge{
+\path{durrett_ch2_elementary_renewal_theorem};
+\path{durrett_ch2_renewal_slln};
+\path{durrett_ch2_uniform_integrability}.
+}
+
+\noindent\textbf{Solution.}
+Choose $\delta>0$ with $p=\Prob(\xi_1>\delta)>0$, and let
+$K=\lceil t/\delta\rceil$.  If $N_t>mK$, then among the first $mK$
+interarrival times no block of length $K$ can consist entirely of
+variables larger than $\delta$.  Thus
+\[
+  \Prob(N_t>mK)\le (1-p^K)^m.
+\]
+This geometric tail bound implies $\E N_t^2\le C K^2\le C't^2$, so
+$\limsup_t\E(N_t/t)^2<\infty$.
+
+By the strong law for renewal times, $N_t/t\to1/\mu$ a.s. when
+$\mu=\E\xi_1<\infty$.  The $L^2$ bound gives uniform integrability, so
+$\E(N_t/t)\to1/\mu$, i.e. $U(t)/t\to1/\mu$.
+
+\section*{Exercise 2.6.3}
+
+\noindent\textbf{Question.}
+Poisson arrivals occur at rate $1$.  A server accepts a customer iff the
+server is free, and service times have distribution $F$ with mean $\mu$.
+Show that accepted arrival times form a renewal process with mean
+interarrival time $\mu+1$, and that the limiting fraction of arrivals
+served is $1/(\mu+1)$.
+
+\Knowledge{
+\path{durrett_ch2_poisson_memoryless};
+\path{durrett_ch2_renewal_reward_theorem};
+\path{durrett_ch2_renewal_slln}.
+}
+
+\noindent\textbf{Solution.}
+After an accepted customer begins service, the server is unavailable for
+a service time with mean $\mu$.  Once service ends, the memoryless
+property of the Poisson process says the waiting time to the next
+arrival is exponential with mean $1$, independent of the past.  Hence
+accepted arrivals form a renewal process with interarrival law
+\[
+  \text{service time}+\operatorname{Exp}(1),
+\]
+whose mean is $\mu+1$.  Therefore the accepted arrival rate is
+$1/(\mu+1)$.  The total arrival rate is $1$, so the limiting fraction
+served is $1/(\mu+1)$.
+
+\section*{Exercise 2.6.4}
+
+\noindent\textbf{Question.}
+Let $A_t=t-T_{N(t)-1}$ be the age.  For fixed $x>0$, show that
+$H(t)=\Prob(A_t>x)$ satisfies
+\[
+  H(t)=(1-F(t))\1_{(x,\infty)}(t)+\int_0^t H(t-s)\,dF(s),
+\]
+and conclude
+\[
+  \Prob(A_t>x)\to {1\over\mu}\int_x^\infty (1-F(u))\,du.
+\]
+
+\Knowledge{
+\path{durrett_ch2_renewal_equation};
+\path{durrett_ch2_key_renewal_theorem};
+\path{durrett_ch2_age_residual_life}.
+}
+
+\noindent\textbf{Solution.}
+Condition on the first renewal time $T_1$.  If $T_1>t$, then
+$A_t=t$, so the event occurs exactly when $t>x$.  If $T_1=s\le t$, the
+process restarts at time $s$, and the new age at time $t$ has the same
+law as $A_{t-s}$.  This gives the stated renewal equation.
+
+The forcing function is
+\[
+  h(t)=(1-F(t))\1_{(x,\infty)}(t),
+\]
+which is directly Riemann integrable when $\mu<\infty$.  The key renewal
+theorem yields
+\[
+  H(t)\to {1\over\mu}\int_0^\infty h(u)\,du
+  ={1\over\mu}\int_x^\infty(1-F(u))\,du.
+\]
+
+\section*{Exercise 2.6.5}
+
+\noindent\textbf{Question.}
+Use the renewal equation in Exercise 2.6.4 and Theorem 2.6.9 to show
+that if the renewal process is a rate $\lambda$ Poisson process, then
+$A_t$ has the same distribution as $\xi_1\wedge t$.
+
+\Knowledge{
+\path{durrett_ch2_poisson_memoryless};
+\path{durrett_ch2_renewal_equation};
+}
+
+\noindent\textbf{Solution.}
+For Poisson renewals, $F(u)=1-e^{-\lambda u}$.  For $0<x<t$,
+\[
+  \Prob(A_t>x)=\Prob(\text{no renewal in }(t-x,t])=e^{-\lambda x},
+\]
+and for $x\ge t$ this probability is $0$.  This is also
+\[
+  \Prob(\xi_1\wedge t>x),
+\]
+since $\xi_1$ is exponential with rate $\lambda$.  Thus
+$A_t\stackrel d=\xi_1\wedge t$.
+
+\section*{Exercise 2.6.6}
+
+\noindent\textbf{Question.}
+Let $B_t=T_{N(t)}-t$ be the residual lifetime.  Show that
+\[
+  \Prob(A_t>x,\ B_t>y)
+  \to {1\over\mu}\int_{x+y}^\infty(1-F(u))\,du.
+\]
+
+\Knowledge{
+\path{durrett_ch2_age_residual_life};
+\path{durrett_ch2_key_renewal_theorem};
+}
+
+\noindent\textbf{Solution.}
+The event $\{A_t>x,B_t>y\}$ means that the renewal interval straddling
+$t$ began before $t-x$ and has length exceeding $x+y$.  Its renewal
+equation has forcing term
+\[
+  h(t)=(1-F(t+y))\1_{(x,\infty)}(t).
+\]
+By the key renewal theorem,
+\[
+  \Prob(A_t>x,B_t>y)
+  \to {1\over\mu}\int_0^\infty h(u)\,du
+  ={1\over\mu}\int_x^\infty(1-F(u+y))\,du
+  ={1\over\mu}\int_{x+y}^\infty(1-F(v))\,dv.
+\]
+
+\section*{Exercise 2.6.7}
+
+\noindent\textbf{Question.}
+In an alternating renewal process, working times have distribution
+$F_1$ with mean $\mu_1$, repair times have distribution $F_2$ with mean
+$\mu_2$, and one cycle has law $F=F_1*F_2$.  If $F$ is nonarithmetic,
+show that the probability $H(t)$ that the machine is working at time
+$t$ satisfies
+\[
+  H(t)\to {\mu_1\over\mu_1+\mu_2}.
+\]
+
+\Knowledge{
+\path{durrett_ch2_alternating_renewal_process};
+\path{durrett_ch2_key_renewal_theorem};
+\path{durrett_ch2_renewal_reward_theorem}.
+}
+
+\noindent\textbf{Solution.}
+The machine is working at time $t$ either because the initial working
+period exceeds $t$, or because a full cycle has ended and the restarted
+process is working.  Thus
+\[
+  H(t)=1-F_1(t)+\int_0^t H(t-s)\,dF(s).
+\]
+The forcing function $h(t)=1-F_1(t)$ is directly Riemann integrable and
+\[
+  \int_0^\infty h(t)\,dt=\mu_1.
+\]
+The mean cycle length is $\mu_1+\mu_2$.  The key renewal theorem gives
+\[
+  H(t)\to {\mu_1\over \mu_1+\mu_2}.
+\]
+
+\section*{Exercise 2.6.8}
+
+\noindent\textbf{Question.}
+Find a renewal equation for
+$H(t)=\Prob(\text{the number of renewals in }[0,t]\text{ is odd})$, and
+use the renewal theorem to show that $H(t)\to1/2$.
+
+\Knowledge{
+\path{durrett_ch2_renewal_equation};
+\path{durrett_ch2_alternating_renewal_process};
+\path{durrett_ch2_key_renewal_theorem}.
+}
+
+\noindent\textbf{Solution.}
+Counting the renewal at time $0$, if the first interarrival exceeds
+$t$, the count is $1$ and hence odd.  If the first interarrival is
+$s\le t$, parity is reversed relative to the restarted process.  Hence
+\[
+  H(t)=1-F(t)+\int_0^t(1-H(t-s))\,dF(s).
+\]
+This is the alternating-renewal equation with equal on- and off-cycle
+distributions.  By Exercise 2.6.7, the limiting fraction of time spent
+in either parity is
+\[
+  {\mu\over\mu+\mu}={1\over2}.
+\]
+Thus $H(t)\to1/2$.
+
+\section*{Exercise 2.6.9}
+
+\noindent\textbf{Question.}
+Assume $F$ has directly Riemann integrable density $f$.  Let
+$V=U-\1_{[0,\infty)}$.  Show that $V$ has density $v$ satisfying
+\[
+  v(t)=f(t)+\int_0^t v(t-s)\,dF(s),
+\]
+and conclude that $v(t)\to1/\mu$.
+
+\Knowledge{
+\path{durrett_ch2_renewal_density};
+\path{durrett_ch2_key_renewal_theorem}.
+}
+
+\noindent\textbf{Solution.}
+Since
+\[
+  U=\sum_{n=0}^\infty F^{*n},
+  \qquad
+  V=\sum_{n=1}^\infty F^{*n},
+\]
+the measure $V$ has density
+\[
+  v(t)=\sum_{n=1}^\infty f^{*n}(t).
+\]
+Separating the first term gives
+\[
+  v(t)=f(t)+\sum_{n=2}^\infty f^{*n}(t)
+  =f(t)+\int_0^t v(t-s)\,dF(s).
+\]
+The key renewal theorem applied to the directly Riemann integrable
+function $f$ gives
+\[
+  v(t)\to {1\over\mu}\int_0^\infty f(s)\,ds={1\over\mu}.
+\]
+
+\section*{Exercise 2.7.1}
+
+\noindent\textbf{Question.}
+For $\gamma(a)$ in the large-deviation theorem, show that the following
+are equivalent:
+\[
+  \gamma(a)=-\infty,\qquad
+  \Prob(X_1\ge a)=0,\qquad
+  \Prob(S_n\ge na)=0\text{ for all }n.
+\]
+
+\Knowledge{
+\path{durrett_ch2_large_deviation_gamma};
+\path{durrett_ch2_independent_sums}.
+}
+
+\noindent\textbf{Solution.}
+If $\Prob(X_1\ge a)=0$, then every summand is $<a$ a.s.; hence
+$S_n<na$ a.s. and $\Prob(S_n\ge na)=0$ for all $n$, so
+$\gamma(a)=-\infty$.
+
+Conversely, if $\Prob(S_n\ge na)=0$ for all $n$, taking $n=1$ gives
+$\Prob(X_1\ge a)=0$.  Finally, if $\gamma(a)=-\infty$ but
+$p=\Prob(X_1\ge a)>0$, then
+$\Prob(S_n\ge na)\ge p^n$, so
+$n^{-1}\log\Prob(S_n\ge na)\ge\log p>-\infty$, a contradiction.
+
+\section*{Exercise 2.7.2}
+
+\noindent\textbf{Question.}
+Use the definition of $\gamma$ to show that for rational
+$\lambda\in[0,1]$,
+\[
+  \gamma(\lambda a+(1-\lambda)b)
+  \ge \lambda\gamma(a)+(1-\lambda)\gamma(b).
+\]
+Extend this to all $\lambda$ and show that $\gamma$ is concave, hence
+Lipschitz continuous on compact subsets of $\{\gamma>-\infty\}$.
+
+\Knowledge{
+\path{durrett_ch2_large_deviation_gamma};
+\path{durrett_ch2_superadditivity};
+\path{durrett_ch2_concavity}.
+}
+
+\noindent\textbf{Solution.}
+Let $\lambda=r/(r+s)$ with integers $r,s\ge0$.  Independence gives
+\[
+  \Prob(S_{r+s}\ge ra+sb)
+  \ge \Prob(S_r\ge ra)\Prob(S_s'\ge sb),
+\]
+where $S_s'$ is an independent copy of $S_s$.  Iterating this block
+argument and taking logarithms divided by the total length yields
+\[
+  \gamma\!\left({ra+sb\over r+s}\right)
+  \ge {r\over r+s}\gamma(a)+{s\over r+s}\gamma(b).
+\]
+Thus the inequality holds for rational $\lambda$.  Since $\gamma$ is
+nonincreasing in $a$, approximating an arbitrary $\lambda$ from above
+and below by rationals extends the inequality to all $\lambda\in[0,1]$.
+Therefore $\gamma$ is concave on its effective domain.  A finite concave
+function on an open interval has bounded one-sided slopes on compact
+subintervals, hence is Lipschitz there.
+
+\section*{Exercise 2.7.3}
+
+\noindent\textbf{Question.}
+Let $X_i$ be i.i.d. Poisson random variables with mean $1$.  Find
+\[
+  \lim_{n\to\infty}{1\over n}\log\Prob(S_n\ge na),
+  \qquad a>1.
+\]
+
+\Knowledge{
+\path{durrett_ch2_cramer_theorem};
+\path{durrett_ch2_poisson_large_deviation};
+\path{durrett_ch2_chernoff_bound}.
+}
+
+\noindent\textbf{Solution.}
+Here $S_n$ is Poisson with mean $n$.  The moment generating function of
+$X_1$ is
+\[
+  \phi(\theta)=\exp(e^\theta-1).
+\]
+For $a>1$, the optimizing Chernoff parameter solves
+$\phi'(\theta)/\phi(\theta)=e^\theta=a$, so $\theta=\log a$.  The rate
+function is
+\[
+  I(a)=a\log a-a+1.
+\]
+Therefore
+\[
+  \lim_{n\to\infty}{1\over n}\log\Prob(S_n\ge na)
+  =-I(a)
+  =-a\log a+a-1.
+\]
+
+\section*{Exercise 2.7.4}
+
+\noindent\textbf{Question.}
+For fair coin flips written as $X_i=\pm1$, prove
+\[
+  \phi(\theta)\le \exp(\phi(\theta)-1)\le \exp(\beta\theta^2),
+  \qquad \theta\le1,
+\]
+where
+\[
+  \beta=\sum_{n=1}^\infty {1\over(2n)!}\approx0.586,
+\]
+and use Chernoff's inequality to show that for $0\le a\le1$,
+\[
+  \Prob(S_n\ge an)\le \exp\left(-{na^2\over4\beta}\right).
+\]
+
+\Knowledge{
+\path{durrett_ch2_chernoff_bound};
+\path{durrett_ch2_mgf_bounds};
+\path{durrett_ch2_subgaussian_coin_flips}.
+}
+
+\noindent\textbf{Solution.}
+For $X_1=\pm1$ with probability $1/2$,
+\[
+  \phi(\theta)=\E e^{\theta X_1}=\cosh\theta.
+\]
+Since $x\le e^{x-1}$ for $x>0$,
+\[
+  \phi(\theta)\le e^{\phi(\theta)-1}.
+\]
+For $0\le\theta\le1$,
+\[
+  \phi(\theta)-1
+  =\sum_{n=1}^\infty {\theta^{2n}\over(2n)!}
+  \le \theta^2\sum_{n=1}^\infty {1\over(2n)!}
+  =\beta\theta^2.
+\]
+Thus $\phi(\theta)\le e^{\beta\theta^2}$.  Chernoff's bound gives
+\[
+  \Prob(S_n\ge an)
+  \le \exp\{-n(a\theta-\beta\theta^2)\}.
+\]
+For $0\le a\le1$, choose $\theta=a/(2\beta)\le1$.  Then
+$a\theta-\beta\theta^2=a^2/(4\beta)$, so
+\[
+  \Prob(S_n\ge an)\le
+  \exp\left(-{na^2\over4\beta}\right).
+\]
+
+\section*{Exercise 2.7.5}
+
+\noindent\textbf{Question.}
+Suppose $\E X_i=0$ and $\E e^{\theta X_i}=\infty$ for all
+$\theta>0$.  Show that for every $a>0$,
+\[
+  {1\over n}\log\Prob(S_n\ge na)\to0.
+\]
+
+\Knowledge{
+\path{durrett_ch2_heavy_tail_large_deviation};
+\path{durrett_ch2_one_big_jump};
+\path{durrett_ch2_large_deviation_gamma}.
+}
+
+\noindent\textbf{Solution.}
+The limit $\gamma(a)$ exists by the large-deviation theorem and is at
+most $0$.  Suppose $\gamma(a)<0$ for some $a>0$.  Then for some
+$c>0$,
+\[
+  \Prob(S_n\ge na)\le e^{-cn}
+\]
+for all large $n$.  By the weak law, for large $n$,
+\[
+  \Prob(S_{n-1}\ge -na)\ge {1\over2}.
+\]
+Therefore
+\[
+  \Prob(X_1\ge 2na)
+  \le 2\Prob(S_n\ge na)
+  \le 2e^{-cn}.
+\]
+Monotonicity fills the gaps between multiples of $2a$, so the positive
+tail of $X_1$ is exponentially bounded.  This would imply
+$\E e^{\theta X_1}<\infty$ for some $\theta>0$, contradicting the
+assumption.  Hence $\gamma(a)=0$ for every $a>0$.
+
+\section*{Exercise 2.7.6}
+
+\noindent\textbf{Question.}
+Show that if $\E X_i=0$, then for $a,\varepsilon>0$,
+\[
+  \liminf_{n\to\infty}
+  {\Prob(S_n\ge na)\over n\Prob(X_1\ge n(a+\varepsilon))}
+  \ge1.
+\]
+
+\Knowledge{
+\path{durrett_ch2_one_big_jump};
+\path{durrett_ch2_weak_law};
+\path{durrett_ch2_tail_probability}.
+}
+
+\noindent\textbf{Solution.}
+Let $p_n=\Prob(X_1\ge n(a+\varepsilon))$.  Since $\E|X_1|<\infty$,
+$np_n\to0$.  Consider the event that exactly one of
+$X_1,\ldots,X_n$ is at least $n(a+\varepsilon)$ and the remaining sum is
+at least $-n\varepsilon$.  On this event, $S_n\ge na$.  Independence
+and the weak law give
+\[
+  \Prob(S_{n-1}\ge -n\varepsilon)\to1.
+\]
+Hence
+\[
+  \Prob(S_n\ge na)
+  \ge n p_n(1-p_n)^{n-1}\Prob(S_{n-1}\ge -n\varepsilon),
+\]
+and the right side is asymptotic to $n p_n$.  Dividing by
+$n\Prob(X_1\ge n(a+\varepsilon))$ proves the desired lower bound.
+
+\end{document}

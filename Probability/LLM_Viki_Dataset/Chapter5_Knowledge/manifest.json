@@ -1,0 +1,26 @@
+{
+  "name": "durrett_chapter5_markov_chains_llm_viki",
+  "description": "Curated LLM/Viki-style knowledge pieces for Chapter 5 of Durrett Probability: Theory and Examples.",
+  "source_file": "Probability/Textbook/Chapters/PTE-Chapter5.pdf",
+  "created_at": "2026-06-11T06:40:05.784404+00:00",
+  "piece_count": 50,
+  "section_count": 8,
+  "files": [
+    "chapter5_knowledge_pieces.jsonl",
+    "chapter5_section_guides.jsonl",
+    "chapter5_viki.md",
+    "chapter5_flashcards.tsv",
+    "manifest.json",
+    "chapter5_exercise_records.jsonl",
+    "chapter5_exercise_method_cards.jsonl",
+    "chapter5_exercise_new_knowledge.jsonl",
+    "chapter5_exercise_method_flashcards.tsv",
+    "chapter5_exercise_viki.md"
+  ],
+  "exercise_source_tex": "Probability/Exercises/Chapter5/Chapter5Exercises.tex",
+  "exercise_source_pdf": "Probability/Exercises/Chapter5/Chapter5Exercises.pdf",
+  "exercise_record_count": 55,
+  "exercise_method_card_count": 7,
+  "exercise_new_knowledge_count": 35,
+  "exercise_viki_created_at": "2026-06-12T08:01:21.927301+00:00"
+}
