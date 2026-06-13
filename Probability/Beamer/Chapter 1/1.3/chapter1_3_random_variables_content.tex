@@ -1,0 +1,380 @@
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+
+\usepackage{amsmath,amssymb,mathtools}
+
+\newcommand{\OmegaSpace}{\Omega}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\Sfield}{\mathcal{S}}
+\newcommand{\G}{\mathcal{G}}
+\newcommand{\Hclass}{\mathcal{H}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\vikiname}[1]{\par\smallskip{\scriptsize\color{blue!60!black}\textbf{LLMviki:} \texttt{\detokenize{#1}}}}
+\newcommand{\blankproof}{%
+  \vspace{2mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par
+}
+\newcommand{\proofblock}[1]{\ifteacher #1 \else \blankproof \fi}
+
+\title[Chapter 1.3]{Chapter 1.3 Random Variables}
+\subtitle{Rick Durrett Probability: Theory and Examples}
+\author{MSU Probability Prelim}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+  \vspace{-5mm}
+  \begin{center}
+    \small Built from the local Chapter 1 LLMviki flash cards.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Roadmap for 1.3}
+  \begin{block}{Learning goal}
+    Prove measurability quickly using generators and closure under limits/composition.
+  \end{block}
+  \begin{enumerate}
+    \item Random variables as measurable maps.
+    \item Generator checking and inverse images.
+    \item Arithmetic, composition, and limits of random variables.
+    \item Semicontinuity and discontinuity sets.
+    \item $\sigma(X)$ factorization: when $Y=f(X)$.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Random Variables as Measurable Maps}
+  \begin{block}{Definition}
+    A random variable is a measurable map
+    \[
+      X:(\OmegaSpace,\F)\to(\R,\B(\R)).
+    \]
+    Equivalently,
+    \[
+      \{X\in B\}\in\F\qquad\text{for every }B\in\B(\R).
+    \]
+  \end{block}
+  \begin{alertblock}{Pitfall}
+    A random variable is not the same thing as its distribution. Different maps may have the same law.
+  \end{alertblock}
+  \vikiname{Random variables as measurable maps; ID: durrett_ch1_measurable_map}
+\end{frame}
+
+\begin{frame}{Checking Measurability on Generators}
+  \begin{block}{Theorem}
+    If $\Sfield=\sigma(\A)$, then to prove $X:(\Omega,\F)\to(E,\Sfield)$ is measurable, it is enough to check
+    \[
+      X^{-1}(A)\in\F\qquad\text{for every }A\in\A.
+    \]
+  \end{block}
+  \proofblock{
+  Let
+  \[
+    \mathcal{D}=\{B\in\Sfield:X^{-1}(B)\in\F\}.
+  \]
+  Since inverse images preserve complements and countable unions, $\mathcal{D}$ is a sigma-field. If $\A\subseteq\mathcal{D}$, then $\sigma(\A)\subseteq\mathcal{D}$, so all target measurable sets have measurable inverse image.
+  }
+  \vikiname{Checking measurability on generators; ID: durrett_ch1_measurability_generator}
+\end{frame}
+
+\begin{frame}{Composition of Measurable Maps}
+  \begin{block}{Theorem}
+    If $X$ is measurable and $f$ is measurable, then $f(X)$ is measurable.
+  \end{block}
+  \proofblock{
+  For any Borel set $B$,
+  \[
+    \{f(X)\in B\}=\{X\in f^{-1}(B)\}.
+  \]
+  Since $f$ is measurable, $f^{-1}(B)$ is Borel; since $X$ is measurable, the event on the right is in $\F$.
+  }
+  \vikiname{Composition of measurable maps; ID: durrett_ch1_composition_measurable}
+\end{frame}
+
+\begin{frame}{Arithmetic of Random Variables}
+  \begin{block}{Theorem}
+    Finite sums, products, maxima, minima, and continuous functions of random variables are random variables.
+  \end{block}
+  \begin{itemize}
+    \item Vector trick: first prove $(X,Y)$ is measurable.
+    \item Then compose with continuous maps such as $(x,y)\mapsto x+y$ or $(x,y)\mapsto xy$.
+    \item Direct trick for sums: use rational cuts.
+  \end{itemize}
+  \vikiname{Arithmetic of random variables; ID: durrett_ch1_measurable_arithmetic}
+\end{frame}
+
+\begin{frame}[shrink=5]{Limits Preserve Measurability}
+  \begin{block}{Theorem}
+    If $(X_n)$ are measurable real functions, then
+    \[
+      \sup_n X_n,\quad \inf_n X_n,\quad \limsup_n X_n,\quad \liminf_n X_n
+    \]
+    are measurable. Any pointwise limit of measurable functions is measurable.
+  \end{block}
+  \proofblock{
+  Use countable descriptions such as
+  \[
+    \left\{\sup_n X_n\le a\right\}=\bigcap_{n=1}^{\infty}\{X_n\le a\}.
+  \]
+  Then write limsup/liminf through countable suprema and infima:
+  \[
+    \limsup_n X_n=\inf_m\sup_{n\ge m}X_n.
+  \]
+  }
+  \vikiname{Limits preserve measurability; ID: durrett_ch1_limits_measurable}
+\end{frame}
+
+\begin{frame}{$\sigma(X)$ Factorization}
+  \begin{block}{Fact}
+    A random variable $Y$ is $\sigma(X)$-measurable if and only if there is a Borel measurable $f:\R\to\R$ such that
+    \[
+      Y=f(X).
+    \]
+  \end{block}
+  \begin{itemize}
+    \item Easy direction: inverse images compose.
+    \item Hard direction: approximate $Y$ by simple functions or dyadic bins.
+  \end{itemize}
+  \vikiname{Functions measurable with respect to sigma(X); ID: durrett_ch1_sigma_x_factorization}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.1}
+  Show that if $\A$ generates $\Sfield$, then
+  \[
+    X^{-1}(\A)\equiv \{\{X\in A\}:A\in\A\}
+  \]
+  generates
+  \[
+    \sigma(X)=\{\{X\in B\}:B\in\Sfield\}.
+  \]
+  \vikiname{Checking measurability on generators; ID: durrett_ch1_measurability_generator}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.1: Proof Skeleton}
+  \proofblock{
+  Let $\G=\sigma(X^{-1}(\A))$. Since $\A\subseteq\Sfield$, $\G\subseteq\sigma(X)$. For the reverse inclusion, define
+  \[
+    \mathcal{D}=\{B\in\Sfield:\{X\in B\}\in\G\}.
+  \]
+  The class $\mathcal{D}$ is a sigma-field and contains $\A$, hence $\mathcal{D}=\Sfield$. Therefore every $\{X\in B\}$ with $B\in\Sfield$ lies in $\G$.
+  }
+  \vikiname{Checking measurability on generators; ID: durrett_ch1_measurability_generator}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.2}
+  Prove Theorem 1.3.6 when $n=2$ by checking directly that
+  \[
+    \{X_1+X_2<x\}\in\F.
+  \]
+  \vikiname{Rational cut proof for sum measurability; ID: exercise_method_rational_cut_sum_measurability}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.2: Proof Skeleton}
+  \proofblock{
+  For fixed $x\in\R$, write
+  \[
+    \{X_1+X_2<x\}
+    =
+    \bigcup_{q\in\Q}\bigl(\{X_1<q\}\cap\{X_2<x-q\}\bigr).
+  \]
+  The equality follows from density of $\Q$ between $X_1(\omega)$ and $x-X_2(\omega)$. The right side is a countable union of measurable events.
+  }
+  \vikiname{Rational cut proof for sum measurability; ID: exercise_method_rational_cut_sum_measurability}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.3}
+  Show that if $f$ is continuous and $X_n\to X$ almost surely, then
+  \[
+    f(X_n)\to f(X)
+  \]
+  almost surely.
+  \vikiname{Composition of measurable maps; ID: durrett_ch1_composition_measurable}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.3: Proof Skeleton}
+  \proofblock{
+  Let
+  \[
+    \Omega_0=\{\omega:X_n(\omega)\to X(\omega)\}.
+  \]
+  Then $\Prob(\Omega_0)=1$. For $\omega\in\Omega_0$, continuity of $f$ gives
+  \[
+    f(X_n(\omega))\to f(X(\omega)).
+  \]
+  Hence convergence holds on a probability-one set.
+  }
+  \vikiname{Composition of measurable maps; ID: durrett_ch1_composition_measurable}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.4}
+  \begin{enumerate}
+    \item[(i)] Show that a continuous function from $\R^d$ to $\R$ is measurable from $(\R^d,\B(\R^d))$ to $(\R,\B(\R))$.
+    \item[(ii)] Show that $\B(\R^d)$ is the smallest sigma-field that makes all continuous functions measurable.
+  \end{enumerate}
+  \vikiname{Composition of measurable maps; ID: durrett_ch1_composition_measurable}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.4: Proof Skeleton}
+  \proofblock{
+  For (i), inverse images of open sets under continuous functions are open, hence Borel. For (ii), suppose $\G$ makes every continuous real function measurable. For any closed $C\subseteq\R^d$, the distance function
+  \[
+    d_C(x)=\inf_{y\in C}|x-y|
+  \]
+  is continuous and
+  \[
+    C=\{x:d_C(x)=0\}.
+  \]
+  Thus all closed sets, hence all Borel sets, lie in $\G$.
+  }
+  \vikiname{Checking measurability on generators; ID: durrett_ch1_measurability_generator}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.5}
+  A function $f$ is lower semicontinuous if
+  \[
+    \liminf_{y\to x} f(y)\ge f(x),
+  \]
+  and upper semicontinuous if $-f$ is lower semicontinuous. Show that
+  $f$ is lower semicontinuous if and only if $\{x:f(x)\le a\}$ is closed
+  for each $a\in\R$, and conclude that semicontinuous functions are
+  measurable.
+  \vikiname{Lower semicontinuity via closed sublevel sets; ID: exercise_method_closed_sublevel_semicontinuity}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.5: Proof Skeleton}
+  \proofblock{
+  If $f$ is l.s.c. and $x_n\to x$ with $f(x_n)\le a$, then
+  \[
+    f(x)\le\liminf_n f(x_n)\le a,
+  \]
+  so $\{f\le a\}$ is closed. Conversely, if all $\{f\le a\}$ are closed and $\liminf f(y_n)<f(x)$ for some $y_n\to x$, choose $a$ between them and get a contradiction by closedness. Since $\{f\le a\}$ is Borel for every $a$, $f$ is measurable.
+  }
+  \vikiname{Lower semicontinuity via closed sublevel sets; ID: exercise_method_closed_sublevel_semicontinuity}
+\end{frame}
+
+\begin{frame}[shrink=6]{Exercise 1.3.6}
+  Let $f:\R^d\to\R$ be arbitrary and define
+  \[
+    f^\delta(x)=\sup\{f(y):|y-x|<\delta\},\qquad
+    f_\delta(x)=\inf\{f(y):|y-x|<\delta\}.
+  \]
+  Show that $f^\delta$ is lower semicontinuous and $f_\delta$ is upper
+  semicontinuous. Let
+  \[
+    f^0=\lim_{\delta\downarrow0}f^\delta,\qquad
+    f_0=\lim_{\delta\downarrow0}f_\delta.
+  \]
+  Conclude that the set of discontinuities of $f$ is $\{f^0\ne f_0\}$ and is measurable.
+  \vikiname{Discontinuity set from upper and lower local envelopes; ID: exercise_method_oscillation_discontinuity_set}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.6: Proof Skeleton}
+  \proofblock{
+  Show $\{x:f^\delta(x)>a\}$ is open: if $f^\delta(x)>a$, some nearby $y$ has $f(y)>a$, and the same $y$ remains nearby for all $x'$ close to $x$. Thus $f^\delta$ is l.s.c.; similarly $f_\delta$ is u.s.c. The limits $f^0,f_0$ are measurable. Continuity at $x$ is equivalent to the small-ball upper and lower envelopes squeezing together:
+  \[
+    f^0(x)=f_0(x).
+  \]
+  }
+  \vikiname{Discontinuity set from upper and lower local envelopes; ID: exercise_method_oscillation_discontinuity_set}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.7}
+  A function $\phi:\Omega\to\R$ is simple if
+  \[
+    \phi(\omega)=\sum_{m=1}^n c_m\one_{A_m}(\omega),
+    \qquad A_m\in\F.
+  \]
+  Show that the class of $\F$-measurable functions is the smallest class
+  containing the simple functions and closed under pointwise limits.
+  \vikiname{Limits preserve measurability; ID: durrett_ch1_limits_measurable}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.7: Proof Skeleton}
+  \proofblock{
+  Simple functions are measurable, and pointwise limits of measurable functions are measurable. For minimality, approximate any nonnegative measurable $f$ by simple functions
+  \[
+    f_n=2^{-n}\left\lfloor 2^n(f\wedge n)\right\rfloor.
+  \]
+  Then $f_n\to f$ pointwise. For general real $f$, apply this to $f^+$ and $f^-$ and take differences.
+  }
+  \vikiname{Limits preserve measurability; ID: durrett_ch1_limits_measurable}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.8}
+  Use the previous exercise to conclude that $Y$ is measurable with
+  respect to $\sigma(X)$ if and only if
+  \[
+    Y=f(X)
+  \]
+  for some measurable function $f:\R\to\R$.
+  \vikiname{Functions measurable with respect to sigma(X); ID: durrett_ch1_sigma_x_factorization}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.8: Proof Skeleton}
+  \proofblock{
+  If $Y=f(X)$, then $\{Y\in B\}=\{X\in f^{-1}(B)\}\in\sigma(X)$. Conversely, let $\Hclass$ be the class of $\sigma(X)$-measurable functions representable as $f(X)$. It contains simple $\sigma(X)$-measurable functions and is closed under pointwise limits. By Exercise 1.3.7, every $\sigma(X)$-measurable $Y$ belongs to $\Hclass$.
+  }
+  \vikiname{Functions measurable with respect to sigma(X); ID: durrett_ch1_sigma_x_factorization}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.3.9}
+  Give a constructive proof of the previous result. Note that
+  \[
+    \{\omega:m2^{-n}\le Y(\omega)<(m+1)2^{-n}\}
+    =
+    \{X\in B_{m,n}\}
+  \]
+  for some Borel set $B_{m,n}$, and define $f_n(x)=m2^{-n}$ for
+  $x\in B_{m,n}$. Show that $f_n(x)\to f(x)$ and $Y=f(X)$.
+  \vikiname{Constructive representation of sigma(X)-measurable functions; ID: exercise_method_constructive_sigma_x_representation}
+\end{frame}
+
+\begin{frame}{Exercise 1.3.9: Proof Skeleton}
+  \proofblock{
+  Partition $\Omega$ into dyadic bins
+  \[
+    A_{m,n}=\{m2^{-n}\le Y<(m+1)2^{-n}\}.
+  \]
+  Since $A_{m,n}\in\sigma(X)$, write $A_{m,n}=\{X\in B_{m,n}\}$. Make the $B_{m,n}$ disjoint if needed, then define
+  \[
+    f_n(x)=\sum_{m\in\Z}m2^{-n}\one_{B_{m,n}}(x).
+  \]
+  Then $0\le Y-f_n(X)<2^{-n}$, so $f_n(X)\to Y$. Let $f=\lim f_n$ on the Borel set where the limit exists, and $0$ elsewhere.
+  }
+  \vikiname{Constructive representation of sigma(X)-measurable functions; ID: exercise_method_constructive_sigma_x_representation}
+\end{frame}
+
+\begin{frame}{Checklist: How to Attack 1.3 Problems}
+  \begin{enumerate}
+    \item To prove measurability, reduce to a generator.
+    \item For sums, use rational cuts when a direct proof is requested.
+    \item For limits, rewrite events using countable unions/intersections.
+    \item For semicontinuity, use closed sublevel sets or open superlevel sets.
+    \item For $\sigma(X)$-measurability, think ``information carried by $X$'' and prove $Y=f(X)$.
+  \end{enumerate}
+  \vikiname{Chapter 1.3 flash cards and exercise method cards}
+\end{frame}
+
+\begin{frame}{Mini Practice}
+  \begin{enumerate}
+    \item Prove that $\max(X,Y)$ is measurable using rational cuts.
+    \item If $X_n$ are random variables, show $\{\lim_n X_n \text{ exists}\}\in\F$.
+    \item Show every continuous $f:\R^d\to\R^k$ is Borel measurable.
+    \item If $Y$ is $\sigma(X)$-measurable and $g$ is Borel, explain why $g(Y)$ is $\sigma(X)$-measurable.
+  \end{enumerate}
+\end{frame}
+
+\end{document}
