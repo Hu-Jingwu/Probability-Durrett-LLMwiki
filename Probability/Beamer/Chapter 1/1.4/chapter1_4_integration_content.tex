@@ -1,0 +1,327 @@
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+
+\usepackage{amsmath,amssymb,mathtools}
+
+\newcommand{\OmegaSpace}{\Omega}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\lam}{\lambda}
+\newcommand{\vikiname}[1]{\par\smallskip{\scriptsize\color{blue!60!black}\textbf{LLMviki:} \texttt{\detokenize{#1}}}}
+\newcommand{\blankproof}{%
+  \vspace{2mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par
+}
+\newcommand{\longblankproof}{%
+  \vspace{1mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par
+}
+\newcommand{\proofblock}[1]{\ifteacher #1 \else \blankproof \fi}
+\newcommand{\longproofblock}[1]{\ifteacher #1 \else \longblankproof \fi}
+
+\title[Chapter 1.4]{Chapter 1.4 Integration}
+\subtitle{Rick Durrett Probability: Theory and Examples}
+\author{MSU Probability Prelim}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+  \vspace{-5mm}
+  \begin{center}
+    \small Built from the local Chapter 1 LLMviki flash cards.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Roadmap for 1.4}
+  \begin{block}{Learning goal}
+    Understand the Lebesgue integral construction well enough to know why approximation arguments work.
+  \end{block}
+  \begin{enumerate}
+    \item Simple functions and canonical level-set sums.
+    \item Nonnegative integral as lower approximation.
+    \item Signed integrability through positive and negative parts.
+    \item Linearity, monotonicity, and a.e. replacement.
+    \item Approximation exercises: null sets, dyadic bins, $L^1$ density, and Riemann--Lebesgue.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Simple Functions}
+  \begin{block}{Definition}
+    A measurable function $\phi$ is simple if it takes finitely many values. In canonical form,
+    \[
+      \phi=\sum_{k=1}^n a_k\one_{A_k},
+    \]
+    where the $A_k$ are measurable level sets.
+  \end{block}
+  \begin{block}{Integral}
+    For $\phi\ge0$,
+    \[
+      \int \phi\,d\mu=\sum_{k=1}^n a_k\mu(A_k).
+    \]
+  \end{block}
+  \vikiname{Simple functions; ID: durrett_ch1_simple_functions}
+\end{frame}
+
+\begin{frame}{Simple-Function Proof Template}
+  \begin{block}{How to prove integral identities}
+    Prove the statement first for indicators, then for nonnegative simple functions, then pass to limits.
+  \end{block}
+  \proofblock{
+  Indicators are the atomic case:
+  \[
+    \int \one_A\,d\mu=\mu(A).
+  \]
+  Finite linear combinations follow by finite additivity on disjoint level sets. For general nonnegative functions, choose simple $\phi_n\uparrow f$ and use the definition of the nonnegative integral.
+  }
+  \vikiname{Simple functions; ID: durrett_ch1_simple_functions}
+\end{frame}
+
+\begin{frame}{Integral of a Nonnegative Function}
+  \begin{block}{Definition}
+    If $f\ge0$ is measurable, define
+    \[
+      \int f\,d\mu
+      =
+      \sup\left\{\int \phi\,d\mu:
+      0\le \phi\le f,\ \phi\text{ simple}\right\}.
+    \]
+  \end{block}
+  \begin{alertblock}{Pitfall}
+    The value may be $+\infty$. Do not subtract two infinite nonnegative integrals.
+  \end{alertblock}
+  \vikiname{Integral of a nonnegative function; ID: durrett_ch1_nonnegative_integral}
+\end{frame}
+
+\begin{frame}{Monotone Approximation Idea}
+  \begin{block}{Proof idea}
+    The definition makes lower approximation the natural language for nonnegative integrals.
+  \end{block}
+  \proofblock{
+  Given $f\ge0$, construct simple functions $\phi_n$ with
+  \[
+    0\le \phi_n\le \phi_{n+1}\le f,
+    \qquad
+    \phi_n\uparrow f.
+  \]
+  Then the integrals increase to $\int f\,d\mu$. This is the engine behind dyadic approximations and monotone convergence arguments.
+  }
+  \vikiname{Integral of a nonnegative function; ID: durrett_ch1_nonnegative_integral}
+\end{frame}
+
+\begin{frame}{Integrable Signed Functions}
+  \begin{block}{Definition}
+    For a real measurable $f$, write
+    \[
+      f^+=\max(f,0),\qquad f^-=\max(-f,0).
+    \]
+    Then $f=f^+-f^-$ and $|f|=f^++f^-$.
+  \end{block}
+  \begin{block}{Integrability}
+    We say $f$ is integrable if
+    \[
+      \int f^+\,d\mu<\infty
+      \quad\text{and}\quad
+      \int f^-\,d\mu<\infty,
+    \]
+    equivalently $\int |f|\,d\mu<\infty$.
+  \end{block}
+  \vikiname{Integrable signed functions; ID: durrett_ch1_integrable_function}
+\end{frame}
+
+\begin{frame}{Signed Integral: How to Define It}
+  \begin{block}{Definition}
+    If $f$ is integrable, set
+    \[
+      \int f\,d\mu
+      =
+      \int f^+\,d\mu-\int f^-\,d\mu.
+    \]
+  \end{block}
+  \proofblock{
+  The integrability assumption guarantees both terms are finite, so the subtraction is meaningful. This is exactly why one checks $\int |f|\,d\mu<\infty$ before using finite linearity or dominated convergence style arguments.
+  }
+  \vikiname{Integrable signed functions; ID: durrett_ch1_integrable_function}
+\end{frame}
+
+\begin{frame}{Linearity and Order Properties}
+  \begin{block}{Theorem}
+    For integrable functions, the integral is linear and monotone:
+    \[
+      \int(af+bg)\,d\mu=a\int f\,d\mu+b\int g\,d\mu,
+    \]
+    and if $f\le g$ a.e., then
+    \[
+      \int f\,d\mu\le \int g\,d\mu.
+    \]
+    If $f=g$ a.e., then $\int f\,d\mu=\int g\,d\mu$.
+  \end{block}
+  \vikiname{Linearity and order properties of the integral; ID: durrett_ch1_integral_linearity}
+\end{frame}
+
+\begin{frame}{Linearity: How to Prove It}
+  \proofblock{
+  Start with indicators and disjoint simple functions, where the formula is finite algebra. Extend to nonnegative simple functions by canonical level sets. For general nonnegative functions, approximate from below by simple functions. Finally split signed functions into positive and negative parts, checking finiteness so no $\infty-\infty$ expression appears.
+  }
+  \vikiname{Linearity and order properties of the integral; ID: durrett_ch1_integral_linearity}
+\end{frame}
+
+\begin{frame}{Exercise 1.4.1}
+  Show that if $f\ge0$ and
+  \[
+    \int f\,d\mu=0,
+  \]
+  then $f=0$ almost everywhere.
+  \vikiname{Zero integral of nonnegative function implies zero a.e.; ID: exercise_method_zero_integral_nonnegative}
+\end{frame}
+
+\begin{frame}{Exercise 1.4.1: Proof Skeleton}
+  \proofblock{
+  For each $n\ge1$, let
+  \[
+    A_n=\{x:f(x)>1/n\}.
+  \]
+  Since $f\ge (1/n)\one_{A_n}$,
+  \[
+    0=\int f\,d\mu\ge \frac1n\mu(A_n),
+  \]
+  so $\mu(A_n)=0$. Finally,
+  \[
+    \{f>0\}=\bigcup_{n=1}^{\infty}A_n,
+  \]
+  a countable union of null sets.
+  }
+  \vikiname{Zero integral of nonnegative function implies zero a.e.; ID: exercise_method_zero_integral_nonnegative}
+\end{frame}
+
+\begin{frame}{Exercise 1.4.2}
+  Let $f\ge0$ and
+  \[
+    E_{n,m}=\left\{x:\frac{m}{2^n}\le f(x)<\frac{m+1}{2^n}\right\}.
+  \]
+  Show that, as $n\to\infty$,
+  \[
+    \sum_{m=1}^{\infty}\frac{m}{2^n}\mu(E_{n,m})
+    \uparrow
+    \int f\,d\mu.
+  \]
+  \vikiname{Dyadic lower simple approximations; ID: exercise_method_dyadic_lower_integral_approximation}
+\end{frame}
+
+\begin{frame}[shrink=5]{Exercise 1.4.2: Proof Skeleton}
+  \proofblock{
+  Define
+  \[
+    \phi_n(x)=\sum_{m=1}^{\infty}\frac{m}{2^n}\one_{E_{n,m}}(x).
+  \]
+  Equivalently, for finite $f(x)$,
+  \[
+    \phi_n(x)=2^{-n}\lfloor 2^n f(x)\rfloor.
+  \]
+  Hence $0\le\phi_n\le f$ and $\phi_n\uparrow f$ pointwise. Also
+  \[
+    \int \phi_n\,d\mu
+    =
+    \sum_{m=1}^{\infty}\frac{m}{2^n}\mu(E_{n,m}).
+  \]
+  By monotone lower approximation for the nonnegative integral,
+  \[
+    \int\phi_n\,d\mu\uparrow\int f\,d\mu.
+  \]
+  }
+  \vikiname{Dyadic lower simple approximations; ID: exercise_method_dyadic_lower_integral_approximation}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.4.3}
+  Let $g$ be an integrable function on $\R$ and let $\eps>0$.
+  Show, using the definition of the integral and interval approximation of
+  measurable sets, that $g$ can be approximated in $L^1$ by a continuous
+  function. More explicitly:
+  \begin{enumerate}
+    \item approximate $g$ by a simple function $\phi$ with
+    $\int |g-\phi|\,dx<\eps$;
+    \item approximate the sets in $\phi$ by finite unions of intervals to
+    obtain a step function $q$ with $\int|\phi-q|\,dx<\eps$;
+    \item round the corners of $q$ to obtain a continuous function $r$ with
+    $\int|q-r|\,dx<\eps$.
+  \end{enumerate}
+  \vikiname{L1 approximation by continuous functions; ID: exercise_method_l1_continuous_approximation}
+\end{frame}
+
+\begin{frame}[shrink=30]{Exercise 1.4.3: Proof Skeleton}
+  \longproofblock{
+  First approximate $g$ by a simple function
+  \[
+    \phi=\sum_{k=1}^N b_k\one_{A_k},
+    \qquad
+    \int_{\R}|g-\phi|\,dx<\eps.
+  \]
+  Approximate each measurable set $A_k$ by a finite union of intervals $U_k$ so well that
+  \[
+    \sum_{k=1}^N |b_k|\lambda(A_k\triangle U_k)<\eps.
+  \]
+  Put $\psi=\sum_{k=1}^N b_k\one_{U_k}$ and refine endpoints to rewrite it as a step function $q$; then
+  \[
+    \int_{\R}|\phi-q|\,dx<\eps.
+  \]
+  Finally choose small boundary widths $\delta_j$ and replace each jump of $q$ by a short linear ramp. The resulting $r$ is continuous and can be chosen so that
+  \[
+    \int_{\R}|q-r|\,dx<\eps.
+  \]
+  Thus $\int_{\R}|g-r|\,dx<3\eps$, and since $\eps$ is arbitrary this gives $L^1$ approximation.
+  }
+  \vikiname{L1 approximation by continuous functions; ID: exercise_method_l1_continuous_approximation}
+\end{frame}
+
+\begin{frame}{Exercise 1.4.4}
+  Prove the Riemann--Lebesgue lemma: if $g$ is integrable, then
+  \[
+    \lim_{n\to\infty}\int_{\R} g(x)\cos(nx)\,dx=0.
+  \]
+  Hint: first prove it for step functions, then use the previous exercise.
+  \vikiname{Riemann-Lebesgue by step-function reduction; ID: exercise_method_riemann_lebesgue_step_reduction}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.4.4: Proof Skeleton}
+  \longproofblock{
+  First suppose
+  \[
+    q(x)=\sum_{j=1}^M c_j\one_{(a_{j-1},a_j)}(x).
+  \]
+  Then
+  \[
+    \int_{\R}q(x)\cos(nx)\,dx
+    =
+    \sum_{j=1}^M c_j
+    \frac{\sin(na_j)-\sin(na_{j-1})}{n}\to0.
+  \]
+  Now choose a step function $q$ with $\int_{\R}|g-q|\,dx<\eps$. Since $|\cos(nx)|\le1$,
+  \[
+    \left|\int g\cos(nx)\,dx\right|
+    \le
+    \left|\int q\cos(nx)\,dx\right|+\eps.
+  \]
+  Taking $\limsup$ and then letting $\eps\downarrow0$ proves the limit is $0$.
+  }
+  \vikiname{Riemann-Lebesgue by step-function reduction; ID: exercise_method_riemann_lebesgue_step_reduction}
+\end{frame}
+
+\end{document}
