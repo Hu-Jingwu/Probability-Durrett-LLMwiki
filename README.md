@@ -1,6 +1,6 @@
-# Probability Durrett LLMviki Solutions
+# Probability Durrett LLMwiki Solutions
 
-This repository is a study-oriented LLMviki for Rick Durrett's *Probability:
+This repository is a study-oriented LLMwiki for Rick Durrett's *Probability:
 Theory and Examples*.
 
 It organizes chapter knowledge, solved-exercise methods, reusable proof
@@ -15,13 +15,13 @@ systems to search.
 - A retrieval-friendly dataset with Markdown, JSONL, and TSV files.
 - A personal study companion for probability prelim preparation.
 
-## Unified LLMviki
+## Unified LLMwiki
 
 The main entry point is:
 
 `Probability/LLM_Viki_Dataset/Probability_Knowledge/probability_viki.md`
 
-This file merges the chapter-level LLMvikis into one probability-wide guide.
+This file merges the chapter-level LLMwikis into one probability-wide guide.
 It currently includes:
 
 - 9 chapters
@@ -64,7 +64,7 @@ Each chapter folder contains some combination of:
 
 ## Rebuild
 
-After updating any chapter-level LLMviki, rebuild the unified probability viki
+After updating any chapter-level LLMwiki, rebuild the unified probability viki
 with:
 
 ```bash
