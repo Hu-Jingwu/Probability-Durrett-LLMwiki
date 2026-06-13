@@ -1,0 +1,495 @@
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+
+\usepackage{amsmath,amssymb,mathtools}
+
+\newcommand{\OmegaSpace}{\Omega}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\vikiname}[1]{\par\smallskip{\scriptsize\color{blue!60!black}\textbf{LLMviki:} \texttt{\detokenize{#1}}}}
+\newcommand{\blankproof}{%
+  \vspace{2mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par
+}
+\newcommand{\longblankproof}{%
+  \vspace{1mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par
+}
+\newcommand{\proofblock}[1]{\ifteacher #1 \else \blankproof \fi}
+\newcommand{\longproofblock}[1]{\ifteacher #1 \else \longblankproof \fi}
+
+\title[Chapter 1.5]{Chapter 1.5 Properties of the Integral}
+\subtitle{Rick Durrett Probability: Theory and Examples}
+\author{Hu Jingwu}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+  \vspace{-5mm}
+  \begin{center}
+    \small Built from the local Chapter 1 LLMviki flash cards.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Roadmap for 1.5}
+  \begin{block}{Learning goal}
+    Use Jensen, Holder, Minkowski, Fatou, MCT, DCT, and bounded convergence with exact hypotheses.
+  \end{block}
+  \begin{enumerate}
+    \item Inequalities: Jensen, Holder, Minkowski.
+    \item Limit theorems: bounded convergence, Fatou, MCT, DCT.
+    \item Exercise patterns: endpoint Holder, $L^p\to L^\infty$, absolute continuity, dense simple functions, series exchange.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Jensen's Inequality}
+  \begin{block}{Theorem}
+    If $\mu$ is a probability measure, $\varphi$ is convex, and the integrals are defined, then
+    \[
+      \varphi\left(\int f\,d\mu\right)\le \int \varphi(f)\,d\mu.
+    \]
+  \end{block}
+  \proofblock{
+  Let $m=\int f\,d\mu$. For a convex $\varphi$, choose a supporting line at $m$:
+  \[
+    \varphi(x)\ge \varphi(m)+a(x-m).
+  \]
+  Substitute $x=f$ and integrate. Since $\int(f-m)\,d\mu=0$, Jensen follows.
+  }
+  \vikiname{Jensen's inequality for integrals; ID: durrett_ch1_jensen_integral}
+\end{frame}
+
+\begin{frame}{Holder's Inequality}
+  \begin{block}{Theorem}
+    If $1<p,q<\infty$ and $p^{-1}+q^{-1}=1$, then
+    \[
+      \int |fg|\,d\mu\le \norm{f}_p\norm{g}_q.
+    \]
+  \end{block}
+  \proofblock{
+  If either norm is zero, the result is immediate. Otherwise normalize $F=|f|/\norm{f}_p$ and $G=|g|/\norm{g}_q$. Young's inequality gives
+  \[
+    FG\le \frac{F^p}{p}+\frac{G^q}{q}.
+  \]
+  Integrating gives $\int FG\,d\mu\le 1$, hence Holder.
+  }
+  \vikiname{Holder's inequality; ID: durrett_ch1_holder_integral}
+\end{frame}
+
+\begin{frame}{Minkowski's Inequality}
+  \begin{block}{Theorem}
+    For $1\le p\le\infty$,
+    \[
+      \norm{f+g}_p\le \norm{f}_p+\norm{g}_p.
+    \]
+  \end{block}
+  \proofblock{
+  For $1<p<\infty$, write
+  \[
+    |f+g|^p\le |f|\,|f+g|^{p-1}+|g|\,|f+g|^{p-1}.
+  \]
+  Apply Holder to each term and divide by $\norm{f+g}_p^{p-1}$. The endpoints $p=1$ and $p=\infty$ follow from the ordinary triangle inequality.
+  }
+  \vikiname{Minkowski's inequality; ID: durrett_ch1_minkowski}
+\end{frame}
+
+\begin{frame}{Bounded Convergence}
+  \begin{block}{Theorem}
+    On a finite-measure space, if $f_n\to f$ pointwise and $|f_n|\le M$, then
+    \[
+      \int f_n\,d\mu\to \int f\,d\mu.
+    \]
+  \end{block}
+  \proofblock{
+  Since $\mu(\Omega)<\infty$, the constant function $M$ is integrable. Also $|f_n|\le M$ and $|f|\le M$ pointwise, so $|f_n-f|\le 2M$. Apply dominated convergence.
+  }
+  \vikiname{Bounded convergence theorem; ID: durrett_ch1_bounded_convergence}
+\end{frame}
+
+\begin{frame}{Fatou's Lemma}
+  \begin{block}{Theorem}
+    If $f_n\ge0$, then
+    \[
+      \int \liminf_{n\to\infty} f_n\,d\mu
+      \le
+      \liminf_{n\to\infty}\int f_n\,d\mu.
+    \]
+  \end{block}
+  \proofblock{
+  Define $g_n=\inf_{k\ge n}f_k$. Then $g_n\uparrow \liminf_k f_k$. By MCT,
+  \[
+    \int g_n\,d\mu\uparrow \int \liminf_k f_k\,d\mu.
+  \]
+  Since $g_n\le f_k$ for all $k\ge n$, $\int g_n\,d\mu\le \inf_{k\ge n}\int f_k\,d\mu$. Let $n\to\infty$.
+  }
+  \vikiname{Fatou's lemma; ID: durrett_ch1_fatou_integral}
+\end{frame}
+
+\begin{frame}{Monotone Convergence Theorem}
+  \begin{block}{Theorem}
+    If $0\le f_n\uparrow f$, then
+    \[
+      \int f_n\,d\mu\uparrow \int f\,d\mu.
+    \]
+  \end{block}
+  \proofblock{
+  Monotonicity gives $\int f_n\,d\mu$ increasing and bounded above by $\int f\,d\mu$. Conversely, every simple $\phi\le f$ is eventually captured up to a small error by the increasing sequence; taking suprema over lower simple approximations gives equality.
+  }
+  \vikiname{Monotone convergence theorem; ID: durrett_ch1_monotone_convergence}
+\end{frame}
+
+\begin{frame}{Dominated Convergence Theorem}
+  \begin{block}{Theorem}
+    If $f_n\to f$ a.e. and $|f_n|\le g$ for one integrable $g$, then
+    \[
+      \int f_n\,d\mu\to \int f\,d\mu.
+    \]
+  \end{block}
+  \proofblock{
+  Since $|f|\le g$ a.e., the functions $g+f_n$ and $g-f_n$ are nonnegative. Apply Fatou to both:
+  \[
+    \int(g+f)\le \liminf\int(g+f_n),\qquad
+    \int(g-f)\le \liminf\int(g-f_n).
+  \]
+  Rearranging gives matching limsup and liminf bounds.
+  }
+  \vikiname{Dominated convergence theorem; ID: durrett_ch1_dominated_convergence}
+\end{frame}
+
+\begin{frame}{Exercise 1.5.1}
+  Let
+  \[
+    \lVert f\rVert_\infty
+    =
+    \inf\{M:\mu(\{x:|f(x)|>M\})=0\}.
+  \]
+  Prove that
+  \[
+    \int |fg|\,d\mu\le \lVert f\rVert_1\lVert g\rVert_\infty.
+  \]
+  \vikiname{Essential supremum bounds integrals; ID: exercise_method_essential_supremum_bound}
+\end{frame}
+
+\begin{frame}{Exercise 1.5.1: Proof Skeleton}
+  \proofblock{
+  Let $M=\norm{g}_\infty$. By the definition of essential supremum,
+  \[
+    |g|\le M\qquad\text{a.e.}
+  \]
+  Hence $|fg|\le M|f|$ a.e. Monotonicity and homogeneity give
+  \[
+    \int |fg|\,d\mu\le M\int |f|\,d\mu
+    =
+    \norm{g}_\infty\norm{f}_1.
+  \]
+  }
+  \vikiname{Essential supremum bounds integrals; ID: exercise_method_essential_supremum_bound}
+\end{frame}
+
+\begin{frame}{Exercise 1.5.2}
+  Show that if $\mu$ is a probability measure, then
+  \[
+    \lVert f\rVert_\infty=\lim_{p\to\infty}\lVert f\rVert_p.
+  \]
+  \vikiname{Lp norms converge to Linfty on probability spaces; ID: exercise_method_lp_to_l_infty_limit}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.5.2: Proof Skeleton}
+  \longproofblock{
+  Let $M=\norm{f}_\infty$. If $M<\infty$, then $|f|\le M$ a.e. and $\mu(\Omega)=1$, so
+  \[
+    \norm{f}_p\le M.
+  \]
+  For $\eps>0$, set
+  \[
+    A_\eps=\{|f|>M-\eps\}.
+  \]
+  By essential supremum, $\mu(A_\eps)>0$. Therefore
+  \[
+    \norm{f}_p^p\ge (M-\eps)^p\mu(A_\eps),
+    \qquad
+    \norm{f}_p\ge (M-\eps)\mu(A_\eps)^{1/p}.
+  \]
+  Let $p\to\infty$ and then $\eps\downarrow0$. If $M=\infty$, repeat with $K$ in place of $M-\eps$ and let $K\to\infty$.
+  }
+  \vikiname{Lp norms converge to Linfty on probability spaces; ID: exercise_method_lp_to_l_infty_limit}
+\end{frame}
+
+\begin{frame}{Exercise 1.5.3}
+  Prove Minkowski's inequality. For $p\in(1,\infty)$, use Holder's
+  inequality to show
+  \[
+    \lVert f+g\rVert_p\le \lVert f\rVert_p+\lVert g\rVert_p.
+  \]
+  Then show the same result for $p=1$ and $p=\infty$.
+  \vikiname{Minkowski's inequality; ID: durrett_ch1_minkowski}
+\end{frame}
+
+\begin{frame}[shrink=10]{Exercise 1.5.3: Proof Skeleton}
+  \longproofblock{
+  Let $q$ be conjugate to $p$. If $\norm{f+g}_p=0$, stop. Otherwise,
+  \[
+    \norm{f+g}_p^p
+    \le
+    \int |f|\,|f+g|^{p-1}d\mu+
+    \int |g|\,|f+g|^{p-1}d\mu.
+  \]
+  Holder gives
+  \[
+    \int |f|\,|f+g|^{p-1}d\mu
+    \le \norm{f}_p\norm{f+g}_p^{p-1},
+  \]
+  and the same for $g$. Divide by $\norm{f+g}_p^{p-1}$. For $p=1$, integrate $|f+g|\le |f|+|g|$. For $p=\infty$, use the same pointwise inequality a.e.
+  }
+  \vikiname{Minkowski's inequality; ID: durrett_ch1_minkowski}
+\end{frame}
+
+\begin{frame}{Exercise 1.5.4}
+  If $f$ is integrable and $E_m$ are disjoint sets with union $E$, show
+  that
+  \[
+    \sum_{m=0}^{\infty}\int_{E_m}f\,d\mu
+    =
+    \int_E f\,d\mu.
+  \]
+  Conclude that if $f\ge0$, then
+  \[
+    \nu(E)=\int_E f\,d\mu
+  \]
+  defines a measure.
+  \vikiname{Monotone convergence theorem; ID: durrett_ch1_monotone_convergence}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.5.4: Proof Skeleton}
+  \longproofblock{
+  First suppose $f\ge0$. Since $E_m$ are disjoint,
+  \[
+    \one_E f=\sum_{m=0}^{\infty}\one_{E_m}f.
+  \]
+  The partial sums increase to $\one_E f$, so MCT gives
+  \[
+    \int_E f\,d\mu
+    =
+    \lim_{n\to\infty}\sum_{m=0}^n\int_{E_m}f\,d\mu.
+  \]
+  For signed integrable $f$, apply the nonnegative case to $f^+$ and $f^-$ and subtract. If $f\ge0$, the identity gives countable additivity of $\nu(E)=\int_E f\,d\mu$, with $\nu(\varnothing)=0$ and $\nu(E)\ge0$.
+  }
+  \vikiname{Monotone convergence theorem; ID: durrett_ch1_monotone_convergence}
+\end{frame}
+
+\begin{frame}{Exercise 1.5.5}
+  If $g_n\uparrow g$ and
+  \[
+    \int g_1^-\,d\mu<\infty,
+  \]
+  show that
+  \[
+    \int g_n\,d\mu\uparrow \int g\,d\mu.
+  \]
+  \vikiname{Monotone convergence theorem; ID: durrett_ch1_monotone_convergence}
+\end{frame}
+
+\begin{frame}{Exercise 1.5.5: Proof Skeleton}
+  \proofblock{
+  Set
+  \[
+    h_n=g_n-g_1,\qquad h=g-g_1.
+  \]
+  Then $h_n\ge0$ and $h_n\uparrow h$. By MCT,
+  \[
+    \int h_n\,d\mu\uparrow \int h\,d\mu.
+  \]
+  Since $\int g_1^-\,d\mu<\infty$, the extended integrals are well-defined and
+  \[
+    \int g_n\,d\mu=\int g_1\,d\mu+\int h_n\,d\mu
+    \uparrow
+    \int g_1\,d\mu+\int h\,d\mu=\int g\,d\mu.
+  \]
+  }
+  \vikiname{Monotone convergence theorem; ID: durrett_ch1_monotone_convergence}
+\end{frame}
+
+\begin{frame}{Exercise 1.5.6}
+  If $g_m\ge0$, show that
+  \[
+    \int \sum_{m=0}^{\infty}g_m\,d\mu
+    =
+    \sum_{m=0}^{\infty}\int g_m\,d\mu.
+  \]
+  \vikiname{Monotone convergence theorem; ID: durrett_ch1_monotone_convergence}
+\end{frame}
+
+\begin{frame}{Exercise 1.5.6: Proof Skeleton}
+  \proofblock{
+  Let
+  \[
+    s_n=\sum_{m=0}^n g_m.
+  \]
+  Then $s_n\ge0$ and $s_n\uparrow \sum_{m=0}^{\infty}g_m$. MCT gives
+  \[
+    \int \sum_{m=0}^{\infty}g_m\,d\mu
+    =
+    \lim_{n\to\infty}\int s_n\,d\mu.
+  \]
+  Finite linearity gives $\int s_n\,d\mu=\sum_{m=0}^n\int g_m\,d\mu$; let $n\to\infty$.
+  }
+  \vikiname{Monotone convergence theorem; ID: durrett_ch1_monotone_convergence}
+\end{frame}
+
+\begin{frame}[shrink=6]{Exercise 1.5.7}
+  Let $f\ge0$.
+  \begin{enumerate}
+    \item Show that
+    \[
+      \int f\wedge n\,d\mu\uparrow \int f\,d\mu.
+    \]
+    \item Use this to conclude that if $g$ is integrable and
+    $\varepsilon>0$, then there is $\delta>0$ such that
+    $\mu(A)<\delta$ implies
+    \[
+      \int_A |g|\,d\mu<\varepsilon.
+    \]
+  \end{enumerate}
+  \vikiname{Monotone convergence theorem; ID: durrett_ch1_monotone_convergence}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.5.7: Proof Skeleton}
+  \longproofblock{
+  Since $f\wedge n\uparrow f$, MCT gives
+  \[
+    \int f\wedge n\,d\mu\uparrow \int f\,d\mu.
+  \]
+  Apply this to $f=|g|$. Since $g$ is integrable,
+  \[
+    \int (|g|-|g|\wedge n)\,d\mu\downarrow0.
+  \]
+  Choose $n$ so the tail is $<\eps/2$. Then
+  \[
+    \int_A |g|\,d\mu
+    \le
+    \int_A (|g|\wedge n)\,d\mu+
+    \int(|g|-|g|\wedge n)\,d\mu
+    \le n\mu(A)+\eps/2.
+  \]
+  Take $\delta=\eps/(2n)$, with any positive $\delta$ if $n=0$.
+  }
+  \vikiname{Monotone convergence theorem; ID: durrett_ch1_monotone_convergence}
+\end{frame}
+
+\begin{frame}{Exercise 1.5.8}
+  Show that if $f$ is integrable on $[a,b]$ and
+  \[
+    g(x)=\int_{[a,x]} f(y)\,dy,
+  \]
+  then $g$ is continuous on $(a,b)$.
+  \vikiname{Absolute continuity of the integral; ID: durrett_ch1_dominated_convergence}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.5.8: Proof Skeleton}
+  \longproofblock{
+  Fix $x\in(a,b)$ and $\eps>0$. By Exercise 1.5.7, choose $\delta>0$ such that $\lambda(A)<\delta$ implies
+  \[
+    \int_A |f(y)|\,dy<\eps.
+  \]
+  If $|h|<\delta$ and $x+h\in(a,b)$, then
+  \[
+    g(x+h)-g(x)
+    =
+    \begin{cases}
+    \int_{(x,x+h]} f(y)\,dy, & h>0,\\
+    -\int_{(x+h,x]} f(y)\,dy, & h<0.
+    \end{cases}
+  \]
+  In both cases the absolute value is bounded by the integral of $|f|$ over an interval of length $|h|<\delta$, hence is $<\eps$.
+  }
+  \vikiname{Absolute continuity of the integral; ID: durrett_ch1_dominated_convergence}
+\end{frame}
+
+\begin{frame}{Exercise 1.5.9}
+  Show that if
+  \[
+    \lVert f\rVert_p=\left(\int |f|^p\,d\mu\right)^{1/p}<\infty,
+  \]
+  then there are simple functions $\phi_n$ such that
+  \[
+    \lVert \phi_n-f\rVert_p\to0.
+  \]
+  \vikiname{Simple functions are dense in Lp; ID: exercise_method_density_of_simple_functions_in_lp}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.5.9: Proof Skeleton}
+  \longproofblock{
+  For $1\le p<\infty$, choose simple $\phi_n$ such that
+  \[
+    \phi_n(x)\to f(x),
+    \qquad
+    |\phi_n(x)|\le |f(x)|.
+  \]
+  For example, approximate $f^+$ and $f^-$ by dyadic simple functions from below. Then
+  \[
+    |\phi_n-f|^p\le (|\phi_n|+|f|)^p\le 2^p|f|^p.
+  \]
+  Since $\norm{f}_p<\infty$, the dominating function $2^p|f|^p$ is integrable. DCT gives
+  \[
+    \int |\phi_n-f|^p\,d\mu\to0,
+  \]
+  so $\norm{\phi_n-f}_p\to0$.
+  }
+  \vikiname{Simple functions are dense in Lp; ID: exercise_method_density_of_simple_functions_in_lp}
+\end{frame}
+
+\begin{frame}{Exercise 1.5.10}
+  Show that if
+  \[
+    \sum_n \int |f_n|\,d\mu<\infty,
+  \]
+  then
+  \[
+    \sum_n\int f_n\,d\mu
+    =
+    \int \sum_n f_n\,d\mu.
+  \]
+  \vikiname{Exchange integral and absolutely summable series; ID: exercise_method_absolute_summability_exchange}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.5.10: Proof Skeleton}
+  \longproofblock{
+  By Exercise 1.5.6 applied to $|f_n|$,
+  \[
+    \int \sum_n |f_n|\,d\mu
+    =
+    \sum_n\int |f_n|\,d\mu<\infty.
+  \]
+  Thus $H=\sum_n |f_n|$ is integrable and finite a.e. Let
+  \[
+    S_N=\sum_{n=0}^N f_n,\qquad S=\sum_n f_n.
+  \]
+  Then $S_N\to S$ a.e. and $|S_N|\le H$. DCT gives
+  \[
+    \int S_N\,d\mu\to\int S\,d\mu.
+  \]
+  Since finite linearity gives $\int S_N\,d\mu=\sum_{n=0}^N\int f_n\,d\mu$, let $N\to\infty$.
+  }
+  \vikiname{Exchange integral and absolutely summable series; ID: exercise_method_absolute_summability_exchange}
+\end{frame}
+
+\end{document}
