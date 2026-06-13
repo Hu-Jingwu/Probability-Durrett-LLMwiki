@@ -1,0 +1,434 @@
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs}
+
+\newcommand{\OmegaSpace}{\Omega}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\Sclass}{\mathcal{S}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\vikiname}[1]{\par\smallskip{\scriptsize\color{blue!60!black}\textbf{LLMviki:} \texttt{\detokenize{#1}}}}
+\newcommand{\blankproof}{%
+  \vspace{2mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{7mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{7mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{7mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par
+}
+\newcommand{\proofblock}[1]{\ifteacher #1 \else \blankproof \fi}
+
+\title[Chapter 1.1]{Chapter 1.1 Probability Spaces}
+\subtitle{Important Theorems, Proof Ideas, Proof Templates, and Exercises}
+\author{MSU Probability Prelim}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+  \vspace{-5mm}
+  \begin{center}
+    \small Built from the local Chapter 1 LLMviki flash cards.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Roadmap for 1.1}
+  \begin{block}{Learning goal}
+    Speak fluently about events, sigma-fields, probability measures, and extension from simple generating classes.
+  \end{block}
+  \begin{enumerate}
+    \item Probability spaces and sigma-fields.
+    \item Continuity of measure.
+    \item Discrete and Stieltjes probability models.
+    \item Extension from semialgebras and rectangles.
+    \item Exercise patterns: generators, increasing sigma-fields, density counterexamples.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Probability Space}
+  \begin{block}{Definition}
+    A probability space is a triple
+    \[
+      (\OmegaSpace,\F,\Prob),
+    \]
+    where $\OmegaSpace$ is the sample space, $\F$ is a sigma-field of events, and $\Prob$ is a countably additive measure with $\Prob(\OmegaSpace)=1$.
+  \end{block}
+  \begin{itemize}
+    \item Events are only the subsets in $\F$.
+    \item Most elementary probability identities come from closure of $\F$ and countable additivity of $\Prob$.
+  \end{itemize}
+  \vikiname{Probability space; ID: durrett_ch1_probability_space}
+\end{frame}
+
+\begin{frame}{Sigma-Field Closure Rules}
+  \begin{block}{Definition}
+    A class $\F$ is a sigma-field if:
+    \[
+      \OmegaSpace\in\F,\qquad A\in\F\Rightarrow A^c\in\F,\qquad
+      A_1,A_2,\ldots\in\F\Rightarrow \bigcup_{n=1}^{\infty}A_n\in\F.
+    \]
+  \end{block}
+  \begin{block}{Consequences}
+    $\F$ is also closed under countable intersections, finite unions, finite intersections, and set differences.
+  \end{block}
+  \vikiname{Sigma-field closure rules; ID: durrett_ch1_sigma_field}
+\end{frame}
+
+\begin{frame}[shrink=8]{How to Prove Sigma-Field Closure Consequences}
+  \begin{block}{Target}
+    Derive countable intersection closure from complement and countable union closure.
+  \end{block}
+  \proofblock{
+  \begin{proof}
+    If $A_n\in\F$, then $A_n^c\in\F$ for every $n$. Since $\F$ is closed under countable unions,
+    \[
+      \bigcup_{n=1}^{\infty}A_n^c\in\F.
+    \]
+    Taking complements and using De Morgan's law,
+    \[
+      \bigcap_{n=1}^{\infty}A_n
+      =
+      \left(\bigcup_{n=1}^{\infty}A_n^c\right)^c
+      \in\F.
+    \]
+    Finite operations are special cases of countable operations.
+  \end{proof}
+  }
+  \vikiname{Sigma-field closure rules; ID: durrett_ch1_sigma_field}
+\end{frame}
+
+\begin{frame}{Basic Probability Identities}
+  For $A,B\in\F$:
+  \[
+    \Prob(A^c)=1-\Prob(A),\qquad
+    A\subseteq B\Rightarrow \Prob(A)\le \Prob(B),
+  \]
+  \[
+    \Prob(B\setminus A)=\Prob(B)-\Prob(A)\quad(A\subseteq B),
+  \]
+  \[
+    \Prob(A\cup B)=\Prob(A)+\Prob(B)-\Prob(A\cap B).
+  \]
+  \begin{alertblock}{Teaching point}
+    These are not separate axioms. They are quick consequences of disjoint decomposition and countable additivity.
+  \end{alertblock}
+  \vikiname{Probability space; ID: durrett_ch1_probability_space}
+\end{frame}
+
+\begin{frame}{Continuity of Measure}
+  \begin{block}{Theorem}
+    If $A_n\uparrow A$, meaning $A_1\subseteq A_2\subseteq\cdots$ and $A=\bigcup_n A_n$, then
+    \[
+      \Prob(A_n)\uparrow \Prob(A).
+    \]
+    If $A_n\downarrow A$, meaning $A_1\supseteq A_2\supseteq\cdots$ and $A=\bigcap_n A_n$, then
+    \[
+      \Prob(A_n)\downarrow \Prob(A).
+    \]
+  \end{block}
+  \begin{itemize}
+    \item For general measures, the decreasing version needs $\mu(A_1)<\infty$.
+    \item Under probability measures, this finiteness is automatic.
+  \end{itemize}
+  \vikiname{Continuity of measure; ID: durrett_ch1_measure_continuity}
+\end{frame}
+
+\begin{frame}[shrink=8]{Proof Idea: Continuity from Below}
+  \begin{block}{Key move}
+    Turn nested sets into disjoint increments.
+  \end{block}
+  \proofblock{
+  \begin{proof}
+    Let $B_1=A_1$ and $B_n=A_n\setminus A_{n-1}$ for $n\ge2$. Then the $B_n$ are pairwise disjoint and
+    \[
+      A_n=\bigcup_{k=1}^{n}B_k,\qquad A=\bigcup_{k=1}^{\infty}B_k.
+    \]
+    By countable additivity,
+    \[
+      \Prob(A)=\sum_{k=1}^{\infty}\Prob(B_k)
+      =
+      \lim_{n\to\infty}\sum_{k=1}^{n}\Prob(B_k)
+      =
+      \lim_{n\to\infty}\Prob(A_n).
+    \]
+  \end{proof}
+  }
+  \vikiname{Continuity of measure; ID: durrett_ch1_measure_continuity}
+\end{frame}
+
+\begin{frame}{Proof Idea: Continuity from Above}
+  \begin{block}{Key move}
+    Reduce decreasing sets to increasing complements.
+  \end{block}
+  \proofblock{
+  \begin{proof}
+    If $A_n\downarrow A$, then $A_n^c\uparrow A^c$. By continuity from below,
+    \[
+      \Prob(A_n^c)\uparrow \Prob(A^c).
+    \]
+    Since $\Prob(A_n)=1-\Prob(A_n^c)$ and $\Prob(A)=1-\Prob(A^c)$,
+    \[
+      \lim_{n\to\infty}\Prob(A_n)
+      =
+      1-\lim_{n\to\infty}\Prob(A_n^c)
+      =
+      1-\Prob(A^c)
+      =
+      \Prob(A).
+    \]
+  \end{proof}
+  }
+  \vikiname{Continuity of measure; ID: durrett_ch1_measure_continuity}
+\end{frame}
+
+\begin{frame}{Discrete Probability Spaces}
+  \begin{block}{Model}
+    If $\OmegaSpace$ is countable and $p(\omega)\ge0$ with
+    \[
+      \sum_{\omega\in\OmegaSpace}p(\omega)=1,
+    \]
+    then define
+    \[
+      \Prob(A)=\sum_{\omega\in A}p(\omega),\qquad A\subseteq\OmegaSpace.
+    \]
+  \end{block}
+  \begin{itemize}
+    \item Countable additivity follows from rearranging nonnegative series.
+    \item This intuition does not determine laws on an uncountable space.
+  \end{itemize}
+  \vikiname{Discrete probability spaces; ID: durrett_ch1_discrete_probability_space}
+\end{frame}
+
+\begin{frame}{Stieltjes Measures from Distribution-Like Functions}
+  \begin{block}{Theorem}
+    A nondecreasing right-continuous function $F:\R\to\R$ with suitable limits defines a unique Borel measure through interval increments:
+    \[
+      \mu((a,b])=F(b)-F(a).
+    \]
+    If $F(-\infty)=0$ and $F(\infty)=1$, then $\mu$ is a probability measure.
+  \end{block}
+  \begin{alertblock}{Why it matters}
+    This is the bridge from CDFs to probability measures on $\R$.
+  \end{alertblock}
+  \vikiname{Stieltjes measures from distribution-like functions; ID: durrett_ch1_stieltjes_measure}
+\end{frame}
+
+\begin{frame}{How to Prove a Stieltjes Construction}
+  \begin{enumerate}
+    \item Define $\mu((a,b])=F(b)-F(a)$ on half-open intervals.
+    \item Verify nonnegativity and finite additivity on disjoint interval decompositions.
+    \item Use right-continuity of $F$ to get the needed continuity property.
+    \item Extend from the interval semialgebra to $\B(\R)$.
+    \item Use uniqueness because intervals generate the Borel sigma-field.
+  \end{enumerate}
+  \proofblock{
+  \begin{block}{Instructor note}
+    In an exam solution, one usually cites the extension theorem after checking that the interval formula is consistent and countably additive on the generating semialgebra. The proof burden is not to rebuild Caratheodory from scratch unless explicitly asked.
+  \end{block}
+  }
+  \vikiname{Stieltjes measures from distribution-like functions; ID: durrett_ch1_stieltjes_measure}
+\end{frame}
+
+\begin{frame}{Extension from Semialgebras}
+  \begin{block}{Proof template}
+    A measure-like function on a semialgebra can be extended when it has the right countable additivity or continuity behavior on the generating class.
+  \end{block}
+  \begin{enumerate}
+    \item Start with simple pieces in $\Sclass$.
+    \item Pass to finite disjoint unions of pieces.
+    \item Check countable additivity or continuity.
+    \item Extend to $\sigma(\Sclass)$.
+  \end{enumerate}
+  \vikiname{Extension from semialgebras; ID: durrett_ch1_semialgebra_extension}
+\end{frame}
+
+\begin{frame}{Multidimensional Distribution Functions}
+  \begin{block}{Theorem}
+    A function $F$ on $\R^d$ satisfying right-continuity, correct limits, and nonnegative rectangle increments defines a probability measure on $\B(\R^d)$.
+  \end{block}
+  \[
+    \mu\bigl((a_1,b_1]\times\cdots\times(a_d,b_d]\bigr)
+    =
+    \Delta_{a,b}F\ge0.
+  \]
+  \begin{alertblock}{Pitfall}
+    Coordinatewise monotonicity is not enough. Rectangle probabilities must be nonnegative.
+  \end{alertblock}
+  \vikiname{Multidimensional distribution functions; ID: durrett_ch1_product_distribution_function}
+\end{frame}
+
+\begin{frame}{How to Prove Generated Sigma-Field Claims}
+  \begin{block}{Standard two-inclusion proof}
+    To show $\sigma(\C)=\B(\R^d)$:
+  \end{block}
+  \begin{enumerate}
+    \item Show every set in $\C$ is Borel, so $\sigma(\C)\subseteq\B(\R^d)$.
+    \item Show every open set belongs to $\sigma(\C)$.
+    \item Use a countable rational base: every open set is a countable union of rational rectangles or balls.
+  \end{enumerate}
+  \vikiname{Sigma-field closure rules; ID: durrett_ch1_sigma_field}
+  \vikiname{Extension from semialgebras; ID: durrett_ch1_semialgebra_extension}
+\end{frame}
+
+\begin{frame}{Exercise 1: Countable/Co-countable Probability Space}
+  Let $\OmegaSpace=\R$, let $\F$ be the collection of all subsets $A$ such that
+  $A$ or $A^c$ is countable, and define
+  \[
+    \Prob(A)=
+    \begin{cases}
+      0, & A \text{ is countable},\\
+      1, & A^c \text{ is countable}.
+    \end{cases}
+  \]
+  Show that $(\OmegaSpace,\F,\Prob)$ is a probability space.
+  \vikiname{Countable/co-countable probability measure; ID: exercise_method_countable_cocountable_measure}
+\end{frame}
+
+\begin{frame}{Exercise 1: Proof Skeleton}
+  \proofblock{
+  \begin{enumerate}
+    \item $\varnothing,\R\in\F$, and complement closure is built into the definition.
+    \item For $A_n\in\F$, if all $A_n$ are countable, then $\bigcup_n A_n$ is countable.
+    \item If some $A_k$ is co-countable, then
+      \[
+        \left(\bigcup_n A_n\right)^c\subseteq A_k^c,
+      \]
+      so the union is co-countable.
+    \item For disjoint $A_n$, either all are countable and both sides of countable additivity are $0$, or exactly one is co-countable and both sides are $1$.
+  \end{enumerate}
+  }
+  \vikiname{Countable/co-countable probability measure; ID: exercise_method_countable_cocountable_measure}
+\end{frame}
+
+\begin{frame}{Exercise 2: Borel Field from Half-Open Rectangles}
+  Recall the definition of $\Sclass_d$ from Example 1.1.5:
+  \[
+    \Sclass_d=\{\varnothing\}\cup
+    \{(a_1,b_1]\times\cdots\times(a_d,b_d]:
+    -\infty\le a_i<b_i\le\infty\}.
+  \]
+  Show that $\sigma(\Sclass_d)=\B(\R^d)$, the Borel subsets of $\R^d$.
+  \vikiname{Borel sigma-field from half-open rectangles; ID: exercise_method_borel_generated_by_half_open_rectangles}
+\end{frame}
+
+\begin{frame}{Exercise 2: Proof Skeleton}
+  \proofblock{
+  \begin{enumerate}
+    \item Since each half-open rectangle is Borel, $\sigma(\Sclass_d)\subseteq\B(\R^d)$.
+    \item If $q_i<r_i$ are rational, then
+      \[
+        (q_1,r_1)\times\cdots\times(q_d,r_d)
+        =
+        \bigcup_{m\ge1}(q_1,r_1-1/m]\times\cdots\times(q_d,r_d-1/m],
+      \]
+      omitting empty terms.
+    \item Every open $G\subseteq\R^d$ is a countable union of rational open rectangles, hence $G\in\sigma(\Sclass_d)$.
+    \item Therefore $\B(\R^d)\subseteq\sigma(\Sclass_d)$.
+  \end{enumerate}
+  }
+  \vikiname{Borel sigma-field from half-open rectangles; ID: exercise_method_borel_generated_by_half_open_rectangles}
+\end{frame}
+
+\begin{frame}{Exercise 3: Countably Generated Borel Field}
+  A sigma-field $\F$ is said to be countably generated if there is a
+  countable collection $\C\subseteq\F$ such that $\sigma(\C)=\F$.
+  Show that $\B(\R^d)$ is countably generated.
+  \vikiname{Borel sigma-field from half-open rectangles; ID: exercise_method_borel_generated_by_half_open_rectangles}
+\end{frame}
+
+\begin{frame}{Exercise 3: Proof Skeleton}
+  \proofblock{
+  Use the countable class
+  \[
+    \C=\{B(q,r):q\in\Q^d,\ r\in\Q,\ r>0\}.
+  \]
+  This is a countable base for the Euclidean topology. Since every open set is a countable union of balls from $\C$, all open sets lie in $\sigma(\C)$. Thus $\B(\R^d)\subseteq\sigma(\C)$. The reverse inclusion follows because every ball in $\C$ is open and hence Borel.
+  }
+  \vikiname{Borel sigma-field from half-open rectangles; ID: exercise_method_borel_generated_by_half_open_rectangles}
+\end{frame}
+
+\begin{frame}{Exercise 4: Increasing Union of Sigma-Fields}
+  If $\F_1\subseteq\F_2\subseteq\cdots$ are sigma-algebras, then:
+  \begin{enumerate}
+    \item[(i)] Show that $\bigcup_i\F_i$ is an algebra.
+    \item[(ii)] Give an example to show that $\bigcup_i\F_i$ need not be a sigma-algebra.
+  \end{enumerate}
+  \vikiname{Increasing union of sigma-fields can fail countable closure; ID: exercise_method_increasing_sigma_fields_not_sigma_field}
+\end{frame}
+
+\begin{frame}{Exercise 4: Counterexample}
+  \proofblock{
+  Let $\OmegaSpace=\N$ and
+  \[
+    \F_n=\sigma(\{1\},\{2\},\ldots,\{n\}).
+  \]
+  Then $\bigcup_n\F_n$ contains every finite set. In particular, each singleton $\{2k\}$ belongs to $\bigcup_n\F_n$. But
+  \[
+    E=\{2,4,6,\ldots\}=\bigcup_{k\ge1}\{2k\}
+  \]
+  is neither finite nor cofinite relative to any finite initial-coordinate sigma-field, so $E\notin\bigcup_n\F_n$. Hence the union is not closed under countable unions.
+  }
+  \vikiname{Increasing union of sigma-fields can fail countable closure; ID: exercise_method_increasing_sigma_fields_not_sigma_field}
+\end{frame}
+
+\begin{frame}{Exercise 5: Asymptotic Density Is Not an Algebra}
+  A set $A\subseteq\{1,2,\ldots\}$ is said to have asymptotic density
+  $\theta$ if
+  \[
+    \lim_{n\to\infty}
+    \frac{|A\cap\{1,2,\ldots,n\}|}{n}
+    =\theta.
+  \]
+  Let $\A$ be the collection of sets for which the asymptotic density
+  exists. Is $\A$ a sigma-algebra? Is $\A$ an algebra?
+  \vikiname{Block construction for asymptotic density counterexamples; ID: exercise_method_asymptotic_density_block_counterexample}
+\end{frame}
+
+\begin{frame}{Exercise 5: Block Counterexample}
+  \proofblock{
+  Let $N_k=2^{2^k}$ and $I_k=\{N_{k-1}+1,\ldots,N_k\}$. Let $E$ be the even integers. Define
+  \[
+    B\cap I_k=
+    \begin{cases}
+      E\cap I_k, & k\text{ odd},\\
+      E^c\cap I_k, & k\text{ even}.
+    \end{cases}
+  \]
+  Then $E$ has density $1/2$ and $B$ has density $1/2$. But $E\cap B$ has density near $1/2$ at the end of odd blocks and near $0$ at the end of even blocks. Since $N_k/N_{k-1}\to\infty$, the latest block dominates previous blocks, so the density of $E\cap B$ does not exist.
+  }
+  \vikiname{Block construction for asymptotic density counterexamples; ID: exercise_method_asymptotic_density_block_counterexample}
+\end{frame}
+
+\begin{frame}{Checklist: How to Attack 1.1 Problems}
+  \begin{enumerate}
+    \item Need to prove ``probability space''? Check sigma-field, normalization, countable additivity.
+    \item Need to prove ``generated sigma-field''? Use two inclusions and a countable rational base.
+    \item Need a limit of probabilities? Try continuity from below/above.
+    \item Need a counterexample to sigma-field closure? Use finite initial-coordinate sigma-fields.
+    \item Need a density-limit counterexample? Use rapidly growing blocks.
+  \end{enumerate}
+  \vikiname{Chapter 1.1 exercise method cards}
+\end{frame}
+
+\begin{frame}{Mini Practice}
+  \begin{enumerate}
+    \item If $A_n\uparrow A$, prove $\Prob(A\setminus A_n)\to0$.
+    \item Show $\sigma((a,b]:a<b)=\B(\R)$.
+    \item Construct a finite algebra on $\Omega=\{1,2,3,4\}$ generated by $\{1,2\}$.
+    \item Suppose $A_n\downarrow\varnothing$. Explain why $\Prob(A_n)\to0$.
+    \item Explain why an uncountable union of measurable sets need not be covered by the sigma-field axioms.
+  \end{enumerate}
+\end{frame}
+
+\end{document}
