@@ -1,7 +1,7 @@
 # Probability Durrett LLMviki Solutions
 
 This repository is a study-oriented LLMviki for Rick Durrett's *Probability:
-Theory and Examples* and related MSU probability preliminary exam preparation.
+Theory and Examples*.
 
 It organizes chapter knowledge, solved-exercise methods, reusable proof
 patterns, and flashcards into formats that are easy for both humans and LLM/RAG
