@@ -1,0 +1,363 @@
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs}
+
+\newcommand{\OmegaSpace}{\Omega}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\vikiname}[1]{\par\smallskip{\scriptsize\color{blue!60!black}\textbf{LLMviki:} \texttt{\detokenize{#1}}}}
+\newcommand{\blankproof}{%
+  \vspace{2mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par
+}
+\newcommand{\proofblock}[1]{\ifteacher #1 \else \blankproof \fi}
+
+\title[Chapter 1.2]{Chapter 1.2 Distributions}
+\subtitle{Rick Durrett Probability: Theory and Examples}
+\author{MSU Probability Prelim}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+  \vspace{-5mm}
+  \begin{center}
+    \small Built from the local Chapter 1 LLMviki flash cards.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Roadmap for 1.2}
+  \begin{block}{Learning goal}
+    Move between laws, CDFs, densities/mass functions, atoms, and transformations.
+  \end{block}
+  \begin{enumerate}
+    \item Distribution functions and probability laws.
+    \item Atoms as jumps and countability of discontinuities.
+    \item Normal tail estimates.
+    \item Probability integral transform.
+    \item Density transformations: monotone maps, lognormal, and squares.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Distribution Function Properties}
+  \begin{block}{Theorem}
+    If $F(x)=\Prob(X\le x)$, then:
+    \[
+      F \text{ is nondecreasing},\qquad
+      \lim_{x\to-\infty}F(x)=0,\qquad
+      \lim_{x\to\infty}F(x)=1,
+    \]
+    and $F$ is right-continuous.
+  \end{block}
+  \begin{alertblock}{Pitfall}
+    A CDF need not be left-continuous. Its jumps are atoms.
+  \end{alertblock}
+  \vikiname{Distribution function properties; ID: durrett_ch1_distribution_function}
+\end{frame}
+
+\begin{frame}{How to Prove CDF Properties}
+  \begin{block}{Proof idea}
+    Translate analytic properties of $F$ into event inclusions and continuity of probability.
+  \end{block}
+  \proofblock{
+  \begin{proof}
+    If $x\le y$, then $\{X\le x\}\subseteq\{X\le y\}$, so $F(x)\le F(y)$.
+    For right-continuity, take $x_n\downarrow x$. Then
+    \[
+      \{X\le x_n\}\downarrow \{X\le x\}.
+    \]
+    By continuity from above,
+    \[
+      F(x_n)=\Prob(X\le x_n)\downarrow \Prob(X\le x)=F(x).
+    \]
+    The limits at $\pm\infty$ follow from $\{X\le n\}\uparrow\Omega$ and
+    $\{X\le -n\}\downarrow\varnothing$.
+  \end{proof}
+  }
+  \vikiname{Distribution function properties; ID: durrett_ch1_distribution_function}
+\end{frame}
+
+\begin{frame}{Every Valid CDF Determines a Law}
+  \begin{block}{Theorem}
+    Any function $F:\R\to[0,1]$ that is nondecreasing, right-continuous, and satisfies
+    \[
+      F(-\infty)=0,\qquad F(\infty)=1
+    \]
+    is the CDF of a unique probability measure on $\B(\R)$.
+  \end{block}
+  \begin{itemize}
+    \item Define $\mu((a,b])=F(b)-F(a)$.
+    \item Extend from half-open intervals to the Borel sigma-field.
+  \end{itemize}
+  \vikiname{Every valid CDF determines a law; ID: durrett_ch1_cdf_to_law}
+\end{frame}
+
+\begin{frame}{Atoms Are Jumps}
+  \begin{block}{Fact}
+    For a real random variable with CDF $F$,
+    \[
+      \Prob(X=x)=F(x)-F(x-),
+      \qquad
+      F(x-)=\lim_{y\uparrow x}F(y).
+    \]
+  \end{block}
+  \proofblock{
+  Since $\{X<x\}=\bigcup_{n\ge1}\{X\le x-1/n\}$, continuity from below gives
+  \[
+    \Prob(X<x)=\lim_{n\to\infty}F(x-1/n)=F(x-).
+  \]
+  Therefore
+  \[
+    \Prob(X=x)=\Prob(X\le x)-\Prob(X<x)=F(x)-F(x-).
+  \]
+  }
+  \vikiname{Atoms are jumps of the CDF; ID: durrett_ch1_atoms_jumps}
+\end{frame}
+
+\begin{frame}{Standard Normal Tail Estimate}
+  \begin{block}{Inequality}
+    If $\chi$ is standard normal and $x>0$, then Durrett's normal-tail estimate gives
+    \[
+      (x^{-1}-x^{-3})e^{-x^2/2}
+      \le
+      \int_x^\infty e^{-y^2/2}\,dy
+      \le
+      x^{-1}e^{-x^2/2}.
+    \]
+  \end{block}
+  Hence
+  \[
+    \Prob(\chi\ge x)=\frac{1}{\sqrt{2\pi}}\int_x^\infty e^{-y^2/2}\,dy.
+  \]
+  \vikiname{Standard normal tail estimate; ID: durrett_ch1_normal_tail_bound}
+\end{frame}
+
+\begin{frame}{Probability Integral Transform}
+  \begin{block}{Fact}
+    If $X$ has continuous CDF $F$, then
+    \[
+      F(X)\sim \operatorname{Unif}(0,1).
+    \]
+  \end{block}
+  \begin{itemize}
+    \item Proof route: compute $\Prob(F(X)\le y)$ through a quantile.
+    \item Flat intervals require care, but continuity makes their probability contribution zero.
+  \end{itemize}
+  \vikiname{Probability integral transform; ID: durrett_ch1_probability_integral_transform}
+\end{frame}
+
+\begin{frame}{Monotone Density Change of Variables}
+  \begin{block}{Theorem}
+    Suppose $X$ has density $f$ on $[\alpha,\beta]$ and $g$ is strictly increasing and differentiable. If $Y=g(X)$, then
+    \[
+      f_Y(y)=
+      \frac{f(g^{-1}(y))}{g'(g^{-1}(y))}
+      \one_{\{g(\alpha)<y<g(\beta)\}}.
+    \]
+  \end{block}
+  \proofblock{
+  For $g(\alpha)<y<g(\beta)$,
+  \[
+    \Prob(Y\le y)=\Prob(X\le g^{-1}(y))
+    =\int_{\alpha}^{g^{-1}(y)}f(x)\,dx.
+  \]
+  Differentiate with respect to $y$ and use
+  $(g^{-1})'(y)=1/g'(g^{-1}(y))$.
+  }
+  \vikiname{Monotone density change of variables; ID: exercise_method_density_change_of_variables}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.1}
+  Let $X$ and $Y$ be random variables on $(\Omega,\F,P)$ and let
+  $A\in\F$. Define $Z=X$ on $A$ and $Z=Y$ on $A^c$. Show that $Z$ is a
+  random variable.
+  \vikiname{Piecewise random variable measurability; ID: exercise_method_piecewise_random_variable_measurability}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.1: Proof Skeleton}
+  \proofblock{
+  It is enough to check $\{Z\le x\}\in\F$ for each $x\in\R$. Write
+  \[
+    \{Z\le x\}
+    =
+    \bigl(A\cap\{X\le x\}\bigr)
+    \cup
+    \bigl(A^c\cap\{Y\le x\}\bigr).
+  \]
+  Each set on the right is measurable, so $Z$ is measurable.
+  }
+  \vikiname{Piecewise random variable measurability; ID: exercise_method_piecewise_random_variable_measurability}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.2}
+  Let $\chi$ be standard normal. Use Durrett's normal-tail estimate to
+  find upper and lower bounds for $\Prob(\chi\ge4)$.
+  \vikiname{Standard normal tail estimate; ID: durrett_ch1_normal_tail_bound}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.2: Proof Skeleton}
+  \proofblock{
+  Durrett's estimate with $x=4$ gives
+  \[
+    \left(\frac14-\frac{1}{64}\right)e^{-8}
+    \le
+    \int_4^\infty e^{-y^2/2}\,dy
+    \le
+    \frac14e^{-8}.
+  \]
+  Therefore
+  \[
+    \frac{15}{64\sqrt{2\pi}}e^{-8}
+    \le
+    \Prob(\chi\ge4)
+    \le
+    \frac{1}{4\sqrt{2\pi}}e^{-8}.
+  \]
+  }
+  \vikiname{Standard normal tail estimate; ID: durrett_ch1_normal_tail_bound}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.3}
+  Show that a distribution function has at most countably many
+  discontinuities.
+  \vikiname{Countability of CDF jumps; ID: exercise_method_countable_cdf_discontinuities}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.3: Proof Skeleton}
+  \proofblock{
+  Let $\Delta F(x)=F(x)-F(x-)$. For $m,n\ge1$, set
+  \[
+    D_{m,n}=\{x\in[-n,n]:\Delta F(x)>1/m\}.
+  \]
+  Each $D_{m,n}$ is finite, since finitely many jumps in it have total size at most $1$ and each jump is bigger than $1/m$. Every discontinuity has $\Delta F(x)>0$, so it lies in some $D_{m,n}$. Hence the discontinuity set is a countable union of finite sets.
+  }
+  \vikiname{Countability of CDF jumps; ID: exercise_method_countable_cdf_discontinuities}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.4}
+  Suppose $F(x)=\Prob(X\le x)$ is continuous. Show that $Y=F(X)$ is
+  uniform on $(0,1)$, i.e.
+  \[
+    \Prob(Y\le y)=y,\qquad 0\le y\le1.
+  \]
+  \vikiname{Probability integral transform; ID: durrett_ch1_probability_integral_transform}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.4: Proof Skeleton}
+  \proofblock{
+  For $0\le y\le1$, use the generalized quantile
+  \[
+    x_y=\sup\{x:F(x)\le y\}.
+  \]
+  By monotonicity and continuity, $\{F(X)\le y\}$ has the same probability as a suitable half-line endpoint with CDF value $y$. Flat intervals carry no probability mass because $F$ is constant there. Thus
+  \[
+    \Prob(F(X)\le y)=y.
+  \]
+  }
+  \vikiname{Probability integral transform; ID: durrett_ch1_probability_integral_transform}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.5}
+  Suppose $X$ has continuous density $f$ and is supported on
+  $[\alpha,\beta]$. Let $g$ be strictly increasing and differentiable on
+  $(\alpha,\beta)$. Find the density of $g(X)$.
+  \vikiname{Monotone density change of variables; ID: exercise_method_density_change_of_variables}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.5: Proof Skeleton}
+  \proofblock{
+  Let $Y=g(X)$. For $g(\alpha)<y<g(\beta)$,
+  \[
+    F_Y(y)=\Prob(g(X)\le y)=\Prob(X\le g^{-1}(y))
+    =\int_{\alpha}^{g^{-1}(y)}f(x)\,dx.
+  \]
+  Differentiating,
+  \[
+    f_Y(y)=\frac{f(g^{-1}(y))}{g'(g^{-1}(y))},
+  \]
+  and $f_Y(y)=0$ outside $(g(\alpha),g(\beta))$.
+  }
+  \vikiname{Monotone density change of variables; ID: exercise_method_density_change_of_variables}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.6}
+  Suppose $X$ is normally distributed. Use the previous exercise to find
+  the density of $\exp(X)$, the lognormal distribution.
+  \vikiname{Monotone density change of variables; ID: exercise_method_density_change_of_variables}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.6: Proof Skeleton}
+  \proofblock{
+  If $X\sim N(\mu,\sigma^2)$ and $Y=e^X$, then $g^{-1}(y)=\log y$ and
+  $g'(g^{-1}(y))=y$. Hence, for $y>0$,
+  \[
+    f_Y(y)=\frac{1}{y\sigma\sqrt{2\pi}}
+    \exp\left[-\frac{(\log y-\mu)^2}{2\sigma^2}\right],
+  \]
+  and $f_Y(y)=0$ for $y\le0$.
+  }
+  \vikiname{Monotone density change of variables; ID: exercise_method_density_change_of_variables}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.7}
+  \begin{enumerate}
+    \item[(i)] If $X$ has density $f$, compute the distribution function and density of $X^2$.
+    \item[(ii)] Specialize to $X$ standard normal to get the chi-square density with one degree of freedom.
+  \end{enumerate}
+  \vikiname{Density of a square transform; ID: exercise_method_square_transform_density}
+\end{frame}
+
+\begin{frame}{Exercise 1.2.7: Proof Skeleton}
+  \proofblock{
+  Let $Y=X^2$. For $y\ge0$,
+  \[
+    F_Y(y)=\Prob(-\sqrt y\le X\le\sqrt y)
+    =\int_{-\sqrt y}^{\sqrt y}f(x)\,dx.
+  \]
+  Thus, for $y>0$,
+  \[
+    f_Y(y)=\frac{f(\sqrt y)+f(-\sqrt y)}{2\sqrt y}.
+  \]
+  If $X$ is standard normal, then
+  \[
+    f_Y(y)=\frac{1}{\sqrt{2\pi y}}e^{-y/2}\one_{(0,\infty)}(y).
+  \]
+  }
+  \vikiname{Density of a square transform; ID: exercise_method_square_transform_density}
+\end{frame}
+
+\begin{frame}{Checklist: How to Attack 1.2 Problems}
+  \begin{enumerate}
+    \item Need to verify a CDF? Check monotonicity, right-continuity, and endpoint limits.
+    \item Need an atom? Compute $F(x)-F(x-)$.
+    \item Need countability of jumps? Group jumps by size and bounded interval.
+    \item Need a transformed density? Compute the transformed CDF first, then differentiate.
+    \item Need a normal tail? Keep the exponential term and constants separate.
+  \end{enumerate}
+  \vikiname{Chapter 1.2 flash cards and exercise method cards}
+\end{frame}
+
+\begin{frame}{Mini Practice}
+  \begin{enumerate}
+    \item If $F$ is continuous and strictly increasing, show $\Prob(F(X)\le y)=y$ directly using $F^{-1}$.
+    \item If $X$ has density $f$, find the density of $aX+b$ for $a<0$.
+    \item Show that a CDF can have only finitely many jumps larger than $0.01$.
+    \item If $X\sim N(0,1)$, use the tail bound to estimate $\Prob(|X|\ge x)$.
+  \end{enumerate}
+\end{frame}
+
+\end{document}
