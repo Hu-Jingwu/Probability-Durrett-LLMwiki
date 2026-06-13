@@ -1,0 +1,585 @@
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+
+\usepackage{amsmath,amssymb,mathtools}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\var}{\operatorname{var}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\vikiname}[1]{\par\smallskip{\scriptsize\color{blue!60!black}\textbf{LLMviki:} \texttt{\detokenize{#1}}}}
+\newcommand{\blankproof}{%
+  \vspace{2mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{5mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par
+}
+\newcommand{\longblankproof}{%
+  \vspace{1mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par\vspace{4mm}
+  {\color{gray!55}\rule{\linewidth}{0.4pt}}\par
+}
+\newcommand{\proofblock}[1]{\ifteacher #1 \else \blankproof \fi}
+\newcommand{\longproofblock}[1]{\ifteacher #1 \else \longblankproof \fi}
+
+\title[Chapter 1.6]{Chapter 1.6 Expected Value}
+\subtitle{Rick Durrett Probability: Theory and Examples}
+\author{Hu Jingwu}
+\date{}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+  \vspace{-5mm}
+  \begin{center}
+    \small Built from the local Chapter 1 LLMviki flash cards.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Roadmap for 1.6}
+  \begin{block}{Learning goal}
+    Treat expectation as integration and deploy inequalities, change of variables, and limit theorems confidently.
+  \end{block}
+  \begin{enumerate}
+    \item Expectation as Lebesgue integral.
+    \item Linearity, monotonicity, and convergence theorems.
+    \item Markov, Chebyshev, Jensen, and moment inequalities.
+    \item Change of variables, tail expectations, inclusion-exclusion, and Bonferroni.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Expected Value as Integral}
+  \begin{block}{Definition}
+    For a random variable $X$ on $(\Omega,\mathcal F,\Prob)$,
+    \[
+      \E X=\int_\Omega X\,d\Prob,
+    \]
+    provided the positive and negative parts do not both have infinite integral.
+  \end{block}
+  \begin{alertblock}{Pitfall}
+    $\E X$ is not defined when $\E X^+=\E X^-=\infty$.
+  \end{alertblock}
+  \vikiname{Expected value as Lebesgue integral; ID: durrett_ch1_expectation_as_integral}
+\end{frame}
+
+\begin{frame}{Linearity and Monotonicity}
+  \begin{block}{Theorem}
+    If $X,Y$ are integrable and $a,b\in\R$, then
+    \[
+      \E(aX+bY)=a\E X+b\E Y.
+    \]
+    If $X\le Y$ a.s., then $\E X\le \E Y$ whenever the expectations are defined.
+  \end{block}
+  \proofblock{
+  This is exactly integral linearity and monotonicity applied on the probability space. Independence is not needed for linearity; independence enters only when factoring products.
+  }
+  \vikiname{Linearity and monotonicity of expectation; ID: durrett_ch1_expectation_linearity}
+\end{frame}
+
+\begin{frame}{Markov and Chebyshev}
+  \begin{block}{Markov}
+    If $Y\ge0$ and $a>0$, then
+    \[
+      \Prob(Y\ge a)\le \frac{\E Y}{a}.
+    \]
+  \end{block}
+  \begin{block}{Chebyshev}
+    If $\E X=\mu$ and $\var(X)=\sigma^2$, then
+    \[
+      \Prob(|X-\mu|\ge a)\le \frac{\sigma^2}{a^2}.
+    \]
+  \end{block}
+  \vikiname{Markov and Chebyshev inequalities; ID: durrett_ch1_markov_chebyshev}
+\end{frame}
+
+\begin{frame}{Markov: How to Prove}
+  \proofblock{
+  For $Y\ge0$,
+  \[
+    a\one_{\{Y\ge a\}}\le Y.
+  \]
+  Taking expectations gives $a\Prob(Y\ge a)\le \E Y$. Chebyshev follows by applying Markov to $Y=(X-\mu)^2$.
+  }
+  \vikiname{Markov and Chebyshev inequalities; ID: durrett_ch1_markov_chebyshev}
+\end{frame}
+
+\begin{frame}{Expectation Limit Theorems}
+  \begin{block}{Toolkit}
+    Fatou, monotone convergence, dominated convergence, and bounded convergence all transfer to expectations.
+  \end{block}
+  \begin{itemize}
+    \item Fatou: nonnegative sequences give lower semicontinuity.
+    \item MCT: $0\le X_n\uparrow X$ implies $\E X_n\uparrow \E X$.
+    \item DCT: $X_n\to X$ and $|X_n|\le Y$ with $\E Y<\infty$ implies $\E X_n\to \E X$.
+  \end{itemize}
+  \vikiname{Limit theorems for expectation; ID: durrett_ch1_expectation_limit_theorems}
+\end{frame}
+
+\begin{frame}[shrink=8]{Change of Variables Formula}
+  \begin{block}{Theorem}
+    If $X$ has law $\mu$ and $f$ is measurable, then
+    \[
+      \E f(X)=\int f(x)\,\mu(dx),
+    \]
+    whenever $f\ge0$ or $f(X)$ is integrable.
+  \end{block}
+  \proofblock{
+  Prove first for indicators $f=\one_A$, where both sides equal $\Prob(X\in A)$. Extend by linearity to simple functions, then by MCT to nonnegative $f$, and by signed decomposition to integrable $f$.
+  }
+  \vikiname{Change of variables formula; ID: durrett_ch1_change_of_variables}
+\end{frame}
+
+\begin{frame}{Tail Integral Formula}
+  \begin{block}{Formula}
+    For $X\ge0$,
+    \[
+      \E X=\int_0^\infty \Prob(X>t)\,dt.
+    \]
+  \end{block}
+  \proofblock{
+  Write
+  \[
+    X(\omega)=\int_0^\infty \one_{\{t<X(\omega)\}}\,dt.
+  \]
+  Then apply Tonelli to interchange the $\omega$ and $t$ integrals.
+  }
+  \vikiname{Tail integral and nonnegative expectations; ID: durrett_ch1_tail_sum_nonnegative}
+\end{frame}
+
+\begin{frame}{Inclusion-Exclusion}
+  \begin{block}{Formula}
+    For events $A_1,\ldots,A_n$,
+    \[
+      \Prob\left(\bigcup_i A_i\right)
+      =
+      \sum_i\Prob(A_i)-\sum_{i<j}\Prob(A_iA_j)+\cdots
+      +(-1)^{n-1}\Prob\left(\bigcap_i A_i\right).
+    \]
+  \end{block}
+  \proofblock{
+  Use
+  \[
+    \one_{\cup_i A_i}=1-\prod_{i=1}^n(1-\one_{A_i}),
+  \]
+  expand the finite product, then take expectations.
+  }
+  \vikiname{Inclusion-exclusion and Bonferroni; ID: durrett_ch1_inclusion_exclusion}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.1}
+  Suppose $\phi$ is strictly convex. Under the assumptions of Jensen's
+  inequality, show that
+  \[
+    \phi(EX)=E\phi(X)
+  \]
+  implies $X=EX$ almost surely.
+  \vikiname{Equality case in strict Jensen; ID: exercise_method_strict_jensen_equality}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.1: Proof Skeleton}
+  \proofblock{
+  Let $m=\E X$. If $\Prob(X\ne m)>0$, then $X$ is nonconstant on a set of positive probability. Strict convexity makes Jensen strict for nonconstant random variables:
+  \[
+    \E\phi(X)>\phi(\E X).
+  \]
+  This contradicts equality. Hence $\Prob(X=m)=1$.
+  }
+  \vikiname{Equality case in strict Jensen; ID: exercise_method_strict_jensen_equality}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.2}
+  Suppose $\phi:\R^n\to\R$ is convex. Show that
+  \[
+    E\phi(X_1,\ldots,X_n)\ge \phi(EX_1,\ldots,EX_n),
+  \]
+  provided $E|\phi(X_1,\ldots,X_n)|<\infty$ and $E|X_i|<\infty$ for all
+  $i$.
+  \vikiname{Jensen's inequality for integrals; ID: durrett_ch1_jensen_integral}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.2: Proof Skeleton}
+  \proofblock{
+  Let $m=(\E X_1,\ldots,\E X_n)$. A convex function has a supporting hyperplane at $m$:
+  \[
+    \phi(x)\ge a\cdot x+b,\qquad \phi(m)=a\cdot m+b.
+  \]
+  Taking expectations yields
+  \[
+    \E\phi(X)\ge a\cdot \E X+b=\phi(m).
+  \]
+  }
+  \vikiname{Jensen's inequality for integrals; ID: durrett_ch1_jensen_integral}
+\end{frame}
+
+\begin{frame}[shrink=6]{Exercise 1.6.3}
+  Chebyshev's inequality is and is not sharp.
+  \begin{enumerate}
+    \item Show that if $0<b\le a$ are fixed, there is $X$ with $EX^2=b^2$
+    for which $P(|X|\ge a)=b^2/a^2$.
+    \item Show that if $0<EX^2<\infty$, then
+    \[
+      \lim_{a\to\infty}\frac{a^2P(|X|\ge a)}{EX^2}=0.
+    \]
+  \end{enumerate}
+  \vikiname{Two-point distributions as Chebyshev extremizers; ID: exercise_method_two_point_extremizers}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.6.3: Proof Skeleton}
+  \longproofblock{
+  For fixed $a,b$, take
+  \[
+    \Prob(X=a)=\Prob(X=-a)=\frac{b^2}{2a^2},\qquad
+    \Prob(X=0)=1-\frac{b^2}{a^2}.
+  \]
+  Then $\E X^2=b^2$ and $\Prob(|X|\ge a)=b^2/a^2$. For the limit statement set $Y=X^2$. Then
+  \[
+    a^2\Prob(|X|\ge a)\le \E(Y;Y\ge a^2).
+  \]
+  Since $Y\one_{\{Y\ge a^2\}}\to0$ and is dominated by integrable $Y$, DCT gives the limit.
+  }
+  \vikiname{Two-point distributions as Chebyshev extremizers; ID: exercise_method_two_point_extremizers}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.6.4}
+  One-sided Chebyshev bound.
+  \begin{enumerate}
+    \item Let $a>b>0$, $0<p<1$, and let $X$ satisfy
+    $P(X=a)=p$, $P(X=-b)=1-p$. Apply Chebyshev's inequality to
+    $\phi(x)=(x+b)^2$ and conclude that if $Y$ has the same mean and
+    variance as $X$, then $P(Y\ge a)\le p$, with equality when $Y=X$.
+    \item If $EY=0$, $\operatorname{var}(Y)=\sigma^2$, and $a>0$, show
+    \[
+      P(Y\ge a)\le \frac{\sigma^2}{a^2+\sigma^2},
+    \]
+    and show equality is possible.
+  \end{enumerate}
+  \vikiname{Two-point distributions as Chebyshev extremizers; ID: exercise_method_two_point_extremizers}
+\end{frame}
+
+\begin{frame}[shrink=10]{Exercise 1.6.4: Proof Skeleton}
+  \longproofblock{
+  For the two-point $X$,
+  \[
+    \E(X+b)^2=p(a+b)^2.
+  \]
+  If $Y$ has the same mean and variance, then $\E(Y+b)^2$ has the same value. On $\{Y\ge a\}$,
+  \[
+    (Y+b)^2\ge(a+b)^2,
+  \]
+  so Markov gives $P(Y\ge a)\le p$. For mean zero and variance $\sigma^2$, choose the extremal two-point distribution with values $a$ and $-\sigma^2/a$. Its mass at $a$ is
+  \[
+    \frac{\sigma^2}{a^2+\sigma^2},
+  \]
+  giving both the bound and equality case.
+  }
+  \vikiname{Two-point distributions as Chebyshev extremizers; ID: exercise_method_two_point_extremizers}
+\end{frame}
+
+\begin{frame}[shrink=7]{Exercise 1.6.5}
+  Show that the following lower bounds do not exist:
+  \begin{enumerate}
+    \item If $\varepsilon>0$,
+    \[
+      \inf\{P(|X|>\varepsilon):EX=0,\operatorname{var}(X)=1\}=0.
+    \]
+    \item If $y\ge1$ and $\sigma^2\in(0,\infty)$,
+    \[
+      \inf\{P(|X|>y):EX=1,\operatorname{var}(X)=\sigma^2\}=0.
+    \]
+  \end{enumerate}
+  \vikiname{Two-point distributions as Chebyshev extremizers; ID: exercise_method_two_point_extremizers}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.6.5: Proof Skeleton}
+  \longproofblock{
+  Fix $\delta>0$ and put most mass at the mean. For part (i), take
+  \[
+    \Prob(X=0)=1-\delta,\qquad
+    \Prob(X=\delta^{-1/2})=\Prob(X=-\delta^{-1/2})=\delta/2.
+  \]
+  Then $\E X=0$ and $\var(X)=1$, while the tail event has probability at most $\delta$. For part (ii), use $X=1+\sigma Z$, where $Z$ is the variable from part (i). Then $\E X=1$, $\var(X)=\sigma^2$, and the event $\{|X|>y\}$ is contained in the rare nonzero part for small $\delta$.
+  }
+  \vikiname{Two-point distributions as Chebyshev extremizers; ID: exercise_method_two_point_extremizers}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.6}
+  Let $Y\ge0$ with $EY^2<\infty$. Apply Cauchy--Schwarz to
+  $Y\mathbf{1}_{\{Y>0\}}$ and conclude
+  \[
+    P(Y>0)\ge \frac{(EY)^2}{EY^2}.
+  \]
+  \vikiname{Cauchy-Schwarz lower bound for positive probability; ID: exercise_method_paley_zygmund_basic}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.6: Proof Skeleton}
+  \proofblock{
+  Since $Y=Y\one_{\{Y>0\}}$,
+  \[
+    \E Y=\E(Y\one_{\{Y>0\}}).
+  \]
+  Cauchy--Schwarz gives
+  \[
+    (\E Y)^2\le \E(Y^2)\E(\one_{\{Y>0\}}^2)=\E Y^2\,\Prob(Y>0).
+  \]
+  Divide by $\E Y^2$ unless it is zero, in which case the claim is trivial.
+  }
+  \vikiname{Cauchy-Schwarz lower bound for positive probability; ID: exercise_method_paley_zygmund_basic}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.6.7}
+  Let $\Omega=(0,1)$ with Lebesgue measure, let $\alpha\in(1,2)$, and set
+  \[
+    X_n=n^\alpha\mathbf{1}_{(1/(n+1),1/n)}.
+  \]
+  Show $X_n\to0$ almost surely and Theorem 1.6.8 applies with
+  $h(x)=x$ and $g(x)=|x|^{2/\alpha}$, but the $X_n$ are not dominated by
+  an integrable random variable.
+  \vikiname{Limit theorems for expectation; ID: durrett_ch1_expectation_limit_theorems}
+\end{frame}
+
+\begin{frame}[shrink=10]{Exercise 1.6.7: Proof Skeleton}
+  \longproofblock{
+  The intervals $(1/(n+1),1/n)$ are disjoint, so each $\omega$ belongs to at most one of them; hence $X_n(\omega)\to0$. Also
+  \[
+    \E g(X_n)=n^2\left(\frac1n-\frac1{n+1}\right)=\frac{n}{n+1}\le1,
+  \]
+  and $|h(x)|/g(x)=|x|^{1-2/\alpha}\to0$. If $|X_n|\le Y$ with $\E Y<\infty$, then on $(1/(n+1),1/n)$, $Y\ge n^\alpha$, so
+  \[
+    \E Y\ge \sum_{n=1}^N n^\alpha\left(\frac1n-\frac1{n+1}\right),
+  \]
+  whose terms are comparable to $n^{\alpha-2}$; the series diverges since $\alpha\in(1,2)$.
+  }
+  \vikiname{Limit theorems for expectation; ID: durrett_ch1_expectation_limit_theorems}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.8}
+  Suppose a probability measure $\mu$ has
+  \[
+    \mu(A)=\int_A f(x)\,dx
+  \]
+  for all Borel $A$. Show that for any $g$ with $g\ge0$ or
+  $\int |g|\,d\mu<\infty$,
+  \[
+    \int g(x)\,\mu(dx)=\int g(x)f(x)\,dx.
+  \]
+  \vikiname{Change of variables formula; ID: durrett_ch1_change_of_variables}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.8: Proof Skeleton}
+  \proofblock{
+  First prove it for $g=\one_A$:
+  \[
+    \int \one_A\,d\mu=\mu(A)=\int_A f(x)\,dx.
+  \]
+  Extend by linearity to nonnegative simple functions. For $g\ge0$, take simple $g_n\uparrow g$ and apply MCT on both sides. For signed integrable $g$, apply the nonnegative result to $g^+$ and $g^-$ and subtract.
+  }
+  \vikiname{Change of variables formula; ID: durrett_ch1_change_of_variables}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.9}
+  Let $A_1,\ldots,A_n$ be events and $A=\bigcup_{i=1}^n A_i$. Prove the
+  inclusion--exclusion formula.
+  \vikiname{Indicator expansion for inclusion-exclusion and Bonferroni; ID: exercise_method_inclusion_exclusion_indicators}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.6.9: Proof Skeleton}
+  \longproofblock{
+  Pointwise,
+  \[
+    \one_A=1-\prod_{i=1}^n(1-\one_{A_i}).
+  \]
+  Expanding the product gives
+  \[
+    \one_A=\sum_i\one_{A_i}-\sum_{i<j}\one_{A_i\cap A_j}
+    +\sum_{i<j<k}\one_{A_i\cap A_j\cap A_k}-\cdots.
+  \]
+  Taking expectations yields the finite inclusion--exclusion identity.
+  }
+  \vikiname{Indicator expansion for inclusion-exclusion and Bonferroni; ID: exercise_method_inclusion_exclusion_indicators}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.6.10}
+  Prove the Bonferroni inequalities for
+  $A=\bigcup_{i=1}^n A_i$: stopping inclusion--exclusion after an even
+  number of sums gives a lower bound, and stopping after an odd number of
+  sums gives an upper bound.
+  \vikiname{Indicator expansion for inclusion-exclusion and Bonferroni; ID: exercise_method_inclusion_exclusion_indicators}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.6.10: Proof Skeleton}
+  \longproofblock{
+  For each outcome let
+  \[
+    N=\sum_i\one_{A_i}.
+  \]
+  Then $\one_A=\one_{\{N\ge1\}}$. The inclusion--exclusion partial sums become
+  \[
+    S_r(N)=\sum_{k=1}^r(-1)^{k-1}\binom{N}{k}.
+  \]
+  For $N=0$ all terms vanish. For $N\ge1$, alternating binomial partial sums lie alternately above and below $1$. Thus odd truncations dominate $\one_A$, even truncations are below it. Take expectations.
+  }
+  \vikiname{Indicator expansion for inclusion-exclusion and Bonferroni; ID: exercise_method_inclusion_exclusion_indicators}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.11}
+  If $E|X|^k<\infty$, show that for $0<j<k$,
+  \[
+    E|X|^j<\infty,
+    \qquad
+    E|X|^j\le (E|X|^k)^{j/k}.
+  \]
+  \vikiname{Jensen's inequality for integrals; ID: durrett_ch1_jensen_integral}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.11: Proof Skeleton}
+  \proofblock{
+  Let $Y=|X|^k$ and $r=j/k\in(0,1)$. The map $t\mapsto t^r$ is concave, so Jensen gives
+  \[
+    \E Y^r\le (\E Y)^r.
+  \]
+  Since $Y^r=|X|^j$,
+  \[
+    \E|X|^j\le(\E|X|^k)^{j/k}<\infty.
+  \]
+  }
+  \vikiname{Jensen's inequality for integrals; ID: durrett_ch1_jensen_integral}
+\end{frame}
+
+\begin{frame}[shrink=6]{Exercise 1.6.12}
+  Apply Jensen's inequality with $\phi(x)=e^x$ and
+  $P(X=\log y_m)=p(m)$ to prove
+  \[
+    \sum_{m=1}^n p(m)y_m
+    \ge
+    \prod_{m=1}^n y_m^{p(m)}
+  \]
+  when $\sum_m p(m)=1$ and $p(m),y_m>0$.
+  \vikiname{Jensen's inequality for integrals; ID: durrett_ch1_jensen_integral}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.12: Proof Skeleton}
+  \proofblock{
+  Let $\Prob(X=\log y_m)=p(m)$. Jensen for $\phi(x)=e^x$ gives
+  \[
+    \E e^X\ge e^{\E X}.
+  \]
+  Now
+  \[
+    \E e^X=\sum_{m=1}^n p(m)y_m,
+    \qquad
+    e^{\E X}=\exp\left(\sum_m p(m)\log y_m\right)=\prod_m y_m^{p(m)}.
+  \]
+  }
+  \vikiname{Jensen's inequality for integrals; ID: durrett_ch1_jensen_integral}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.13}
+  If $EX_1^-<\infty$ and $X_n\uparrow X$, show that
+  \[
+    EX_n\uparrow EX.
+  \]
+  \vikiname{Limit theorems for expectation; ID: durrett_ch1_expectation_limit_theorems}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.13: Proof Skeleton}
+  \proofblock{
+  Let $Y_n=X_n-X_1$. Then $Y_n\ge0$ and $Y_n\uparrow X-X_1$. By MCT,
+  \[
+    \E Y_n\uparrow \E(X-X_1).
+  \]
+  Since $\E X_1^-<\infty$, adding $\E X_1$ is legitimate in the extended sense:
+  \[
+    \E X_n=\E X_1+\E Y_n\uparrow \E X.
+  \]
+  }
+  \vikiname{Limit theorems for expectation; ID: durrett_ch1_expectation_limit_theorems}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.14}
+  Let $X\ge0$, but do not assume $E(1/X)<\infty$. Show
+  \[
+    \lim_{y\to\infty} yE(1/X;X>y)=0,
+    \qquad
+    \lim_{y\downarrow0} yE(1/X;X>y)=0.
+  \]
+  \vikiname{Tail truncation for expectation limits; ID: exercise_method_expectation_tail_truncation}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.6.14: Proof Skeleton}
+  \longproofblock{
+  As $y\to\infty$,
+  \[
+    0\le y\E(1/X;X>y)=\E(y/X;X>y)\le \Prob(X>y)\to0.
+  \]
+  As $y\downarrow0$, fix $\eta>0$ and choose $\delta>0$ such that $\Prob(0<X\le\delta)<\eta$. For $0<y<\delta$,
+  \[
+    y\E(1/X;X>y)
+    \le \Prob(y<X\le\delta)+y/\delta
+    \le \eta+y/\delta.
+  \]
+  Let $y\downarrow0$, then $\eta\downarrow0$.
+  }
+  \vikiname{Tail truncation for expectation limits; ID: exercise_method_expectation_tail_truncation}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.15}
+  If $X_n\ge0$, show that
+  \[
+    E\left(\sum_{n=0}^{\infty}X_n\right)=\sum_{n=0}^{\infty}EX_n.
+  \]
+  \vikiname{Limit theorems for expectation; ID: durrett_ch1_expectation_limit_theorems}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.15: Proof Skeleton}
+  \proofblock{
+  Let
+  \[
+    S_N=\sum_{n=0}^N X_n.
+  \]
+  Then $S_N\uparrow \sum_{n=0}^\infty X_n$. MCT gives
+  \[
+    \E\sum_{n=0}^\infty X_n=\lim_{N\to\infty}\E S_N.
+  \]
+  Finite linearity gives $\E S_N=\sum_{n=0}^N\E X_n$; let $N\to\infty$.
+  }
+  \vikiname{Limit theorems for expectation; ID: durrett_ch1_expectation_limit_theorems}
+\end{frame}
+
+\begin{frame}{Exercise 1.6.16}
+  If $X$ is integrable and $A_n$ are disjoint sets with union $A$, show
+  \[
+    \sum_{n=0}^{\infty}E(X;A_n)=E(X;A),
+  \]
+  i.e. the sum converges absolutely and has the displayed value.
+  \vikiname{Linearity and monotonicity of expectation; ID: durrett_ch1_expectation_linearity}
+\end{frame}
+
+\begin{frame}[shrink=8]{Exercise 1.6.16: Proof Skeleton}
+  \longproofblock{
+  Since $X$ is integrable,
+  \[
+    \sum_n \E(|X|;A_n)=\E(|X|;A)\le \E|X|<\infty,
+  \]
+  so $\sum_n\E(X;A_n)$ converges absolutely. For finite unions,
+  \[
+    \sum_{n=0}^N\E(X;A_n)=\E\left(X;\bigcup_{n=0}^N A_n\right).
+  \]
+  As $N\to\infty$, $X\one_{\cup_{n=0}^N A_n}\to X\one_A$ and is dominated by $|X|$. DCT gives the limit.
+  }
+  \vikiname{Linearity and monotonicity of expectation; ID: durrett_ch1_expectation_linearity}
+\end{frame}
+
+\end{document}
